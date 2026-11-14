@@ -7,7 +7,7 @@
 1. Open **Loans**.
 2. Search or filter by warehouse and item type as in Inventory.
 3. Check the borrower shown in the status and select an item for its loan details.
-4. Use **Check in** on the item to return it, or use **Scan QR > Check in items** for several items.
+4. Use **Check in** on the item to return it, or use **Scan codes > Check in items** for several items.
 
 For step-by-step loan actions, see [Check out items](scanner.md#check-out-items-to-an-employee) and [Check in items](scanner.md#check-in-employee-loans).
 

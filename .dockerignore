@@ -45,7 +45,7 @@ artifacts
 **/Thumbs.db
 
 # Production images use source builds, not local bundles or development fixtures
-dolibarr/qrrouter/spa
+dolibarr/owt/spa
 frontend/dev
 frontend/e2e
 frontend/playwright*.ts

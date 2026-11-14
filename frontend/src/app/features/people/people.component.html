@@ -19,7 +19,7 @@
   @if (notice()) {
     <p class="alert success" role="status">{{ notice() | t }}</p>
   }
-  <qrr-card [title]="'Warehouse mapping' | t">
+  <owt-card [title]="'Warehouse mapping' | t">
     <form (ngSubmit)="save()" #form="ngForm">
       <div class="grid">
         <mat-form-field appearance="outline">
@@ -59,14 +59,14 @@
         @for (mapping of api.context()!.state.personal_warehouses | keyvalue; track mapping.key) {
           <tr>
             <td>
-              <qrr-native-link
+              <owt-native-link
                 type="user"
                 [id]="mapping.key"
                 [label]="api.context()!.users[mapping.key] || mapping.key"
               />
             </td>
             <td>
-              <qrr-native-link
+              <owt-native-link
                 type="warehouse"
                 [id]="mapping.value"
                 [label]="api.context()!.warehouses[mapping.value]?.ref || mapping.value"
@@ -76,5 +76,5 @@
         }
       </tbody>
     </table>
-  </qrr-card>
+  </owt-card>
 }

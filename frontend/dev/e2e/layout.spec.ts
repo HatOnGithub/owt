@@ -7,11 +7,11 @@ for (const theme of ['light', 'dark']) {
       mock,
     }) => {
       await page.setViewportSize({ width, height: 1000 });
-      await page.addInitScript(value => localStorage.setItem('qrr-mock-theme', value), theme);
+      await page.addInitScript(value => localStorage.setItem('owt-mock-theme', value), theme);
       const item = await mock.item('Network cable');
       for (const route of ['create', 'create?bulk=assigned', `edit/${item.code}`]) {
         await page.goto('/#/' + route);
-        const fieldset = page.locator('qrr-editor fieldset');
+        const fieldset = page.locator('owt-editor fieldset');
         await expect(fieldset).toBeVisible();
         // Load after component styles to exercise the host theme's cascade priority.
         await page.addStyleTag({

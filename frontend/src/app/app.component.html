@@ -1,6 +1,6 @@
 <div class="app-shell">
   <header class="toolbar no-print">
-    <strong>QR Router</strong>
+    <strong>Open Warehouse Tracker</strong>
     <div>
       <small>{{ 'Revision' | t }} {{ inventory.context()?.state?.revision ?? '—' }}</small>
       <button mat-stroked-button (click)="inventory.refresh()" [disabled]="inventory.loading()">
@@ -19,7 +19,7 @@
     </button>
   </header>
   <div class="module-navigation no-print" [class.open]="menuOpen()">
-    <nav [attr.aria-label]="'QR Router navigation' | t">
+    <nav [attr.aria-label]="'Open Warehouse Tracker navigation' | t">
       @for (link of links; track link.path) {
         @if (allowed(link.path)) {
           <a [routerLink]="link.path" routerLinkActive="active" (click)="menuOpen.set(false)">
@@ -53,7 +53,7 @@
                   | t
               }}
             </p>
-            <qrr-pending-details [pending]="pending" [operation]="pending.action" />
+            <owt-pending-details [pending]="pending" [operation]="pending.action" />
             @if (inventory.can('recover')) {
               <button mat-button (click)="recoverNative()" [disabled]="recovering()">
                 <fa-icon [icon]="icons.refresh" aria-hidden="true" />
@@ -71,11 +71,11 @@
         }
         <router-outlet />
       } @else if (!inventory.loading()) {
-        <qrr-card [title]="'Session unavailable' | t">
+        <owt-card [title]="'Session unavailable' | t">
           <p>
             {{ 'Check your Dolibarr session and service connection, then retry.' | t }}
           </p>
-        </qrr-card>
+        </owt-card>
       }
     </div>
   </main>

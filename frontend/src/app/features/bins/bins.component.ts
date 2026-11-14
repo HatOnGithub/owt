@@ -16,7 +16,7 @@ import { DestinationComponent } from '@shared/location-fields/destination.compon
 
 /** Physical-bin membership UI; whole-bin moves use fixed server intent and resumable member results. */
 @Component({
-  selector: 'qrr-bins',
+  selector: 'owt-bins',
   standalone: true,
   imports: [SharedModule, CaptureComponent, LocationFieldsComponent, DestinationComponent],
   templateUrl: './bins.component.html',

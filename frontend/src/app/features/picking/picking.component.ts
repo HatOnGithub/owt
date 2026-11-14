@@ -9,7 +9,7 @@ import { printLanguages } from '../../../print/language';
 
 /** Allocation proposals and saved order progress; displaying a proposal does not reserve stock. */
 @Component({
-  selector: 'qrr-picking',
+  selector: 'owt-picking',
   standalone: true,
   imports: [SharedModule, LookupComponent],
   changeDetection: ChangeDetectionStrategy.Eager,

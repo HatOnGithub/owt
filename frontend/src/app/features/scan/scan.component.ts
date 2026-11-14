@@ -21,7 +21,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'qrr-scan',
+  selector: 'owt-scan',
   standalone: true,
   imports: [SharedModule, CaptureComponent],
   templateUrl: './scan.component.html',

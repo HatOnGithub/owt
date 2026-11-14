@@ -38,17 +38,17 @@
       <div class="scanner-entry">
         <h3>{{ 'Manual / USB entry' | t }}</h3>
         <p class="entry-hint">
-          {{ 'Use your camera, a USB scanner, or enter QR identifiers below.' | t }}
+          {{ 'Use your camera, a USB scanner, or enter Item identifiers below.' | t }}
         </p>
         <mat-form-field appearance="outline" subscriptSizing="dynamic">
-          <mat-label>{{ 'QR identifiers' | t }}</mat-label>
+          <mat-label>{{ 'Item identifiers' | t }}</mat-label>
           <textarea
             matInput
             rows="2"
             [(ngModel)]="manual"
             [ngModelOptions]="{ standalone: true }"
             (keydown.enter)="$event.preventDefault(); add()"
-            [attr.aria-label]="'QR identifiers' | t"
+            [attr.aria-label]="'Item identifiers' | t"
             autocomplete="off"
             autocapitalize="characters"
             spellcheck="false"

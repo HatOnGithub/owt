@@ -219,7 +219,7 @@ $product->db = new MovementDatabase();
 $user = new User();
 foreach ([0, 1] as $direction) {
     check(
-        $product->correct_stock($user, 12, 3, $direction, 'QR transfer', 17.5, 'QRR-OP') === 1,
+        $product->correct_stock($user, 12, 3, $direction, 'QR transfer', 17.5, 'OWT-OP') === 1,
         'Plain movement failed',
     );
     $call = MouvementStock::$calls[array_key_last(MouvementStock::$calls)];
@@ -227,7 +227,7 @@ foreach ([0, 1] as $direction) {
         $call[1] === 4 && $call[2] === 12 && (float) $call[3] === ($direction ? -3.0 : 3.0),
         'Changed stock sign or identity',
     );
-    check($call[5] === 17.5 && $call[7] === 'QRR-OP', 'Changed price or recovery marker');
+    check($call[5] === 17.5 && $call[7] === 'OWT-OP', 'Changed price or recovery marker');
     check(
         $product->correct_stock_batch(
             $user,
@@ -239,14 +239,14 @@ foreach ([0, 1] as $direction) {
             1700000000,
             1800000000,
             'BOX-001',
-            'QRR-BATCH',
+            'OWT-BATCH',
         ) === 1,
         'Batch movement failed',
     );
     $call = MouvementStock::$calls[array_key_last(MouvementStock::$calls)];
     check((float) $call[3] === ($direction ? -2.0 : 2.0), 'Changed batch movement sign');
     check(
-        $call[7] === 'QRR-BATCH' &&
+        $call[7] === 'OWT-BATCH' &&
             $call[9] === 1700000000 &&
             $call[10] === 1800000000 &&
             $call[11] === 'BOX-001',
@@ -275,13 +275,13 @@ $hookmanager = new class {
 function accessforbidden() {
     throw new RuntimeException('Permission check terminated instead of returning');
 }
-require_once __DIR__ . '/../dolibarr/qrrouter/lib/qrrouter_security.lib.php';
+require_once __DIR__ . '/../dolibarr/owt/lib/owt_security.lib.php';
 check(
-    !qrr_native_read_access($user, 'commande', 39, 'commande'),
+    !owt_native_read_access($user, 'commande', 39, 'commande'),
     'Denied native hook was bypassed',
 );
 $hookmanager->resArray = ['result' => 1];
-check(qrr_native_read_access($user, 'commande', 39, 'commande'), 'Allowed native hook was ignored');
+check(owt_native_read_access($user, 'commande', 39, 'commande'), 'Allowed native hook was ignored');
 if ((new ReflectionFunction('restrictedArea'))->getNumberOfParameters() >= 10) {
     check(
         $hookmanager->parameters['nodie'] === 1 && $hookmanager->parameters['mode'] === 'read',
@@ -289,16 +289,23 @@ if ((new ReflectionFunction('restrictedArea'))->getNumberOfParameters() >= 10) {
     );
 }
 $user->status = 0;
-check(!qrr_internal_user($user), 'Inactive modern-status user accepted');
+check(!owt_internal_user($user), 'Inactive modern-status user accepted');
 $user->status = 1;
-check(qrr_internal_user($user), 'Active modern-status user rejected');
+check(owt_internal_user($user), 'Active modern-status user rejected');
 
 // Instantiate our descriptor against this release's actual DolibarrModules base class.
 $baseFile = $fixture . '/core/modules/DolibarrModules.class.php';
 mkdir(dirname($baseFile), 0777, true);
 copy($source . '/core/modules/DolibarrModules.class.php', $baseFile);
-require_once __DIR__ . '/../dolibarr/qrrouter/core/modules/modQrrouter.class.php';
-$module = new modQrrouter(null);
+require_once __DIR__ . '/../dolibarr/owt/core/modules/modOwt.class.php';
+$module = new modOwt(null);
+check(
+    $module->name === 'Owt' &&
+        $module->rights_class === 'owt' &&
+        $module->const_name === 'MAIN_MODULE_OWT' &&
+        $module->family === 'products',
+    'OWT must register as a native Products-family warehouse extension',
+);
 check($module->need_dolibarr_version === [21, 0, 2], 'Incorrect Dolibarr minimum');
 check($module->phpmin === [8, 0], 'Incorrect PHP minimum');
 check(
@@ -315,7 +322,7 @@ eval(
     public function __construct($db) { $this->db = $db; }
     public function fetch_name_optionals_label($element) {
         if ($this->db->defined) {
-            $this->attributes[$element]["label"]["qrrouter_serial_prefix"] = "Existing prefix";
+            $this->attributes[$element]["label"]["owt_serial_prefix"] = "Existing prefix";
         }
     }
     ' .
@@ -351,7 +358,7 @@ class ActivationDatabase {
     public function DDLAddField($table, $name, $definition) {
         $this->adds++;
         check(
-            $table === 'llx_product_extrafields' && $name === 'qrrouter_serial_prefix',
+            $table === 'llx_product_extrafields' && $name === 'owt_serial_prefix',
             'Wrong prefix field target',
         );
         check(
@@ -376,7 +383,7 @@ class ActivationDatabase {
         return true;
     }
 }
-class ActivationModule extends modQrrouter {
+class ActivationModule extends modOwt {
     public $registrations = 0;
     protected function _load_tables($reldir, $onlywithsuffix = '') {
         return 1;
@@ -400,7 +407,7 @@ foreach ([false, true] as $leftoverColumn) {
         'Prefix field definition missing',
     );
     check(
-        str_contains($activationDb->inserts[0], 'QRRSerialPrefixHelp'),
+        str_contains($activationDb->inserts[0], 'OWTSerialPrefixHelp'),
         'Prefix field help missing',
     );
     check($activation->init() === 1 && $activation->registrations === 2, 'Reactivation failed');
@@ -415,10 +422,10 @@ function dol_syslog($message, $level = 0) {}
 function getCountry($id, $mode) {
     return ['label' => 'Fixture', 'code' => 'XX'];
 }
-function qrr_stock_write_right($user) {
+function owt_stock_write_right($user) {
     return true;
 }
-function qrr_product($db, $id) {
+function owt_product($db, $id) {
     return new class {
         public $type = 0;
         public function hasbatch() {
@@ -487,14 +494,14 @@ file_put_contents(
 );
 eval(
     native_function(
-        __DIR__ . '/../dolibarr/qrrouter/lib/qrrouter_service.lib.php',
-        'qrr_warehouse_closed',
+        __DIR__ . '/../dolibarr/owt/lib/owt_service.lib.php',
+        'owt_warehouse_closed',
     )
 );
 eval(
     native_function(
-        __DIR__ . '/../dolibarr/qrrouter/lib/qrrouter_service.lib.php',
-        'qrr_service_preflight',
+        __DIR__ . '/../dolibarr/owt/lib/owt_service.lib.php',
+        'owt_service_preflight',
     )
 );
 foreach (
@@ -508,7 +515,7 @@ foreach (
     as [$properties, $closed]
 ) {
     check(
-        qrr_warehouse_closed((object) $properties) === $closed,
+        owt_warehouse_closed((object) $properties) === $closed,
         'Legacy, modern or unknown warehouse status mishandled',
     );
 }
@@ -522,7 +529,7 @@ foreach ([1, 2, 0] as $warehouseStatus) {
     );
     $rejected = false;
     try {
-        qrr_service_preflight(
+        owt_service_preflight(
             $warehouseDb,
             $user,
             [],
@@ -545,7 +552,7 @@ foreach ([1, 2, 0] as $warehouseStatus) {
 }
 $warehouseDb->exists = false;
 try {
-    qrr_service_preflight(
+    owt_service_preflight(
         $warehouseDb,
         $user,
         [],

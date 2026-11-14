@@ -12,14 +12,14 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 root = Path(__file__).resolve().parents[1]
-dll = root / 'src/QrRouterApi/bin/Release/net10.0/QrRouterApi.dll'
+dll = root / 'src/OwtApi/bin/Release/net10.0/OwtApi.dll'
 with socket.socket() as sock:
     sock.bind(('127.0.0.1', 0))
     port = sock.getsockname()[1]
 base = f'http://127.0.0.1:{port}'
 key = secrets.token_hex(32)
-headers = {'X-Api-Key': key, 'X-Qrr-Entity': '1', 'X-Qrr-User': '7', 'X-Qrr-Read': '1', 'X-Qrr-Use': '1',
-           'X-Qrr-Manage': '1', 'X-Qrr-Admin': '1', 'X-Qrr-Stock': '1', 'Content-Type': 'application/json'}
+headers = {'X-Api-Key': key, 'X-Owt-Entity': '1', 'X-Owt-User': '7', 'X-Owt-Read': '1', 'X-Owt-Use': '1',
+           'X-Owt-Manage': '1', 'X-Owt-Admin': '1', 'X-Owt-Stock': '1', 'Content-Type': 'application/json'}
 passed = 0
 
 
@@ -53,11 +53,11 @@ def start(env, log, application=dll, working_directory=root):
     raise TimeoutError('Service did not start')
 
 
-with tempfile.TemporaryDirectory(prefix='qrrouter-http-') as directory:
+with tempfile.TemporaryDirectory(prefix='owt-http-') as directory:
     config = Path(directory) / 'service.json'
     data_directory = Path(directory) / 'data'
     config.write_text(json.dumps({'AppSettings': {'ApiKey': key, 'DataDirectory': str(data_directory)}}), encoding='utf-8')
-    env = dict(os.environ, QRR_CONFIG_FILE=str(config), ASPNETCORE_URLS=base, ASPNETCORE_ENVIRONMENT='Production')
+    env = dict(os.environ, OWT_CONFIG_FILE=str(config), ASPNETCORE_URLS=base, ASPNETCORE_ENVIRONMENT='Production')
     # Invalid-startup checks must not invoke the Windows Event Log or crash-reporting UI.
     env['Logging__EventLog__LogLevel__Default'] = 'None'
     env['DOTNET_DbgEnableMiniDump'] = '0'
@@ -68,7 +68,7 @@ with tempfile.TemporaryDirectory(prefix='qrrouter-http-') as directory:
         try:
             request('/api/inventory', override={}, expected=401)
             request('/api/inventory', override=dict(headers, **{'X-Api-Key': 'wrong'}), expected=401)
-            request('/api/inventory', override=dict(headers, **{'X-Qrr-Entity': '0'}), expected=400)
+            request('/api/inventory', override=dict(headers, **{'X-Owt-Entity': '0'}), expected=400)
             state = request('/api/inventory')
             assert state['schema'] == 2 and state['items'] == {}
             batch = request('/api/inventory/bulk', {'count': 2})['result']
@@ -76,10 +76,10 @@ with tempfile.TemporaryDirectory(prefix='qrrouter-http-') as directory:
             assert len(state['batches'][batch]['codes']) == 2
             assert state['history'] == []
             assert len(request('/api/inventory?includeHistory=true')['history']) == 1
-            readonly = dict(headers, **{'X-Qrr-Manage': '0', 'X-Qrr-Admin': '0', 'X-Qrr-Stock': '0'})
+            readonly = dict(headers, **{'X-Owt-Manage': '0', 'X-Owt-Admin': '0', 'X-Owt-Stock': '0'})
             request('/api/inventory/bulk', {'count': 1}, override=readonly, expected=403)
             request('/api/inventory/query-batches', {}, override=readonly)
-            request('/api/inventory', override=dict(headers, **{'X-Qrr-Entity': '2'}))
+            request('/api/inventory', override=dict(headers, **{'X-Owt-Entity': '2'}))
             request('/api/inventory/unknown', {}, expected=400)
             # Match PHP cURL serialization: numeric ID maps are JSON objects.
             code = state['batches'][batch]['codes'][0]
@@ -113,8 +113,8 @@ with tempfile.TemporaryDirectory(prefix='qrrouter-http-') as directory:
     for settings in [
         {'AppSettings__DataDirectory': 'data'},
         {'AppSettings__DataDirectory': str(dll.parent / 'data')},
-        {'QRR_CONFIG_FILE': str(Path(directory) / 'missing.json')},
-        {'QRR_CONFIG_FILE': 'relative-config.json'},
+        {'OWT_CONFIG_FILE': str(Path(directory) / 'missing.json')},
+        {'OWT_CONFIG_FILE': 'relative-config.json'},
     ]:
         invalid = dict(env, **settings)
         snapshot = (data_directory / 'entity-1/state.sqlite3').read_bytes()

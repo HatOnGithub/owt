@@ -44,7 +44,7 @@ const page = (title, body, css = '') => `
   </head>
   <body>
     <nav>
-      <a href="${appLink()}">QR Router</a>
+      <a href="${appLink()}">Open Warehouse Tracker</a>
       <button onclick="window.print()">Print / Save as PDF</button>
     </nav>
     <p class="mock-notice">Local Dolibarr mock — sample data only. Print layouts are previews, not the production PHP renderer.</p>
@@ -94,7 +94,7 @@ async function printPage(store, url) {
   if (!locales.includes(locale)) throw new MockError('Unsupported print language');
   const words = translations(locale);
   const t = text => words[text] || text;
-  const controls = `<form class="qrr-noprint" method="get"><label>${escape(t('Output language'))} <select name="lang">${locales.map(id => `<option value="${id}"${id === locale ? ' selected' : ''}>${{ en_US: 'English', nl_NL: 'Nederlands', fr_FR: 'Français' }[id]}</option>`).join('')}</select></label>${[
+  const controls = `<form class="owt-noprint" method="get"><label>${escape(t('Output language'))} <select name="lang">${locales.map(id => `<option value="${id}"${id === locale ? ' selected' : ''}>${{ en_US: 'English', nl_NL: 'Nederlands', fr_FR: 'Français' }[id]}</option>`).join('')}</select></label>${[
     ...params,
   ]
     .filter(([key]) => !['lang', 'symbology'].includes(key))
@@ -141,10 +141,10 @@ async function printPage(store, url) {
     const example = items.find(item => item.bin_values && Object.keys(item.bin_values).length);
     const values = example?.bin_values;
     const payload = values
-      ? `QRRLOC:1:1:${warehouse}:${Buffer.from(JSON.stringify(values)).toString('base64url')}`
+      ? `OWTLOC:1:1:${warehouse}:${Buffer.from(JSON.stringify(values)).toString('base64url')}`
       : '';
     const label = payload
-      ? `<div class="qrr-location-label">${await barcodeSvg(payload, symbology)}<strong>${escape(bin)}</strong></div>`
+      ? `<div class="owt-location-label">${await barcodeSvg(payload, symbology)}<strong>${escape(bin)}</strong></div>`
       : '';
     return page(
       'Bin content sheets',
@@ -189,7 +189,7 @@ export function createMockServer(defaultStore = new MockStore()) {
   return createServer(async (request, response) => {
     try {
       // Browser tests share the HTTP server, but never inventory or settings.
-      const session = request.headers['x-qrr-mock-session'];
+      const session = request.headers['x-owt-mock-session'];
       if (session && !sessions.has(session)) sessions.set(session, new MockStore());
       const store = session ? sessions.get(session) : defaultStore;
       const url = new URL(request.url, 'http://127.0.0.1');
@@ -237,7 +237,7 @@ export function createMockServer(defaultStore = new MockStore()) {
         send(response, 200, printCss, 'text/css; charset=utf-8');
         return;
       }
-      if (url.pathname === '/custom/qrrouter/api.php') {
+      if (url.pathname === '/custom/owt/api.php') {
         if (store.settings.latency)
           await new Promise(resolve => setTimeout(resolve, store.settings.latency));
         if (store.settings.scenario === 'unavailable')
@@ -251,7 +251,7 @@ export function createMockServer(defaultStore = new MockStore()) {
           const form = new URLSearchParams(await readBody(request));
           if (
             form.get('token') !== 'local-mock-token' ||
-            form.get('qrr_token') !== 'local-mock-csrf'
+            form.get('owt_token') !== 'local-mock-csrf'
           )
             throw new MockError('Invalid or expired form token', 403);
           send(response, 200, {
@@ -265,7 +265,7 @@ export function createMockServer(defaultStore = new MockStore()) {
       }
       if (
         method === 'GET' &&
-        ['/custom/qrrouter/qr.php', '/custom/qrrouter/barcode.php'].includes(url.pathname)
+        ['/custom/owt/qr.php', '/custom/owt/barcode.php'].includes(url.pathname)
       ) {
         const payload = url.searchParams.get('location');
         const bin = url.searchParams.get('physical_bin');
@@ -282,7 +282,7 @@ export function createMockServer(defaultStore = new MockStore()) {
         send(response, 200, await barcodeSvg(code, symbology), 'image/svg+xml');
         return;
       }
-      if (method === 'GET' && url.pathname === '/custom/qrrouter/thumbnail.php') {
+      if (method === 'GET' && url.pathname === '/custom/owt/thumbnail.php') {
         const item = store.item(url.searchParams.get('code'));
         const thumbnail = store.data.thumbnails[item.code];
         const match =
@@ -295,14 +295,14 @@ export function createMockServer(defaultStore = new MockStore()) {
       if (
         method === 'GET' &&
         [
-          '/custom/qrrouter/label.php',
-          '/custom/qrrouter/batch_print.php',
-          '/custom/qrrouter/bin_print.php',
-          '/custom/qrrouter/physical_bin_print.php',
+          '/custom/owt/label.php',
+          '/custom/owt/batch_print.php',
+          '/custom/owt/bin_print.php',
+          '/custom/owt/physical_bin_print.php',
         ].includes(url.pathname)
       ) {
         if (!store.permissions().print)
-          throw new MockError('Missing QR Router print permission', 403);
+          throw new MockError('Missing Open Warehouse Tracker print permission', 403);
         send(response, 200, await printPage(store, url), 'text/html; charset=utf-8');
         return;
       }
@@ -320,7 +320,7 @@ export function createMockServer(defaultStore = new MockStore()) {
         );
         return;
       }
-      if (method === 'GET' && url.pathname === '/custom/qrrouter/index.php') {
+      if (method === 'GET' && url.pathname === '/custom/owt/index.php') {
         response.writeHead(302, { Location: appLink() });
         response.end();
         return;
@@ -391,7 +391,7 @@ export async function listenMock(port = 8089) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
-    const server = await listenMock(Number(process.env.QRR_MOCK_PORT || 8089));
+    const server = await listenMock(Number(process.env.OWT_MOCK_PORT || 8089));
     console.log(`Local Dolibarr mock: http://127.0.0.1:${server.address().port}`);
     for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => server.close());
   } catch (error) {

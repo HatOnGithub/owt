@@ -11,74 +11,74 @@ $controls: mat.m2-define-light-theme(
     density: -2,
   )
 );
-qrr-root,
-.cdk-overlay-container.qrr-theme {
+owt-root,
+.cdk-overlay-container.owt-theme {
   @include mat.all-component-themes($controls);
   @include mat.form-field-density(-4);
 }
-.qrr-theme {
-  --qrr-control-gap: 16px;
-  --qrr-button-padding: 12px;
-  --qrr-control-radius: 8px;
-  --mat-form-field-container-text-font: var(--qrr-font, inherit);
-  --mat-form-field-container-text-size: var(--qrr-font-size, inherit);
-  --mat-form-field-outlined-label-text-font: var(--qrr-font, inherit);
-  --mat-form-field-outlined-label-text-color: var(--qrr-text, currentColor);
-  --mat-form-field-outlined-input-text-color: var(--qrr-text, currentColor);
+.owt-theme {
+  --owt-control-gap: 16px;
+  --owt-button-padding: 12px;
+  --owt-control-radius: 8px;
+  --mat-form-field-container-text-font: var(--owt-font, inherit);
+  --mat-form-field-container-text-size: var(--owt-font-size, inherit);
+  --mat-form-field-outlined-label-text-font: var(--owt-font, inherit);
+  --mat-form-field-outlined-label-text-color: var(--owt-text, currentColor);
+  --mat-form-field-outlined-input-text-color: var(--owt-text, currentColor);
   --mat-form-field-outlined-disabled-input-text-color: color-mix(
     in srgb,
-    var(--qrr-text, currentColor) 50%,
+    var(--owt-text, currentColor) 50%,
     transparent
   );
   --mat-form-field-outlined-outline-color: color-mix(
     in srgb,
-    var(--qrr-text, currentColor) 30%,
+    var(--owt-text, currentColor) 30%,
     transparent
   );
-  --mat-form-field-outlined-hover-outline-color: var(--qrr-text, currentColor);
-  --mat-form-field-outlined-focus-outline-color: var(--qrr-action-bg, currentColor);
-  --mat-form-field-outlined-focus-label-text-color: var(--qrr-text, currentColor);
-  --mat-form-field-outlined-container-shape: var(--qrr-control-radius);
-  --mat-select-trigger-text-font: var(--qrr-font, inherit);
-  --mat-select-enabled-trigger-text-color: var(--qrr-text, currentColor);
-  --mat-select-enabled-arrow-color: var(--qrr-text, currentColor);
-  --mat-select-panel-background-color: var(--qrr-surface, Canvas);
-  --mat-autocomplete-background-color: var(--qrr-surface, Canvas);
-  --mat-option-label-text-font: var(--qrr-font, inherit);
-  --mat-option-label-text-color: var(--qrr-text, currentColor);
-  --mat-option-selected-state-label-text-color: var(--qrr-text, currentColor);
+  --mat-form-field-outlined-hover-outline-color: var(--owt-text, currentColor);
+  --mat-form-field-outlined-focus-outline-color: var(--owt-action-bg, currentColor);
+  --mat-form-field-outlined-focus-label-text-color: var(--owt-text, currentColor);
+  --mat-form-field-outlined-container-shape: var(--owt-control-radius);
+  --mat-select-trigger-text-font: var(--owt-font, inherit);
+  --mat-select-enabled-trigger-text-color: var(--owt-text, currentColor);
+  --mat-select-enabled-arrow-color: var(--owt-text, currentColor);
+  --mat-select-panel-background-color: var(--owt-surface, Canvas);
+  --mat-autocomplete-background-color: var(--owt-surface, Canvas);
+  --mat-option-label-text-font: var(--owt-font, inherit);
+  --mat-option-label-text-color: var(--owt-text, currentColor);
+  --mat-option-selected-state-label-text-color: var(--owt-text, currentColor);
   --mat-option-selected-state-layer-color: color-mix(
     in srgb,
-    var(--qrr-text, currentColor) 8%,
+    var(--owt-text, currentColor) 8%,
     transparent
   );
-  --mat-button-filled-container-color: var(--qrr-action-bg, ButtonFace);
-  --mat-button-filled-horizontal-padding: var(--qrr-button-padding);
-  --mat-button-outlined-horizontal-padding: calc(var(--qrr-button-padding) - 1px);
-  --mat-button-text-horizontal-padding: var(--qrr-button-padding);
-  --mat-button-text-with-icon-horizontal-padding: var(--qrr-button-padding);
-  --mat-button-filled-label-text-color: var(--qrr-action-text, ButtonText);
-  --mat-button-filled-container-shape: var(--qrr-control-radius);
-  --mat-button-outlined-container-shape: var(--qrr-control-radius);
-  --mat-button-text-container-shape: var(--qrr-control-radius);
-  --mat-button-outlined-label-text-color: var(--qrr-text, currentColor);
+  --mat-button-filled-container-color: var(--owt-action-bg, ButtonFace);
+  --mat-button-filled-horizontal-padding: var(--owt-button-padding);
+  --mat-button-outlined-horizontal-padding: calc(var(--owt-button-padding) - 1px);
+  --mat-button-text-horizontal-padding: var(--owt-button-padding);
+  --mat-button-text-with-icon-horizontal-padding: var(--owt-button-padding);
+  --mat-button-filled-label-text-color: var(--owt-action-text, ButtonText);
+  --mat-button-filled-container-shape: var(--owt-control-radius);
+  --mat-button-outlined-container-shape: var(--owt-control-radius);
+  --mat-button-text-container-shape: var(--owt-control-radius);
+  --mat-button-outlined-label-text-color: var(--owt-text, currentColor);
   --mat-button-outlined-outline-color: color-mix(
     in srgb,
-    var(--qrr-text, currentColor) 30%,
+    var(--owt-text, currentColor) 30%,
     transparent
   );
-  --mat-button-text-label-text-color: var(--qrr-text, currentColor);
-  --mat-button-filled-label-text-font: var(--qrr-font, inherit);
-  --mat-button-outlined-label-text-font: var(--qrr-font, inherit);
-  --mat-button-text-label-text-font: var(--qrr-font, inherit);
-  --mat-checkbox-label-text-font: var(--qrr-font, inherit);
-  --mat-checkbox-label-text-color: var(--qrr-text, currentColor);
+  --mat-button-text-label-text-color: var(--owt-text, currentColor);
+  --mat-button-filled-label-text-font: var(--owt-font, inherit);
+  --mat-button-outlined-label-text-font: var(--owt-font, inherit);
+  --mat-button-text-label-text-font: var(--owt-font, inherit);
+  --mat-checkbox-label-text-font: var(--owt-font, inherit);
+  --mat-checkbox-label-text-color: var(--owt-text, currentColor);
 }
 // Shared layout and typography used across routed screens.
-.cdk-overlay-container.qrr-theme * {
+.cdk-overlay-container.owt-theme * {
   box-sizing: border-box;
 }
-qrr-root {
+owt-root {
   fa-icon {
     display: inline-block;
     flex-shrink: 0;
@@ -101,7 +101,7 @@ qrr-root {
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-    gap: var(--qrr-control-gap);
+    gap: var(--owt-control-gap);
   }
   .actions {
     display: flex;
@@ -125,8 +125,8 @@ qrr-root {
   }
   // Material internals and overlays cannot be styled through component encapsulation.
   .mat-mdc-text-field-wrapper {
-    background: var(--qrr-input-background, var(--qrr-input-bg, transparent));
-    border-radius: var(--qrr-control-radius);
+    background: var(--owt-input-background, var(--owt-input-bg, transparent));
+    border-radius: var(--owt-control-radius);
   }
   .mat-mdc-form-field-flex,
   .mat-mdc-text-field-wrapper .mat-mdc-input-element {
@@ -148,10 +148,10 @@ qrr-root {
     min-height: 0;
   }
   .mat-mdc-unelevated-button {
-    background: var(--qrr-action-background, ButtonFace);
+    background: var(--owt-action-background, ButtonFace);
   }
   // Projected card actions stretch across the content grid; give them room to wrap.
-  qrr-card > .qrr-section > section > :is([mat-button], [mat-flat-button], [mat-stroked-button]) {
+  owt-card > .owt-section > section > :is([mat-button], [mat-flat-button], [mat-stroked-button]) {
     height: auto;
     min-height: 48px;
     padding-block: 12px;
@@ -207,7 +207,7 @@ qrr-root {
   .tmenu {
     display: none !important;
   }
-  qrr-root {
+  owt-root {
     a {
       color: black;
     }

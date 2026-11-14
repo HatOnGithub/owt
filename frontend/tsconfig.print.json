@@ -6,7 +6,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "strict": true,
     "rootDir": "src/print",
-    "outDir": "dist/qrrouter/browser/print",
+    "outDir": "dist/owt/browser/print",
     "types": [],
     "skipLibCheck": true
   },

@@ -5,13 +5,13 @@ import { ScannerComponent } from './scanner.component';
 
 /** Owns capture-page navigation; the scanner only captures and validates identifiers. */
 @Component({
-  selector: 'qrr-capture',
+  selector: 'owt-capture',
   standalone: true,
   imports: [ScannerComponent],
   styleUrl: './capture.component.css',
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <qrr-scanner
+    <owt-scanner
       [multiple]="multiple()"
       [content]="content()"
       [initial]="initial()"

@@ -33,7 +33,7 @@ form.addEventListener('submit', async event => {
       }),
     });
     if (!response.ok) throw new Error((await response.json()).message);
-    localStorage.setItem('qrr-mock-theme', values.theme);
+    localStorage.setItem('owt-mock-theme', values.theme);
     location.reload();
   } catch (error) {
     status.textContent = error.message;

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import bwip from 'bwip-js';
 import { BarcodeDecoder } from '../src/app/shared/scanner/barcode-decoder.ts';
 import { validCode } from '../src/app/shared/scanner/codes.ts';
-import { normalizeCode } from '../src/app/shared/scanner/codes.ts';
+import { normalizeCode, physicalBinCode } from '../src/app/shared/scanner/codes.ts';
 import { makeCode } from './fixtures.mjs';
 
 // Independent BWIPP encoders exercise the actual decoder, including orientation and inversion.
@@ -48,9 +48,8 @@ function pixels(bcid, text, turns = 0, inverted = false) {
 }
 
 for (const bcid of ['qrcode', 'datamatrix', 'code128', 'pdf417']) {
-  test(`${bcid} preserves the six-character ID in every orientation and inverted colors`, () => {
-    for (const code of [makeCode(198), makeCode(4)]) {
-      assert.equal(code.length, 6);
+  test(`${bcid} preserves six/eight-character IDs in every orientation and inverted colors`, () => {
+    for (const code of [makeCode(198), makeCode(4), makeCode(198, 8), makeCode(191, 8)]) {
       assert.ok(validCode(code));
       const decoder = new BarcodeDecoder();
       for (let turns = 0; turns < 4; turns++)
@@ -63,6 +62,28 @@ for (const bcid of ['qrcode', 'datamatrix', 'code128', 'pdf417']) {
     }
   });
 }
+
+test('both ID lengths validate together and retain checksum protection', () => {
+  const alphabet = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+  assert.equal(makeCode(191, 8), '22222872');
+  assert.ok(validCode('22222872'));
+  for (const length of [6, 8]) {
+    const code = makeCode(198, length);
+    assert.equal(code.length, length);
+    assert.ok(validCode(code));
+    assert.equal(normalizeCode(`https://example.test/qr.php?code=${code}`), code);
+    assert.ok(physicalBinCode('OWTBIN:1:1:' + code));
+    for (let pos = 0; pos < length; pos++)
+      for (const char of alphabet)
+        if (char !== code[pos]) {
+          const changed = code.slice(0, pos) + char + code.slice(pos + 1);
+          assert.equal(validCode(changed), false);
+          assert.equal(physicalBinCode('OWTBIN:1:1:' + changed), false);
+        }
+  }
+  for (const invalid of ['22222', '2222222', '222222222', '2222222I', '2222222O'])
+    assert.equal(validCode(invalid), false);
+});
 test('blank frames do not invent identifiers', () => {
   assert.equal(
     new BarcodeDecoder().decode(new Uint8ClampedArray(160 * 120 * 4).fill(255), 160, 120),
@@ -126,14 +147,16 @@ test('Code 128 survives the antialiased Linux WebKit camera scanline', () => {
 for (const bcid of ['qrcode', 'datamatrix']) {
   test(`${bcid} retains case-sensitive location and physical-bin routes`, () => {
     const location =
-      'QRRLOC:1:1:1:' + Buffer.from(JSON.stringify({ 1: 'A-b' })).toString('base64url');
-    const bin = 'QRRBIN:1:1:' + makeCode(4);
+      'OWTLOC:1:1:1:' + Buffer.from(JSON.stringify({ 1: 'A-b' })).toString('base64url');
+    const bin = 'OWTBIN:1:1:' + makeCode(4);
+    const expandedBin = 'OWTBIN:1:1:' + makeCode(4, 8);
     for (const [route, key, payload] of [
       ['locations', 'location', location],
       ['bins', 'physical_bin', bin],
+      ['bins', 'physical_bin', expandedBin],
     ]) {
       const url =
-        'https://example.test/custom/qrrouter/index.php#/' +
+        'https://example.test/custom/owt/index.php#/' +
         route +
         '?' +
         new URLSearchParams({ [key]: payload });

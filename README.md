@@ -1,13 +1,13 @@
-# QR Router v0.3.11
+# Open Warehouse Tracker (OWT) v0.4.0
 
-QR-based inventory handling inside Dolibarr, originally developed as an internal tool for DeltaIoT.
+Open Warehouse Tracker (OWT) is a native Dolibarr warehouse extension for barcode identification, stock workflows, storage locations, movable bins, picking, loans and operation history. It uses Dolibarr's product, stock, lot/serial and permission systems. Originally developed as an internal tool for DeltaIoT.
 
 Available under the [MIT License](LICENSE). Third-party dependencies retain their own licenses.
 
 ## Features
 
 - **Intended use:** label and identify warehouse items, locate them, track stock actions and manage employee loans from a phone or workstation.
-- **Dependencies:** an existing Dolibarr installation with Product, Stock and Lot/Serial modules, plus the QR Router business service. Locations are stored internally; Binloc is optional for one-time import.
+- **Dependencies:** an existing Dolibarr installation with Product, Stock and Lot/Serial modules, plus the Open Warehouse Tracker business service. Locations are stored internally; Binloc is optional for one-time import.
 - Individual items with native serial numbers, generic product labels and counted containers with native lots.
 - CSV inventory exports and validated imports for creation, registration and metadata updates.
 - Camera scanning and separate manual / USB scanner entry.
@@ -15,7 +15,7 @@ Available under the [MIT License](LICENSE). Third-party dependencies retain thei
 - Movable physical bins with permanent QR labels, packing and recoverable whole-bin moves.
 - Employee checkout and checkin, location QR reports and saved customer-order pick lists with scanner safeguards and manual completion.
 - Individual and bulk QR label creation, including DYMO LabelWriter 550 printing.
-- QR, Data Matrix, Code 128 and PDF417 labels/scanning with the same six-character identifiers; barcode-aware 1D/2D print layouts.
+- QR, Data Matrix, Code 128 and PDF417 labels/scanning with six-character identifiers that automatically expand to eight when full; both lengths remain readable, with barcode-aware 1D/2D print layouts.
 - Inventory search by name, QR ID, serial, product reference, tags and visible extra fields.
 - Links between QR entries and related Dolibarr records.
 - Persistent SQLite storage with automatic migration of existing JSON inventory.
@@ -32,9 +32,9 @@ Follow the [update guide](docs/updating.md) to preserve existing inventory, conf
 
 ## Usage
 
-1. Sign in to Dolibarr and open **QR Router**.
-2. Create labels through **Print QR labels** or **Inventory > Create QR item**.
-3. Open **Scan QR**, choose an action and select your items.
+1. Sign in to Dolibarr and open **Open Warehouse Tracker**.
+2. Create labels through **Print labels** or **Inventory > Create warehouse item**.
+3. Open **Scan codes**, choose an action and select your items.
 4. Review the details and confirm.
 
 See the [user guide](docs/user-guide/README.md) for every interface area and step-by-step scanner workflows. Available actions depend on your Dolibarr permissions.

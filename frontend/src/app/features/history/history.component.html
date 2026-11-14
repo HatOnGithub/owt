@@ -30,7 +30,7 @@
         <a routerLink="/history" [queryParams]="{}">{{ 'All QR entries' | t }}</a>
       </p>
     }
-    <qrr-card [title]="'Filter actions' | t">
+    <owt-card [title]="'Filter actions' | t">
       <form (ngSubmit)="load()">
         <div class="grid">
           <mat-form-field appearance="outline">
@@ -68,7 +68,7 @@
           {{ 'Apply filters / Refresh' | t }}
         </button>
       </form>
-    </qrr-card>
+    </owt-card>
   }
   @if (busy()) {
     <mat-progress-bar mode="indeterminate" />
@@ -112,7 +112,7 @@
                   }
                 }
                 @if (entry.order_id) {
-                  <qrr-native-link
+                  <owt-native-link
                     type="salesorder"
                     [id]="entry.order_id"
                     [label]="'Order #' + entry.order_id"

@@ -10,7 +10,7 @@ root = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--tag', help='Require a matching version tag, optionally ending in -beta.N.')
 args = parser.parse_args()
-module = root / 'dolibarr/qrrouter'
+module = root / 'dolibarr/owt'
 if (module / 'LICENSE').read_bytes() != (root / 'LICENSE').read_bytes():
     raise SystemExit('Project and Dolibarr module licenses must match.')
 # A module archive must pair matching PHP/frontend/service contracts, including standalone
@@ -22,9 +22,9 @@ if args.tag is not None and not re.fullmatch(re.escape('v' + version) + r'(?:-be
     raise SystemExit(f'Release tag must match v{version}, optionally followed by -beta.N.')
 release_tag = args.tag or 'v' + version
 lock = json.loads((root / 'frontend/package-lock.json').read_text(encoding='utf-8'))
-descriptor = (module / 'core/modules/modQrrouter.class.php').read_text(encoding='utf-8')
+descriptor = (module / 'core/modules/modOwt.class.php').read_text(encoding='utf-8')
 module_version = re.search(r"\$this->version\s*=\s*'([^']+)'", descriptor)
-service = ET.parse(root / 'src/QrRouterApi/QrRouterApi.csproj')
+service = ET.parse(root / 'src/OwtApi/OwtApi.csproj')
 if not module_version or any(value != version for value in [
     lock['version'],
     lock['packages']['']['version'],
@@ -32,16 +32,16 @@ if not module_version or any(value != version for value in [
     service.findtext('.//Version'),
 ]) or service.findtext('.//InformationalVersion') != 'v' + version:
     raise SystemExit('Frontend, lockfile, Dolibarr module and service versions must match.')
-output = root / f'artifacts/module_qrrouter-{release_tag}.zip'
+output = root / f'artifacts/module_owt-{release_tag}.zip'
 output.parent.mkdir(parents=True, exist_ok=True)
 if not all((module / path).is_file() for path in ['spa/index.html', 'spa/print/main.js', 'spa/print/model.js']):
     raise SystemExit('Build the Angular frontend first: python tools/build-frontend.py')
 with ZipFile(output, 'w', ZIP_DEFLATED) as archive:
     for source in sorted(module.rglob('*')):
         if source.is_file():
-            archive.write(source, (Path('qrrouter') / source.relative_to(module)).as_posix())
+            archive.write(source, (Path('owt') / source.relative_to(module)).as_posix())
 with ZipFile(output) as archive:
     assert archive.testzip() is None
-    assert 'qrrouter/lib/qrrouter_service.lib.php' in archive.namelist()
+    assert 'owt/lib/owt_service.lib.php' in archive.namelist()
     assert not any('\\' in name or name.endswith(('state.json', '.env')) for name in archive.namelist())
     print(f'Verified {output.name}: {len(archive.namelist())} entries, {output.stat().st_size} bytes')

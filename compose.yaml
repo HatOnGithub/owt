@@ -1,20 +1,20 @@
 services:
-  qrrouter-api:
+  owt-api:
     build:
       context: .
       dockerfile: Dockerfile
-    image: qrrouter-api:0.3.8
+    image: owt-api:0.4.0
     restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      AppSettings__ApiKey: ${QRR_SERVICE_API_KEY:?Set QRR_SERVICE_API_KEY in .env}
+      AppSettings__ApiKey: ${OWT_SERVICE_API_KEY:?Set OWT_SERVICE_API_KEY in .env}
       AppSettings__DataDirectory: /data
     ports:
-      - '127.0.0.1:${QRR_PORT:-5087}:8080'
+      - '127.0.0.1:${OWT_PORT:-5087}:8080'
     volumes:
-      - qrrouter-data:/data
+      - owt-data:/data
     networks:
-      - qrrouter
+      - owt
     read_only: true
     tmpfs:
       - /tmp:size=64m,mode=1777
@@ -25,7 +25,7 @@ services:
     stop_grace_period: 30s
 
 volumes:
-  qrrouter-data:
+  owt-data:
 
 networks:
-  qrrouter:
+  owt:

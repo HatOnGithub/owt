@@ -4,9 +4,9 @@
 
 The browser displays capabilities; PHP enforces the Dolibarr session, native rights and object access; C# enforces the trusted actor's QR capabilities again. Service possession of an API key identifies the trusted adapter, not an arbitrary browser user.
 
-`qrr_inventory_right()` requires an active internal user, enabled QR Router/Product/Stock/Lot-Serial modules, QR module access/read and native product/stock read. Nonadministrators need both `use` and `read`. External or inactive users do not gain entry through an administrator flag. Independent write grants do not replace this base access.
+`owt_inventory_right()` requires an active internal user, enabled Open Warehouse Tracker/Product/Stock/Lot-Serial modules, QR module access/read and native product/stock read. Nonadministrators need both `use` and `read`. External or inactive users do not gain entry through an administrator flag. Independent write grants do not replace this base access.
 
-Native `restrictedArea` checks enforce object scope in addition to broad rights. `qrr_native_read_access()` accounts for the explicit read-mode parameter in newer Dolibarr signatures. Product visibility, warehouse visibility, lot consistency, document access and employee access are rechecked where their records are used. Do not equate an entity ID or a successful catalog lookup with permission for every object in that entity.
+Native `restrictedArea` checks enforce object scope in addition to broad rights. `owt_native_read_access()` accounts for the explicit read-mode parameter in newer Dolibarr signatures. Product visibility, warehouse visibility, lot consistency, document access and employee access are rechecked where their records are used. Do not equate an entity ID or a successful catalog lookup with permission for every object in that entity.
 
 ## QR capability mapping
 
@@ -35,17 +35,17 @@ Recovery additionally checks the original action grant stored with the pending o
 
 Stock execution needs native `stock.mouvement.creer`. Creating a missing native lot or serial also requires native product-create permission. Existing-lot operations do not automatically require creation of a new product identity. Automatic employee warehouse creation requires native warehouse-create permission. History needs native `stock.mouvement.lire` as well as the custom history grant.
 
-Order, manufacturing and shipment references have their own native read checks, including access to the specific record. User selectors are limited to permitted employees. Internal storage locations belong to QR Router; normal location use does not require the optional Binloc module.
+Order, manufacturing and shipment references have their own native read checks, including access to the specific record. User selectors are limited to permitted employees. Internal storage locations belong to Open Warehouse Tracker; normal location use does not require the optional Binloc module.
 
 QR media endpoints still require inventory/object access. Print endpoints additionally require Print. Hiding a button is a convenience; direct URLs and API requests must enforce the same rules.
 
 ## Public projections
 
-`qrr_browser_inventory()` selects allowed fields explicitly. It filters inaccessible QR items and removes their codes from batches; product catalogs are restricted to the remaining items. Employee mappings, checkout details and consumption references are separately filtered. Free-text consumption reasons are removed when they may identify a restricted referenced document.
+`owt_browser_inventory()` selects allowed fields explicitly. It filters inaccessible QR items and removes their codes from batches; product catalogs are restricted to the remaining items. Employee mappings, checkout details and consumption references are separately filtered. Free-text consumption reasons are removed when they may identify a restricted referenced document.
 
 ### Pending synchronization details
 
-Pending metadata contains `id`, action/kind and time. Its optional `details` array has rows containing only `code`, `field`, `before` and `after`. `qrr_pending_change_details()` checks both sides of a native change before describing known public fields. `qrr_pending_operation_details()` also checks destination and movement warehouse visibility before describing a QR patch or signed stock effects.
+Pending metadata contains `id`, action/kind and time. Its optional `details` array has rows containing only `code`, `field`, `before` and `after`. `owt_pending_change_details()` checks both sides of a native change before describing known public fields. `owt_pending_operation_details()` also checks destination and movement warehouse visibility before describing a QR patch or signed stock effects.
 
 Do not forward raw `changes`, candidate `items`, `patch`, `effects`, receipts, prices or proofs. New display fields need explicit projection rules and denial tests. An empty details list yields a generic unavailable message; it must not reveal restricted record identities. Details describe original intent, not evidence that the operation failed or committed. Inventory readers can inspect permitted pending intent without acquiring Recovery or History.
 

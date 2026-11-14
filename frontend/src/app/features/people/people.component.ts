@@ -4,7 +4,7 @@ import { InventoryService } from '@services/inventory.service';
 import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'qrr-people',
+  selector: 'owt-people',
   standalone: true,
   imports: [SharedModule],
   changeDetection: ChangeDetectionStrategy.Eager,

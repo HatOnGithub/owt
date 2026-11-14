@@ -19,7 +19,7 @@ interface LevelRow {
 
 /** Edits level names and option additions; the page owns persistence and reloads. */
 @Component({
-  selector: 'qrr-location-levels-editor',
+  selector: 'owt-location-levels-editor',
   standalone: true,
   imports: [SharedModule],
   templateUrl: './location-levels-editor.component.html',

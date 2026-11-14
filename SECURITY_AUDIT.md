@@ -1,4 +1,4 @@
-# QR Router security review
+# Open Warehouse Tracker security review
 
 Reviewed 9 November 2026. Scope: the PHP module/gateway, native lookups and print/media endpoints, Angular responses and links, the private C# API and state files, development mocks, and CI. Findings below have been remediated in this working tree. Deploy the rebuilt PHP module, Angular bundles and C# service together.
 
@@ -19,7 +19,7 @@ Location policy updated for v0.3.9 on 13 November 2026 to reflect service-owned 
 | Medium | Unix state files could inherit permissive directory/file modes. | Entity directories are restricted to their owner (`0700`), with state and lock files `0600`. Existing data is tightened on access. Windows continues to use deployment ACLs. |
 | Low | Some native failures appended database/native diagnostic strings to browser messages. | Detailed failures are logged server-side; public messages retain a short operation description. Unexpected PHP runtime errors use a generic response. |
 
-Primary implementation: [authorization and projection](dolibarr/qrrouter/lib/qrrouter_security.lib.php), [gateway](dolibarr/qrrouter/api.php), [native query filtering](src/QrRouterApi/Services/InventoryQueries.cs), [state storage](src/QrRouterApi/Repositories/StateRepository.cs).
+Primary implementation: [authorization and projection](dolibarr/owt/lib/owt_security.lib.php), [gateway](dolibarr/owt/api.php), [native query filtering](src/OwtApi/Services/InventoryQueries.cs), [state storage](src/OwtApi/Repositories/StateRepository.cs).
 
 ## Access policy after remediation
 

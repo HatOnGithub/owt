@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { NativeLinksService } from '@services/native-links.service';
 
 @Component({
-  selector: 'qrr-native-link',
+  selector: 'owt-native-link',
   standalone: true,
   templateUrl: './native-link.component.html',
   styleUrl: './native-link.component.css',

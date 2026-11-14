@@ -41,7 +41,7 @@ Reports match saved level identities and values, independently of label formatti
 3. Set the separators and **Show warehouse** option.
 4. Select **Save format**.
 
-These settings change the displayed location format only. The full stored QR Router location remains intact.
+These settings change the displayed location format only. The full stored Open Warehouse Tracker location remains intact.
 
 ## Generate a picking sheet
 
@@ -52,7 +52,7 @@ These settings change the displayed location format only. The full stored QR Rou
 5. Review the proposed bins, products, QR entries and quantities. Item and product links open their details.
 6. Select **Print / Save as PDF** to take the sheet to the warehouse.
 
-For customer orders, the sheet uses requested quantities minus consumption already recorded by QR Router for that order, including pending picks. It does not use Dolibarr's remaining unshipped balance or reserve stock. Returns do not automatically reopen the allowance because they do not identify the order to credit. Record actual stock actions through the appropriate workflow.
+For customer orders, the sheet uses requested quantities minus consumption already recorded by Open Warehouse Tracker for that order, including pending picks. It does not use Dolibarr's remaining unshipped balance or reserve stock. Returns do not automatically reopen the allowance because they do not identify the order to credit. Record actual stock actions through the appropriate workflow.
 
 For manufacturing orders, the sheet uses the planned component lines marked **to consume** on the order. Quantities are already scaled by Dolibarr; they are not multiplied by the finished-product quantity again. Finished products and recorded consumption/production lines are excluded. Previous consumption is not subtracted from the plan. Repeated component lines share available QR quantities, and shortages appear as **Not allocated**. Draft orders without component lines show an empty-preview message; configure the components in Dolibarr first.
 
@@ -83,8 +83,8 @@ Employee cards link to current QR loans. Customer orders, manufacturing orders a
 5. To assign or change a location, select **Change location** beside an item, edit its location values and save. To move stock to another warehouse, use the scanner's **Move** action instead.
 6. Native warehouse cards have a **Locations** link and tab. Product and serial/lot cards link to their QR entries, where **Change location** opens the same editor. The native serial list also links directly to associated QR items.
 
-Definitions and assignments are saved in QR Router's service database. Dolibarr owns warehouse stock, quantities and serial/lot identities. A native stock move to a different warehouse clears the old QR location; assign a location in the new warehouse.
+Definitions and assignments are saved in Open Warehouse Tracker's service database. Dolibarr owns warehouse stock, quantities and serial/lot identities. A native stock move to a different warehouse clears the old QR location; assign a location in the new warehouse.
 
 ## Import existing locations once
 
-With an administrator account and the old location module still available, select **Import Binloc locations** before configuring those warehouses in QR Router. The import copies definitions and assignments for QR-associated lots, preserving warehouses already configured in QR Router. It rejects mismatched stock warehouses or an import with no new warehouses, and rolls back on failure. Verify the result before disabling Binloc. Future location edits are internal and are not written back to Binloc.
+With an administrator account and the old location module still available, select **Import Binloc locations** before configuring those warehouses in Open Warehouse Tracker. The import copies definitions and assignments for QR-associated lots, preserving warehouses already configured in Open Warehouse Tracker. It rejects mismatched stock warehouses or an import with no new warehouses, and rolls back on failure. Verify the result before disabling Binloc. Future location edits are internal and are not written back to Binloc.

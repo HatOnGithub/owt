@@ -1,13 +1,13 @@
 const alphabet = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
 export function validCode(code: string): boolean {
-  if (code.length === 6) {
+  if (code.length === 6 || code.length === 8) {
     let state = 0;
-    for (const char of code.slice(0, 5)) {
+    for (const char of code.slice(0, -1)) {
       const index = alphabet.indexOf(char);
       if (index < 0) return false;
       state = (state * 3 + index + 1) % 31;
     }
-    return alphabet[state] === code[5];
+    return alphabet[state] === code.at(-1);
   }
   return /^(?:[A-HJ-NP-Z2-9]{10}|(?:ITM|GEN|BOX|QR)-[A-Z0-9_-]{6,48})$/.test(code);
 }
@@ -22,14 +22,18 @@ export function normalizeCode(raw: string): string {
   } catch {
     /* Manual identifiers are not URLs. */
   }
-  return /^(QRRLOC|QRRBIN):/.test(value) ? value.trim() : value.trim().toUpperCase();
+  return /^(OWTLOC|OWTBIN):/.test(value) ? value.trim() : value.trim().toUpperCase();
 }
 
 export function locationCode(code: string): boolean {
   return (
-    code.length <= 4096 && /^QRRLOC:1:[1-9][0-9]{0,8}:[1-9][0-9]{0,8}:[A-Za-z0-9_-]+$/.test(code)
+    code.length <= 4096 && /^OWTLOC:1:[1-9][0-9]{0,8}:[1-9][0-9]{0,8}:[A-Za-z0-9_-]+$/.test(code)
   );
 }
 export function physicalBinCode(code: string): boolean {
-  return /^QRRBIN:1:[1-9][0-9]{0,8}:[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6}$/.test(code);
+  const match =
+    /^OWTBIN:1:[1-9][0-9]{0,8}:([23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6}(?:[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{2})?)$/.exec(
+      code
+    );
+  return !!match && validCode(match[1]);
 }

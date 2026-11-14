@@ -1,0 +1,259 @@
+@page {
+  size: 54mm 25mm;
+  margin: 0;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #e8ebef;
+  color: #111;
+  font-family: Arial, sans-serif;
+}
+.owt-print-controls {
+  max-width: 780px;
+  padding: 24px;
+  margin: auto;
+  font-size: 14px;
+  line-height: 1.5;
+}
+h1 {
+  font-size: 23px;
+  margin: 0 0 8px;
+}
+.owt-print-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+button {
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 4px;
+  background: #0754ae;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+a {
+  color: #0754ae;
+}
+.owt-roll {
+  width: var(--label-width, 54mm);
+  margin: 0 auto;
+}
+.owt-thermal-label {
+  display: grid;
+  grid-template-columns: calc(var(--qr-size, 20mm) + 1mm) minmax(0, 1fr);
+  gap: 1mm;
+  width: var(--label-width, 54mm);
+  height: var(--label-height, 25mm);
+  padding: 1mm;
+  overflow: hidden;
+  background: #fff;
+  color: #000;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 5px #0003;
+  break-inside: avoid;
+}
+.owt-qr-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+.owt-label-id-only {
+  grid-template-columns: minmax(0, 1fr);
+}
+.owt-label-id-only .owt-label-details {
+  display: none;
+}
+.owt-qr-column img {
+  display: block;
+  flex: 0 0 auto;
+  width: var(--qr-size, 20mm);
+  height: var(--qr-size, 20mm);
+  padding: calc(var(--qr-size, 20mm) * 0.15);
+  image-rendering: pixelated;
+}
+.owt-id-code {
+  display: block;
+  width: 100%;
+  max-height: calc(var(--detail-font, 8pt) * 1.35);
+  font: bold calc(var(--detail-font, 8pt) + 0.5pt)/1 monospace;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.long-id .owt-qr-column img {
+  width: calc(var(--qr-size, 20mm) * 0.75);
+  height: calc(var(--qr-size, 20mm) * 0.75);
+  padding: calc(var(--qr-size, 20mm) * 0.1);
+}
+.long-id .owt-id-code {
+  max-height: 8mm;
+  font-size: calc(var(--detail-font, 8pt) - 2.5pt);
+  line-height: 1.02;
+}
+.owt-label-details {
+  display: grid;
+  grid-template-rows: repeat(var(--detail-rows, 3), minmax(0, 1fr));
+  gap: 0.5mm;
+  min-width: 0;
+  min-height: 0;
+  padding-block: 0.7mm;
+}
+.owt-label-detail {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.owt-label-detail span {
+  display: block;
+  max-width: 100%;
+  font:
+    var(--detail-font, 8pt)/1.1 Arial,
+    sans-serif;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.owt-label-detail.name span {
+  font-weight: 700;
+  font-size: calc(var(--detail-font, 8pt) + 0.5pt);
+}
+.owt-label-detail.serial span {
+  font-weight: 700;
+  font-size: calc(var(--detail-font, 8pt) + 1pt);
+}
+.owt-label-detail.ref span {
+  font-size: calc(var(--detail-font, 8pt) - 1pt);
+}
+.owt-label-detail.missing span {
+  font-size: calc(var(--detail-font, 8pt) - 1pt);
+  font-weight: 400;
+}
+@media print {
+  html,
+  body {
+    width: var(--label-width, 54mm);
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff;
+  }
+  .owt-print-controls {
+    display: none !important;
+  }
+  .owt-roll {
+    margin: 0;
+    padding: 0;
+  }
+  .owt-thermal-label {
+    margin: 0;
+    box-shadow: none;
+    break-after: page;
+    page-break-after: always;
+  }
+  .owt-thermal-label:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}
+
+body[data-detail-level='2'] .owt-label-details,
+body[data-detail-level='3'] .owt-label-details {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 2mm;
+}
+body[data-detail-level='2'] .owt-label-detail:is(.serial, .name, .ref),
+body[data-detail-level='3'] .owt-label-detail:is(.serial, .name, .ref, .details) {
+  grid-column: 1 / -1;
+}
+.owt-label-detail.details {
+  grid-row: span 2;
+}
+.owt-format-selector {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.owt-format-selector select {
+  font: inherit;
+  padding: 10px;
+}
+
+/* Compact 2D: code left, details right. Large 2D: top-left code with full-width bottom rows. */
+.owt-matrix-large:not(.owt-label-id-only) {
+  grid-template-rows: minmax(0, 65fr) minmax(0, 35fr);
+}
+.owt-matrix-large:not(.owt-label-id-only) .owt-qr-column {
+  grid-column: 1;
+  grid-row: 1;
+}
+.owt-matrix-large:not(.owt-label-id-only) .owt-qr-column img {
+  width: min(var(--qr-size), calc((var(--label-height) - 2mm) * 0.65 - 4mm));
+  height: min(var(--qr-size), calc((var(--label-height) - 2mm) * 0.65 - 4mm));
+}
+.owt-matrix-large:not(.owt-label-id-only) > .owt-label-details:not(.owt-label-bottom-details) {
+  grid-column: 2;
+  grid-row: 1;
+  grid-template-columns: minmax(0, 1fr);
+}
+.owt-matrix-large > .owt-label-bottom-details {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.owt-matrix-large .owt-label-bottom-details .owt-label-detail {
+  grid-column: auto;
+  grid-row: auto;
+}
+
+/* Wide 1D: reserve the entire bottom band for the barcode and intact ID. */
+/* PDF417 remains a left-hand 2D code, but needs more width to retain printable module sizes. */
+body[data-barcode-format='PDF417'] .owt-thermal-label:not(.owt-label-id-only) {
+  grid-template-columns: minmax(0, 60fr) minmax(0, 40fr);
+}
+body[data-barcode-format='PDF417'] .owt-qr-column img {
+  width: 100%;
+  height: calc(var(--label-height) * 0.4);
+  padding: 0 2mm;
+  object-fit: contain;
+}
+body[data-barcode-layout='linear'] .owt-thermal-label {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 12mm);
+  gap: 0.5mm;
+}
+body[data-barcode-layout='linear'] .owt-qr-column {
+  grid-row: 2;
+  grid-column: 1;
+}
+body[data-barcode-layout='linear'] .owt-label-details {
+  grid-row: 1;
+  grid-column: 1;
+  padding: 0;
+}
+body[data-barcode-layout='linear'] .owt-qr-column img,
+body[data-barcode-layout='linear'] .long-id .owt-qr-column img {
+  width: 100%;
+  height: 8mm;
+  padding: 0 3mm;
+  object-fit: contain;
+}
+body[data-barcode-layout='linear'] .owt-label-id-only {
+  grid-template-rows: minmax(0, 1fr);
+}
+body[data-barcode-layout='linear'] .owt-label-id-only .owt-qr-column {
+  grid-row: 1;
+  justify-content: end;
+}

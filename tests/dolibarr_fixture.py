@@ -83,7 +83,7 @@ class Product {
  public function hasbatch(){return false;}
  public $array_options=[];
  public function fetch_optionals(){
-  $this->array_options=['options_description'=>'<p>Heat</p><p>resistant</p>','options_material'=>'2','options_supplier_code'=>'ACME-204','options_zero'=>'0','options_admin_only'=>'ADMIN-ALLOY','options_product_only'=>'Product-specific','options_password'=>'EXTRA_PASSWORD_SECRET','options_hidden'=>'EXTRA_HIDDEN_SECRET','options_disabled'=>'EXTRA_DISABLED_SECRET','options_hidden_attribute'=>'EXTRA_HIDDEN_ATTRIBUTE_SECRET','options_unknown'=>'EXTRA_UNKNOWN_SECRET','options_qrrouter_serial_prefix'=>$this->db->state()['serial_prefixes'][$this->id]??''];return 1;
+  $this->array_options=['options_description'=>'<p>Heat</p><p>resistant</p>','options_material'=>'2','options_supplier_code'=>'ACME-204','options_zero'=>'0','options_admin_only'=>'ADMIN-ALLOY','options_product_only'=>'Product-specific','options_password'=>'EXTRA_PASSWORD_SECRET','options_hidden'=>'EXTRA_HIDDEN_SECRET','options_disabled'=>'EXTRA_DISABLED_SECRET','options_hidden_attribute'=>'EXTRA_HIDDEN_ATTRIBUTE_SECRET','options_unknown'=>'EXTRA_UNKNOWN_SECRET','options_owt_serial_prefix'=>$this->db->state()['serial_prefixes'][$this->id]??''];return 1;
  }
  public function load_stock($mode=''){return 1;}
  public function correct_stock($user,$wid,$qty,$movement,$label='',$price=0,$inventorycode=''){
@@ -104,11 +104,11 @@ class Entrepot {
 '''
 
 LANGS = r'''
-class QrrHttpLangs {
+class OwtHttpLangs {
  public $defaultlang; private $map=[];
  public function __construct($lang){$this->defaultlang=$lang;}
  public function load($domain){
-  $path=__DIR__.'/custom/qrrouter/langs/'.$this->defaultlang.'/qrrouter.lang';
+  $path=__DIR__.'/custom/owt/langs/'.$this->defaultlang.'/owt.lang';
   foreach(file($path, FILE_IGNORE_NEW_LINES) as $line){
    if($line===''||$line[0]==='#'||strpos($line,'=')===false)continue;
    [$key,$val]=explode('=',$line,2);$this->map[$key]=$val;
@@ -116,7 +116,7 @@ class QrrHttpLangs {
  }
  public function trans($key){return $this->map[$key]??$key;}
 }
-$GLOBALS['langs']=new QrrHttpLangs($_GET['testlang']??'en_US');
+$GLOBALS['langs']=new OwtHttpLangs($_GET['testlang']??'en_US');
 '''
 
 EXTRAFIELDS = r'''<?php

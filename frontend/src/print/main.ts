@@ -22,7 +22,7 @@ interface PrintData {
   translations: Record<string, string>;
   locale: string;
 }
-const data: PrintData = JSON.parse(document.getElementById('qrr-print-data')!.textContent!);
+const data: PrintData = JSON.parse(document.getElementById('owt-print-data')!.textContent!);
 const t = (value: string) => data.translations[value] || value;
 const element = <K extends keyof HTMLElementTagNameMap>(tag: K, css = '', text = '') => {
   const node = document.createElement(tag);
@@ -50,7 +50,7 @@ style.textContent = profile
   : '@page{size:A4;margin:7mm}';
 document.head.append(style);
 document.body.dataset['detailLevel'] = String(profile?.level || 0);
-const controls = element('header', 'qrr-print-controls qrr-noprint');
+const controls = element('header', 'owt-print-controls owt-noprint');
 controls.append(element('h1', '', t(thermal ? 'DYMO 550 labels' : data.title)));
 if (profile) controls.append(element('p', '', `${profile.height} × ${profile.width} mm`));
 controls.append(
@@ -63,9 +63,9 @@ controls.append(
   )
 );
 const button = element('button', '', t(thermal ? 'Print DYMO labels' : 'Print / Save as PDF'));
-button.id = 'qrr-print';
+button.id = 'owt-print';
 button.disabled = true;
-controls.append(button, link('Back to QR Router', data.back));
+controls.append(button, link('Back to Open Warehouse Tracker', data.back));
 if (thermal) {
   const a4 = new URL(data.a4, window.location.href);
   a4.searchParams.set('lang', data.locale);
@@ -77,15 +77,15 @@ const status = element(
   '',
   t(data.items.length ? 'Loading barcode images…' : 'No labels to print')
 );
-status.id = 'qrr-print-status';
+status.id = 'owt-print-status';
 status.setAttribute('role', 'status');
 controls.append(status);
-const form = element('form', 'qrr-format-selector');
+const form = element('form', 'owt-format-selector');
 form.method = 'get';
 const label = element('label', '', t('Label size'));
-label.htmlFor = 'qrr-label-size';
+label.htmlFor = 'owt-label-size';
 const select = element('select');
-select.id = 'qrr-label-size';
+select.id = 'owt-label-size';
 select.name = 'format';
 for (const option of data.profiles) {
   const choice = element('option', '', `${option.height} × ${option.width} mm`);
@@ -101,9 +101,9 @@ if (!thermal) {
 }
 form.append(label, select);
 const barcodeLabel = element('label', '', t('Barcode format'));
-barcodeLabel.htmlFor = 'qrr-barcode-format';
+barcodeLabel.htmlFor = 'owt-barcode-format';
 const barcodeSelect = element('select');
-barcodeSelect.id = 'qrr-barcode-format';
+barcodeSelect.id = 'owt-barcode-format';
 barcodeSelect.name = 'symbology';
 for (const format of data.barcode_formats) {
   const option = element('option', '', format.label);
@@ -124,7 +124,7 @@ const apply = element('button', '', t('Apply settings'));
 apply.type = 'submit';
 form.append(apply);
 controls.append(form);
-const main = element('main', thermal ? 'qrr-roll' : data.batch ? 'qrr-batch' : '');
+const main = element('main', thermal ? 'owt-roll' : data.batch ? 'owt-batch' : '');
 const prefixes: Record<string, string> = {
   serial: 'SN',
   ref: 'REF',
@@ -146,21 +146,21 @@ for (const item of data.items) {
     (data.symbology === 'QRCODE' ? 'qr.php?' : 'barcode.php?') +
     new URLSearchParams({ code: item.code, symbology: data.symbology });
   image.alt = barcode.label + ' ' + item.code;
-  image.className = 'qrr-print-image';
+  image.className = 'owt-print-image';
   image.width = 240;
   image.height = 240;
   const article = element(
     'article',
-    thermal ? 'qrr-thermal-label' : 'qrr-qr-label' + (data.batch ? ' qrr-batchlabel' : '')
+    thermal ? 'owt-thermal-label' : 'owt-qr-label' + (data.batch ? ' owt-batchlabel' : '')
   );
-  if (item.type === 'unassigned') article.classList.add('qrr-label-id-only');
+  if (item.type === 'unassigned') article.classList.add('owt-label-id-only');
   if (item.code.length > 16) article.classList.add('long-id');
   article.setAttribute('aria-label', t('Barcode label') + ' ' + item.code);
   if (profile) {
     if (profile.level >= 2 && barcode.layout === 'matrix')
-      article.classList.add('qrr-matrix-large');
-    const qr = element('div', 'qrr-qr-column');
-    qr.append(image, element('strong', 'qrr-id-code', item.code));
+      article.classList.add('owt-matrix-large');
+    const qr = element('div', 'owt-qr-column');
+    qr.append(image, element('strong', 'owt-id-code', item.code));
     const fields = details(
       item,
       product,
@@ -168,7 +168,7 @@ for (const item of data.items) {
       data.warehouses[String(item.warehouse_id)]?.ref,
       t
     );
-    const content = element('div', 'qrr-label-details');
+    const content = element('div', 'owt-label-details');
     content.dataset['detailCount'] = String(fields.length);
     const primary = fields.filter(field => ['name', 'serial', 'ref'].includes(field.kind)).length;
     const notes = fields.some(field => field.kind === 'details');
@@ -183,7 +183,7 @@ for (const item of data.items) {
     for (const field of fields) {
       const row = element(
         'div',
-        'qrr-label-detail ' + field.kind + (field.missing ? ' missing' : '')
+        'owt-label-detail ' + field.kind + (field.missing ? ' missing' : '')
       );
       row.dataset['kind'] = field.kind;
       row.title = field.value;
@@ -200,7 +200,7 @@ for (const item of data.items) {
     if (profile.level >= 2 && barcode.layout === 'matrix' && fields.length > 3) {
       // Primary identification sits beside the top-left code. Secondary details use the full
       // width underneath it, rather than leaving the lower-left label area unused.
-      const bottom = element('div', 'qrr-label-details qrr-label-bottom-details');
+      const bottom = element('div', 'owt-label-details owt-label-bottom-details');
       const rows = [...content.children];
       for (const row of rows.slice(3)) bottom.append(row);
       content.style.setProperty('--detail-rows', '3');
@@ -212,20 +212,20 @@ for (const item of data.items) {
     heading.append(
       element(
         'span',
-        'qrr-printed-name',
+        'owt-printed-name',
         item.type === 'unassigned' ? item.code : name(item, product) || item.code
       )
     );
     if (item.type !== 'unassigned' && serial(item))
-      heading.append(element('small', 'qrr-printed-serial', 'SN ' + serial(item)));
+      heading.append(element('small', 'owt-printed-serial', 'SN ' + serial(item)));
     if (item.type !== 'unassigned' && product.ref)
-      heading.append(element('small', 'qrr-printed-ref', 'REF ' + product.ref));
+      heading.append(element('small', 'owt-printed-ref', 'REF ' + product.ref));
     const qr = element('div');
     qr.append(image);
     article.append(heading, qr);
     if (item.type !== 'unassigned')
-      article.append(element('small', 'qrr-printed-code', 'ID ' + item.code));
-    const extra = element('div', 'qrr-a4-extra');
+      article.append(element('small', 'owt-printed-code', 'ID ' + item.code));
+    const extra = element('div', 'owt-a4-extra');
     const fields = details(item, product, data.profiles.at(-1)!, '', t).filter(
       field => !['name', 'serial', 'ref'].includes(field.kind)
     );
@@ -253,7 +253,7 @@ function fitDetails(): void {
     ) || 5.5) *
       96) /
     72;
-  for (const field of document.querySelectorAll<HTMLElement>('.qrr-label-detail')) {
+  for (const field of document.querySelectorAll<HTMLElement>('.owt-label-detail')) {
     const text = field.querySelector<HTMLElement>('span')!;
     text.dataset['original'] ??= text.textContent || '';
     text.textContent = text.dataset['original'];
@@ -279,7 +279,7 @@ function fitDetails(): void {
     }
   }
 }
-const images = [...document.querySelectorAll<HTMLImageElement>('.qrr-print-image')];
+const images = [...document.querySelectorAll<HTMLImageElement>('.owt-print-image')];
 void Promise.all(
   images.map(image =>
     image.complete

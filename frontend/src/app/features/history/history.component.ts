@@ -16,7 +16,7 @@ import { ActionHistoryPage } from '@core/models/inventory';
 
 /** One paged history view for the global route and an exact-code panel embedded in QR details. */
 @Component({
-  selector: 'qrr-history',
+  selector: 'owt-history',
   standalone: true,
   imports: [SharedModule],
   templateUrl: './history.component.html',

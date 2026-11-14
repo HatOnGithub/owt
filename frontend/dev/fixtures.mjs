@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 
 export const scenarios = [
   'populated',
+  'expanded',
   'empty',
   'no-employees',
   'read-only',
@@ -11,11 +12,18 @@ export const scenarios = [
 ];
 export const locales = ['en_US', 'nl_NL', 'fr_FR'];
 const alphabet = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
-const moduleRoot = new URL('../../dolibarr/qrrouter/', import.meta.url);
+const moduleRoot = new URL('../../dolibarr/owt/', import.meta.url);
 
-export function makeCode(index) {
+export function makeCode(index, length = 6) {
+  if (
+    ![6, 8].includes(length) ||
+    !Number.isSafeInteger(index) ||
+    index < 0 ||
+    index >= 31 ** (length - 1)
+  )
+    throw new Error('Invalid identifier range');
   let payload = '';
-  for (let digit = 0; digit < 5; digit++) {
+  for (let digit = 0; digit < length - 1; digit++) {
     payload = alphabet[index % 31] + payload;
     index = Math.floor(index / 31);
   }
@@ -27,9 +35,9 @@ export function makeCode(index) {
 export function translations(locale) {
   const load = language =>
     Object.fromEntries(
-      readFileSync(new URL(`langs/${language}/qrrouter.lang`, moduleRoot), 'utf8')
+      readFileSync(new URL(`langs/${language}/owt.lang`, moduleRoot), 'utf8')
         .split(/\r?\n/)
-        .filter(line => line.startsWith('QRRUI_') && line.includes('='))
+        .filter(line => line.startsWith('OWTUI_') && line.includes('='))
         .map(line => [line.slice(0, line.indexOf('=')), line.slice(line.indexOf('=') + 1)])
     );
   const english = load('en_US');
@@ -144,8 +152,8 @@ export function createFixture(scenario = 'populated') {
     lots: [{ id: 900, product_id: 2, serial: 'EXISTING-DRILL-01', warehouse_id: 1, qty: 1 }],
     thumbnails: {},
   };
-  const add = (index, values) => {
-    const code = makeCode(index);
+  const add = (index, values, length = 6) => {
+    const code = makeCode(index, length);
     fixture.state.items[code] = {
       code,
       type: 'generic',
@@ -237,6 +245,11 @@ export function createFixture(scenario = 'populated') {
     })
   );
   fixture.state.batches['MOCK-BATCH-1'] = { created_at: at, type: 'unassigned', codes: blanks };
+  // Model an already-expanded entity without manufacturing 28 million occupied records.
+  if (scenario === 'expanded') {
+    fixture.state.identifier_allocation = { items: { length: 8 }, physical_bins: { length: 8 } };
+    add(31 ** 5 + 4, { label: 'Long ID cable', product_id: 3 }, 8);
+  }
   if (scenario === 'pending') {
     fixture.state.pending_native = {
       id: 'mock-sync-1',

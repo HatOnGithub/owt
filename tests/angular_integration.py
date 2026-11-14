@@ -34,7 +34,7 @@ args = parser.parse_args()
 php = [str(Path(args.php).resolve())] if Path(args.php).is_file() else [args.php]
 if args.extension_dir:
     php += ['-n', '-d', 'extension_dir=' + str(Path(args.extension_dir).resolve()), '-d', 'extension=curl']
-for path in (root / 'dolibarr/qrrouter').rglob('*.php'):
+for path in (root / 'dolibarr/owt').rglob('*.php'):
     subprocess.run(php + ['-l', str(path)], check=True, stdout=subprocess.DEVNULL)
 print('All PHP adapter files pass syntax checks.', flush=True)
 subprocess.run(php + [str(root / 'tests/test_translation.php')], check=True)
@@ -62,12 +62,12 @@ def wait(url, proc):
     raise TimeoutError('Fixture server did not start')
 
 
-with tempfile.TemporaryDirectory(prefix='qrrouter-angular-') as directory:
+with tempfile.TemporaryDirectory(prefix='owt-angular-') as directory:
     tmp = Path(directory)
     webroot = tmp / 'htdocs'
     data = tmp / 'data'
     data.mkdir()
-    shutil.copytree(root / 'dolibarr/qrrouter', webroot / 'custom/qrrouter')
+    shutil.copytree(root / 'dolibarr/owt', webroot / 'custom/owt')
     for folder in ['product/class', 'product/stock/class', 'custom/binloc/class', 'custom/binloc/lib', 'commande/class', 'mrp/class', 'core/lib', 'core/modules']:
         (webroot / folder).mkdir(parents=True, exist_ok=True)
     main = fixture.MAIN.replace("if(str_contains($sql,'FROM llx_entrepot')){", "if(str_contains($sql,'FROM llx_product WHERE')){$this->rows=[(object)['rowid'=>3,'ref'=>'PART-003','label'=>'Fixture Part']];}elseif(str_contains($sql,'FROM llx_entrepot')){")
@@ -98,7 +98,7 @@ $GLOBALS['conf']->global = (object) ($GLOBALS['db']->state()['constants'][(strin
         'Tools & parts… — "quoted" \'single\' '
         '<img src="entity-regression" onerror="window.__entityExecuted=true">'
     )
-    inventory_key = 'QRRUI_' + hashlib.sha1(b'Inventory').hexdigest()[:12]
+    inventory_key = 'OWTUI_' + hashlib.sha1(b'Inventory').hexdigest()[:12]
     locale_fixture = locale_fixture.replace(
         "public function trans($key){return $this->map[$key]??$key;}",
         """public function trans($key) {
@@ -119,15 +119,15 @@ $GLOBALS['user']=new class($role) {
  public function __construct($role){$this->role=$role;$this->admin=in_array($role,['admin','external-admin'],true)?1:0;if(str_starts_with($role,'external'))$this->socid=77;if($role==='inactive')$this->statut=0;if($role==='anonymous')$this->id=0;}
  public function hasRight(...$a){
   if($this->admin)return true;
-  if($a===['qrrouter','read'])return $this->role!=='no-qr';
-  if($a===['qrrouter','use'])return $this->role!=='no-use';
-  if($a===['qrrouter','print'])return $this->role!=='no-print';
-  if(count($a)===2&&$a[0]==='qrrouter'&&in_array($a[1],['create','modify','delete','move','consume','return','adjust','loans','picking','recover'],true)) {
+  if($a===['owt','read'])return $this->role!=='no-qr';
+  if($a===['owt','use'])return $this->role!=='no-use';
+  if($a===['owt','print'])return $this->role!=='no-print';
+  if(count($a)===2&&$a[0]==='owt'&&in_array($a[1],['create','modify','delete','move','consume','return','adjust','loans','picking','recover'],true)) {
     if(str_starts_with($this->role,'only-'))return $a[1]===substr($this->role,5);
     if($this->role==='mover')return $a[1]==='move';
     return in_array($this->role,['manager','operator','restricted','mover','no-product-write','no-native-move'],true);
   }
-  if($a===['qrrouter','history'])return str_starts_with($this->role,'history-')||$this->role==='no-movement-read';
+  if($a===['owt','history'])return str_starts_with($this->role,'history-')||$this->role==='no-movement-read';
   if($a===['stock','mouvement','lire'])return $this->role!=='no-movement-read';
   if($a===['produit','lire'])return $this->role!=='no-product';
   if($a===['service','lire'])return true;
@@ -137,13 +137,13 @@ $GLOBALS['user']=new class($role) {
   if($a===['commande','lire'])return !in_array($this->role,['operator','manufacturing-reader'],true);
   if($a===['mrp','read'])return in_array($this->role,['manufacturing-reader','restricted-manufacturing'],true);
   if($a===['expedition','lire'])return false;
-  if($a===['qrrouter','manage'])return in_array($this->role,['manager','operator','restricted','legacy-manage-only'],true);
+  if($a===['owt','manage'])return in_array($this->role,['manager','operator','restricted','legacy-manage-only'],true);
   if($a===['stock','mouvement','creer'])return in_array($this->role,['operator','mover','no-product-write'],true);
   if($a===['produit','creer']||$a===['binloc','write'])return $this->role==='operator';
   return false;
  }
 };
-function isModEnabled($module){if($module==='binloc'&&!empty($_GET['without_binloc']))return false;$role=$_GET['role']??'';return !(($module==='qrrouter'&&$role==='disabled')||$role==='disabled-'.$module);}
+function isModEnabled($module){if($module==='binloc'&&!empty($_GET['without_binloc']))return false;$role=$_GET['role']??'';return !(($module==='owt'&&$role==='disabled')||$role==='disabled-'.$module);}
 function restrictedArea($actor,$feature,$id=0,$table='',$feature2='',$key='fk_soc',$select='rowid',$draft=0,$mode=0){
  if($mode!==1)throw new RuntimeException('Object checks must use non-terminating mode');
  $allowed=['produit'=>[3,4],'stock'=>[1,2],'commande'=>[39],'mrp'=>[19],'expedition'=>[29],'user'=>[8,9]];
@@ -198,27 +198,27 @@ function setEventMessages($message, $errors=null, $style='mesgs') {}
                             'mrp/class/mo.class.php': manufacturing,
                             'native.php': "<?php require __DIR__.'/main.inc.php'; llxHeader('', 'Native Dolibarr page'); llxFooter();",
                             'core/lib/product.lib.php': """<?php
-function product_prepare_head($object){return [['/product/card.php?id='.$object->id,'Product','card'],['/custom/binloc/tab_product_locations.php?id='.$object->id,'Binloc','binloc'],['/custom/qrrouter/native.php?kind=product&id='.$object->id,'QR entries','qrrouter']];}
-function productlot_prepare_head($object){return [['/product/stock/productlot_card.php?id='.$object->id,'Lot','card'],['/custom/qrrouter/native.php?kind=lot&id='.$object->id,'QR entries','qrrouter']];}
+function product_prepare_head($object){return [['/product/card.php?id='.$object->id,'Product','card'],['/custom/binloc/tab_product_locations.php?id='.$object->id,'Binloc','binloc'],['/custom/owt/native.php?kind=product&id='.$object->id,'QR entries','owt']];}
+function productlot_prepare_head($object){return [['/product/stock/productlot_card.php?id='.$object->id,'Lot','card'],['/custom/owt/native.php?kind=lot&id='.$object->id,'QR entries','owt']];}
 """,
                             'core/lib/stock.lib.php': """<?php
-function stock_prepare_head($object){return [['/product/stock/card.php?id='.$object->id,'Warehouse','card'],['/custom/binloc/tab_warehouse_locations.php?id='.$object->id,'Binloc','binloc'],['/custom/qrrouter/native.php?kind=warehouse&id='.$object->id,'QR entries','qrrouter']];}
+function stock_prepare_head($object){return [['/product/stock/card.php?id='.$object->id,'Warehouse','card'],['/custom/binloc/tab_warehouse_locations.php?id='.$object->id,'Binloc','binloc'],['/custom/owt/native.php?kind=warehouse&id='.$object->id,'QR entries','owt']];}
 """,
-                            'custom/qrrouter/hook_fixture.php': """<?php
+                            'custom/owt/hook_fixture.php': """<?php
 require __DIR__.'/../../main.inc.php';
-require __DIR__.'/class/actions_qrrouter.class.php';
+require __DIR__.'/class/actions_owt.class.php';
 $object=(object)['id'=>(int)GETPOST('id','int')]; $action=(string)GETPOST('action');
-$hooks=new ActionsQrrouter($db); $parameters=['currentcontext'=>(string)GETPOST('context')];
+$hooks=new ActionsOwt($db); $parameters=['currentcontext'=>(string)GETPOST('context')];
 $method=(string)GETPOST('method');
 if(in_array($method,['printFieldListTitle','printFieldListOption','printFieldListValue'],true)) {
  $hooks->$method($parameters,$object,$action);print $hooks->resprints;
 } else {$hooks->addMoreActionsButtons($parameters,$object,$action);}
 """,
                             'core/modules/DolibarrModules.class.php': "<?php #[AllowDynamicProperties] class DolibarrModules {}",
-                            'custom/qrrouter/descriptor_fixture.php': """<?php
+                            'custom/owt/descriptor_fixture.php': """<?php
 require __DIR__.'/../../main.inc.php';
-require __DIR__.'/core/modules/modQrrouter.class.php';
-$module=new modQrrouter($db);
+require __DIR__.'/core/modules/modOwt.class.php';
+$module=new modOwt($db);
 echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'=>eval('return '.$module->menu[1]['perms'].';')]);
 """,
                             'core/lib/admin.lib.php': admin}.items():
@@ -231,26 +231,26 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
     api_base = f'http://127.0.0.1:{port()}'
     web_base = f'http://127.0.0.1:{port()}'
     key = secrets.token_hex(32)
-    service_env = dict(os.environ, AppSettings__ApiKey=key, AppSettings__DataDirectory=str(data / 'qrrouter'), ASPNETCORE_URLS=api_base)
+    service_env = dict(os.environ, AppSettings__ApiKey=key, AppSettings__DataDirectory=str(data / 'owt'), ASPNETCORE_URLS=api_base)
     php_env = dict(os.environ)
-    for name in ['QRR_SERVICE_URL', 'QRR_SERVICE_API_KEY']:
+    for name in ['OWT_SERVICE_URL', 'OWT_SERVICE_API_KEY']:
         php_env.pop(name, None)
     service_log = open(tmp / 'service.log', 'w', encoding='utf-8')
     php_log = open(tmp / 'php.log', 'w', encoding='utf-8')
-    service = subprocess.Popen(['dotnet', str(root / 'src/QrRouterApi/bin/Release/net10.0/QrRouterApi.dll')], env=service_env, cwd=root, stdout=service_log, stderr=service_log)
+    service = subprocess.Popen(['dotnet', str(root / 'src/OwtApi/bin/Release/net10.0/OwtApi.dll')], env=service_env, cwd=root, stdout=service_log, stderr=service_log)
     php_server = None
     passed = 0
     try:
         wait(api_base + '/health', service)
         php_server = subprocess.Popen(php + ['-S', web_base.removeprefix('http://'), '-t', str(webroot)], env=php_env, stdout=php_log, stderr=php_log)
-        wait(web_base + '/custom/qrrouter/index.php', php_server)
+        wait(web_base + '/custom/owt/index.php', php_server)
         client = build_opener(HTTPCookieProcessor(http.cookiejar.CookieJar()))
-        base = web_base + '/custom/qrrouter/'
+        base = web_base + '/custom/owt/'
 
         def request(resource='bootstrap', action=None, payload=None, role='admin', csrf=None, expected=200, params=None):
             global_params = {'role': role, 'action': action} if action else {'role': role, 'resource': resource}
             global_params.update(params or {})
-            body = None if action is None else urlencode({'payload': json.dumps(payload), 'token': 'fixture-dolibarr-token', 'qrr_token': csrf or bootstrap['csrf']}).encode()
+            body = None if action is None else urlencode({'payload': json.dumps(payload), 'token': 'fixture-dolibarr-token', 'owt_token': csrf or bootstrap['csrf']}).encode()
             try:
                 with client.open(base + 'api.php?' + urlencode(global_params), body, timeout=15) as response:
                     status, raw = response.status, response.read()
@@ -277,18 +277,18 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
 
         assert 'module settings' in request(expected=409)['message']
         settings_html = settings_request()
-        csrf = re.search(r'name="qrr_token" value="([^"]+)"', settings_html)[1]
+        csrf = re.search(r'name="owt_token" value="([^"]+)"', settings_html)[1]
         settings_request(role='reader', expected=403)
-        form = {'token': 'fixture-dolibarr-token', 'qrr_token': csrf,
+        form = {'token': 'fixture-dolibarr-token', 'owt_token': csrf,
                 'service_url': api_base, 'service_api_key': key}
         settings_request(form, role='reader', expected=403)
-        settings_request({**form, 'qrr_token': 'invalid'}, expected=403)
+        settings_request({**form, 'owt_token': 'invalid'}, expected=403)
         settings_request({**form, 'service_api_key': ''}, expected=400)
         settings_request({**form, 'service_url': 'file:///tmp/not-a-service'}, expected=400)
         assert 'constants' not in json.loads(native_path.read_text())
         settings_request(form)
         stored = json.loads(native_path.read_text())['constants']['1']
-        assert stored == {'QRR_SERVICE_URL': api_base, 'QRR_SERVICE_API_KEY': key}
+        assert stored == {'OWT_SERVICE_URL': api_base, 'OWT_SERVICE_API_KEY': key}
         # Saving a blank password preserves the key and never renders it back to the browser.
         settings_html = settings_request({**form, 'service_api_key': ''})
         assert 'An API key is saved.' in settings_html
@@ -298,7 +298,7 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
         assert json.loads(native_path.read_text())['constants']['1'] == stored
         # Failed second write must not leave the first constant changed.
         failing = json.loads(native_path.read_text())
-        failing['fail_setting'] = 'QRR_SERVICE_API_KEY'
+        failing['fail_setting'] = 'OWT_SERVICE_API_KEY'
         native_path.write_text(json.dumps(failing))
         settings_request({**form, 'service_url': 'http://127.0.0.1:1'}, expected=500)
         failing = json.loads(native_path.read_text())
@@ -307,7 +307,7 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
         native_path.write_text(json.dumps(failing))
         settings_request({**form, 'service_url': 'http://entity-two:8080'}, entity=2)
         assert json.loads(native_path.read_text())['constants']['1'] == stored
-        assert json.loads(native_path.read_text())['constants']['2']['QRR_SERVICE_URL'] == 'http://entity-two:8080'
+        assert json.loads(native_path.read_text())['constants']['2']['OWT_SERVICE_URL'] == 'http://entity-two:8080'
         print('Module settings PASS: admin permissions, CSRF, validation, persistence, blank-key preservation, rollback, entity scope and no secret in HTML.', flush=True)
 
         bootstrap = request()
@@ -345,8 +345,8 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
         assert request()['state']['revision'] == revision_before_invalid
         request(action='bulk', payload={'count': 1}, role='reader', expected=403)
         forged = Request(base + 'api.php?role=reader&action=bulk', data=urlencode({
-            'payload': json.dumps({'count': 1, 'type': 'unassigned'}), 'token': 'fixture-dolibarr-token', 'qrr_token': bootstrap['csrf']
-        }).encode(), headers={'X-Qrr-Admin': '1', 'X-Qrr-Manage': '1', 'X-Qrr-Stock': '1', 'X-Qrr-Entity': '2'})
+            'payload': json.dumps({'count': 1, 'type': 'unassigned'}), 'token': 'fixture-dolibarr-token', 'owt_token': bootstrap['csrf']
+        }).encode(), headers={'X-Owt-Admin': '1', 'X-Owt-Manage': '1', 'X-Owt-Stock': '1', 'X-Owt-Entity': '2'})
         try:
             client.open(forged)
             raise AssertionError('Browser-supplied actor headers were trusted')
@@ -362,7 +362,7 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
             result = request(action='register', payload={'type': kind, 'codes': [code], 'label': 'Fixture ' + kind, 'serial': 'SN-REGISTER' if kind == 'tracked' else '', 'details': 'Inspect seals annually; keep dry.' if kind == 'tracked' else '', 'product_id': 3 if kind == 'generic' else 4, 'warehouse_id': 1, 'qty': qty, 'levels': {'1': 'A'}})
             assert result['codes'] == [code]
         native = lambda: json.loads(native_path.read_text())
-        barcode_state = read_state(data / 'qrrouter/entity-1/state.sqlite3')
+        barcode_state = read_state(data / 'owt/entity-1/state.sqlite3')
         for symbology in ['QRCODE', 'DATAMATRIX', 'C128', 'PDF417']:
             with client.open(base + 'barcode.php?' + urlencode({'code': tracked, 'symbology': symbology})) as response:
                 image = response.read().decode()
@@ -376,19 +376,61 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
                 raise AssertionError('Unsupported barcode format accepted')
             except HTTPError as error:
                 assert error.code == 400
-        assert read_state(data / 'qrrouter/entity-1/state.sqlite3') == barcode_state
+        assert read_state(data / 'owt/entity-1/state.sqlite3') == barcode_state
         print('Barcode rendering PASS: four native symbologies, unchanged six-character IDs, rejected numeric-only formats and no state mutation.', flush=True)
+        # Seed post-exhaustion metadata instead of creating 31^5 fixture records. Service
+        # allocator boundary tests cover the full-range decision itself.
+        expanded_state = json.loads(json.dumps(barcode_state))
+        expanded_state['identifier_allocation'] = {
+            'items': {'length': 8, 'cursor': 2147483648},
+            'physical_bins': {'length': 8, 'cursor': 0},
+        }
+        native_before_expansion = native_path.read_bytes()
+        try:
+            write_state(data / 'owt/entity-1/state.sqlite3', expanded_state)
+            long_generic = request(action='create', payload={'type': 'generic', 'label': 'Expanded cable', 'product_id': 3, 'warehouse_id': 1})
+            long_tracked = request(action='create', payload={'type': 'tracked', 'label': 'Expanded serial', 'product_id': 4, 'warehouse_id': 1})
+            long_batch = request(action='bulk', payload={'type': 'unassigned', 'count': 2})
+            mixed = request()['state']
+            assert len(long_generic) == len(long_tracked) == 8
+            assert all(len(code) == 8 for code in mixed['batches'][long_batch]['codes'])
+            assert tracked in mixed['items'] and generic in mixed['items']
+            assert mixed['items'][long_tracked]['product_lot_id'] > 0
+            moved = request(action='workflow', payload={'kind': 'move', 'codes': [generic, long_generic], 'warehouse_id': 2})
+            assert all(result['ok'] for result in moved), moved
+            history = request('history', params={'code': long_generic})
+            assert history['total'] >= 2 and all(long_generic in row['codes'] for row in history['entries'])
+            for symbology in ['QRCODE', 'DATAMATRIX', 'C128', 'PDF417']:
+                with client.open(base + 'barcode.php?' + urlencode({'code': long_tracked, 'symbology': symbology})) as response:
+                    assert '<svg' in response.read().decode()
+                with client.open(base + 'label.php?' + urlencode({'code': long_tracked, 'symbology': symbology})) as response:
+                    assert long_tracked in response.read().decode()
+            long_bin = request(action='physical-bin-create', payload={'label': 'Expanded tote', 'warehouse_id': 1})
+            assert len(long_bin['id']) == 8
+            public_bin = next(row for row in request('physical-bins') if row['id'] == long_bin['id'])
+            assert public_bin['qr'].endswith(long_bin['id'])
+            with client.open(base + 'physical_bin_print.php?' + urlencode({'bin_id': long_bin['id']})) as response:
+                assert long_bin['id'] in response.read().decode()
+            after_native = read_state(data / 'owt/entity-1/state.sqlite3')
+            assert after_native['identifier_allocation']['items']['length'] == 8
+        finally:
+            write_state(data / 'owt/entity-1/state.sqlite3', barcode_state)
+            native_path.write_bytes(native_before_expansion)
+        print('Expanded identifiers PASS: mixed lengths, bulk and native creation, workflows, history, four barcode formats and physical-bin labels.', flush=True)
         # PHP turns all-digit map keys into integers; the ID itself must remain a string at
         # query/history boundaries even when every character happens to be numeric.
-        numeric_state = read_state(data / 'qrrouter/entity-1/state.sqlite3')
+        numeric_state = read_state(data / 'owt/entity-1/state.sqlite3')
         numeric_fixture = json.loads(json.dumps(numeric_state))
         numeric_fixture['items']['222263'] = {**numeric_fixture['items'][generic], 'code': '222263'}
+        numeric_fixture['items']['22222872'] = {**numeric_fixture['items'][generic], 'code': '22222872'}
         try:
-            write_state(data / 'qrrouter/entity-1/state.sqlite3', numeric_fixture)
+            write_state(data / 'owt/entity-1/state.sqlite3', numeric_fixture)
             assert '222263' in request()['state']['items']
+            assert '22222872' in request()['state']['items']
             request('locations', params={'warehouse_id': 1})
+            assert request('history', params={'code': '22222872'})['total'] == 0
         finally:
-            write_state(data / 'qrrouter/entity-1/state.sqlite3', numeric_state)
+            write_state(data / 'owt/entity-1/state.sqlite3', numeric_state)
         search_products = request()['products']
         assert search_products['4']['tags'] == ['Hydraulics', 'Service parts']
         assert search_products['4']['extrafields']['material'] == {'label': 'Material', 'value': 'Stainless steel'}
@@ -453,15 +495,15 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
                 assert response.read().decode() == ''
         with client.open(base + 'hook_fixture.php?context=product_lotlist&id=999&method=printFieldListValue') as response:
             assert response.read().decode() == '<td></td>'
-        offline = native(); original_url = offline['constants']['1']['QRR_SERVICE_URL']
+        offline = native(); original_url = offline['constants']['1']['OWT_SERVICE_URL']
         try:
-            offline['constants']['1']['QRR_SERVICE_URL'] = 'http://127.0.0.1:1'
+            offline['constants']['1']['OWT_SERVICE_URL'] = 'http://127.0.0.1:1'
             native_path.write_text(json.dumps(offline))
             with client.open(base + 'hook_fixture.php?context=productcard&id=4') as response:
                 assert 'native.php?kind=product' in response.read().decode()
             native_entries('product', 4, expected=503)
         finally:
-            restored = native(); restored['constants']['1']['QRR_SERVICE_URL'] = original_url
+            restored = native(); restored['constants']['1']['OWT_SERVICE_URL'] = original_url
             native_path.write_text(json.dumps(restored))
         assert native()['stock']['4']['1'] == 30
 
@@ -544,7 +586,7 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
         assert all('reference_id' not in entry and 'reference_type' not in entry for entry in reader_history)
         assert request()['state']['history'] == []
         # Synthetic secrets and pending-operation internals must never survive browser projection.
-        state_file = data / 'qrrouter/entity-1/state.sqlite3'
+        state_file = data / 'owt/entity-1/state.sqlite3'
         original_state = read_state(state_file)
         secret = 'PRIVATE-AUDIT-PATCH-DO-NOT-SERVE'
         seeded = json.loads(json.dumps(original_state))
@@ -613,7 +655,7 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
         assert request()['state']['items'][blank]['type'] == 'unassigned'
         with client.open(base + 'index.php') as response:
             host = response.read().decode()
-            assert 'qrr-root' in host and '/spa/main-' in host and key not in host
+            assert 'owt-root' in host and '/spa/main-' in host and key not in host
         assert request()['state']['revision'] == before
         with client.open(base + 'api.php?resource=products&q=Part') as response:
             assert json.load(response)[0]['id'] == 3
@@ -669,7 +711,7 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
         count_before = len(native()['lots']); stock_before = native()['stock']['4']['1']
         request(action='create', payload={'type': 'box', 'label': 'RECOVER-BOX', 'product_id': 4, 'warehouse_id': 1, 'qty': 3}, expected=409)
         assert len(native()['lots']) == count_before and native()['stock']['4']['1'] == stock_before
-        pending_path = data / 'qrrouter/entity-1/state.sqlite3'
+        pending_path = data / 'owt/entity-1/state.sqlite3'
         requested_changes = request()['state']['pending_native']['details']
         assert any(row['field'] == 'Quantity' and row['before'] is None and row['after'] == '3' for row in requested_changes)
         assert any(row['after'] == 'RECOVER-BOX' for row in requested_changes)
@@ -879,12 +921,12 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
         physical_before = internal_request('physical-bins')[0]
         assert set(physical_before['codes']) == set(members)
         import base64
-        target_qr = 'QRRLOC:1:1:2:' + base64.urlsafe_b64encode(json.dumps(target_levels).encode()).decode().rstrip('=')
+        target_qr = 'OWTLOC:1:1:2:' + base64.urlsafe_b64encode(json.dumps(target_levels).encode()).decode().rstrip('=')
         report = internal_request('location-qr', params={'payload': target_qr})
         assert report['bin'] == 'B.02' and report['levels'] == target_levels
         assert not report['summary']['tracked'] and not report['summary']['totals']
-        internal_request('location-qr', params={'payload': target_qr.replace('QRRLOC:1:1:', 'QRRLOC:1:2:')}, expected=403)
-        internal_request('location-qr', params={'payload': 'QRRLOC:1:1:2:broken'}, expected=400)
+        internal_request('location-qr', params={'payload': target_qr.replace('OWTLOC:1:1:', 'OWTLOC:1:2:')}, expected=403)
+        internal_request('location-qr', params={'payload': 'OWTLOC:1:1:2:broken'}, expected=400)
         moved = internal_request(action='physical-bin-move', payload={'bin_id': physical['id'], 'warehouse_id': 2, 'levels': target_levels})
         assert moved['complete'] and all(result['ok'] for result in moved['results']), moved
         current = internal_request()['state']['items']
@@ -894,7 +936,7 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
         assert not internal_request('physical-bins')[0].get('pending_move')
         with client.open(base + 'bin_print.php?' + urlencode({'warehouse_id': 2, 'bin': 'B.02', 'labels': 1, 'without_binloc': 1})) as response:
             printed = response.read().decode()
-            assert 'qrr-location-code' in printed and 'B.02' in printed and 'location=QRRLOC' in printed
+            assert 'owt-location-code' in printed and 'B.02' in printed and 'location=OWTLOC' in printed
         with client.open(base + 'physical_bin_print.php?' + urlencode({'bin_id': physical['id'], 'without_binloc': 1})) as response:
             printed = response.read().decode()
             assert 'Blue tote' in printed and 'physical_bin=' in printed and 'B.02' not in printed
@@ -974,7 +1016,7 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
                     assert response.status == expected_status
             except HTTPError as error:
                 assert error.code == expected_status, (endpoint, role, error.code)
-        forged_permission = Request(base + 'api.php?role=reader&action=bulk', data=urlencode({'token': 'fixture-dolibarr-token', 'qrr_token': bootstrap['csrf'], 'payload': json.dumps({'count': 1})}).encode(), headers={'X-Qrr-Use':'1','X-Qrr-Permissions':'create,modify,delete','X-Qrr-Admin':'1'})
+        forged_permission = Request(base + 'api.php?role=reader&action=bulk', data=urlencode({'token': 'fixture-dolibarr-token', 'owt_token': bootstrap['csrf'], 'payload': json.dumps({'count': 1})}).encode(), headers={'X-Owt-Use':'1','X-Owt-Permissions':'create,modify,delete','X-Owt-Admin':'1'})
         try:
             client.open(forged_permission)
             raise AssertionError('Browser-forged capability headers were trusted')
@@ -982,7 +1024,7 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
             assert error.code == 403
         print('Granular permissions PASS: explicit module access, independent create/edit/delete grants, no manage fallback, native object scopes, stock/lot rights, scoped history, direct media/print authorization and ignored forged headers.', flush=True)
         if args.browser:
-            env = dict(os.environ, QRR_E2E_URL=base, QRR_E2E_ITEM=tracked, QRR_E2E_BOX=box)
+            env = dict(os.environ, OWT_E2E_URL=base, OWT_E2E_ITEM=tracked, OWT_E2E_BOX=box)
             browser_command = ['npm.cmd' if os.name == 'nt' else 'npm', 'run', 'e2e']
             if args.browser_grep:
                 browser_command += ['--', '--grep', args.browser_grep]

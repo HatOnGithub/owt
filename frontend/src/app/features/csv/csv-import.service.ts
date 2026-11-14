@@ -294,7 +294,7 @@ export class CsvImportService {
         row.action = unchanged ? 'skip' : updating ? 'update' : current ? 'register' : 'create';
         requireValue(
           row.action === 'skip' || this.api.can(row.action === 'update' ? 'modify' : 'create'),
-          'Missing QR Router permission for this row'
+          'Missing Open Warehouse Tracker permission for this row'
         );
         row.status = unchanged ? 'unchanged' : 'ready';
         row.message = unchanged

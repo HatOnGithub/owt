@@ -11,7 +11,7 @@ import { Bootstrap, Item, Level, Lookup } from '@core/models/inventory';
 export class InventoryService {
   private http = inject(HttpClient);
   private base = new URL(
-    document.querySelector('qrr-root')?.getAttribute('data-api') || '/custom/qrrouter/api.php',
+    document.querySelector('owt-root')?.getAttribute('data-api') || '/custom/owt/api.php',
     location.origin
   ).pathname;
   readonly context = signal<Bootstrap | null>(null);
@@ -69,7 +69,7 @@ export class InventoryService {
     // Dolibarr's main bootstrap validates the native form token before reaching our API.
     const body = new HttpParams()
       .set('token', context.token)
-      .set('qrr_token', context.csrf)
+      .set('owt_token', context.csrf)
       .set('payload', JSON.stringify(payload));
     return firstValueFrom(
       this.http.post<{ result: T }>(this.base, body, { params: { action } })

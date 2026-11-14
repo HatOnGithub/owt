@@ -1,8 +1,8 @@
 <section class="scanner-page">
   <h1>{{ 'Register items' | t }}</h1>
   @if (api.can('create')) {
-    <qrr-card class="capture-card" [title]="'Select labels' | t">
-      <qrr-capture
+    <owt-card class="capture-card" [title]="'Select labels' | t">
+      <owt-capture
         [initial]="codes()"
         [validate]="validateScan"
         (changed)="codes.set($event); thumbnail = ''"
@@ -18,7 +18,7 @@
         <fa-icon [icon]="continueIcon" aria-hidden="true" />
         {{ 'Assign details' | t }}
       </button>
-    </qrr-card>
+    </owt-card>
   } @else {
     <p class="alert">{{ 'Permission required for this QR action' | t }}</p>
   }

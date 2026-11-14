@@ -25,7 +25,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'qrr-root',
+  selector: 'owt-root',
   standalone: true,
   imports: [SharedModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
@@ -53,8 +53,8 @@ export class AppComponent {
   }
   protected links = [
     { path: '/inventory', label: 'Inventory', icon: faBoxesStacked },
-    { path: '/scan', label: 'Scan QR', icon: faQrcode },
-    { path: '/labels', label: 'Print QR labels', icon: faTags },
+    { path: '/scan', label: 'Scan codes', icon: faQrcode },
+    { path: '/labels', label: 'Print labels', icon: faTags },
     { path: '/locations', label: 'Bins and locations', icon: faWarehouse },
     { path: '/bins', label: 'Physical bins', icon: faBoxesStacked },
     { path: '/loans', label: 'Loans', icon: faRightLeft },
@@ -73,7 +73,7 @@ export class AppComponent {
       const resize = () => {
         const top = Math.max(0, host.getBoundingClientRect().top);
         host.style.setProperty(
-          '--qrr-available-height',
+          '--owt-available-height',
           `${Math.max(0, window.innerHeight - top)}px`
         );
       };

@@ -2,18 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>QR Router — local Dolibarr mock</title>
+    <title>Open Warehouse Tracker — local Dolibarr mock</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <script>
       document.documentElement.dataset.mockTheme =
-        localStorage.getItem('qrr-mock-theme') || 'light';
+        localStorage.getItem('owt-mock-theme') || 'light';
     </script>
   </head>
   <body>
     <header class="mock-topbar">
       <strong>Dolibarr</strong>
-      <span>Products / Stock / QR Router</span>
+      <span>Products / Stock / Open Warehouse Tracker</span>
       <b>LOCAL MOCK</b>
       <button
         type="button"
@@ -29,6 +29,7 @@
         Scenario
         <select name="scenario" aria-label="Mock scenario">
           <option value="populated">Sample inventory</option>
+          <option value="expanded">Expanded identifiers (6 and 8 characters)</option>
           <option value="empty">Empty inventory / no employees</option>
           <option value="no-employees">Sample inventory / no employees</option>
           <option value="read-only">Read-only operator</option>
@@ -65,7 +66,7 @@
     </form>
     <div class="mock-workspace">
       <main class="mock-main">
-        <qrr-root data-api="/custom/qrrouter/api.php"></qrr-root>
+        <owt-root data-api="/custom/owt/api.php"></owt-root>
       </main>
       <aside
         class="mock-camera-panel"

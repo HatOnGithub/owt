@@ -15,7 +15,7 @@
     @if (error()) {
       <p class="alert" role="alert">{{ error() }}</p>
     }
-    <qrr-card [title]="pt('Picking')">
+    <owt-card [title]="pt('Picking')">
       <div class="grid no-print">
         <mat-form-field appearance="outline">
           <mat-label>{{ 'Order type' | t }}</mat-label>
@@ -28,7 +28,7 @@
             }
           </mat-select>
         </mat-form-field>
-        <qrr-lookup
+        <owt-lookup
           [resource]="orderType === 'production' ? 'manufacturing-orders' : 'orders'"
           [label]="orderType === 'production' ? 'Manufacturing order' : 'Customer order'"
           (selected)="order = $event?.id || 0; orderName = $event?.text || ''; resetPreview()"
@@ -88,9 +88,9 @@
       </div>
       @if (rows().length) {
         <h2>
-          <qrr-native-link [type]="orderType" [id]="order" [label]="orderName" />
+          <owt-native-link [type]="orderType" [id]="order" [label]="orderName" />
           ·
-          <qrr-native-link
+          <owt-native-link
             type="warehouse"
             [id]="warehouse"
             [label]="api.context()!.warehouses[warehouse]?.ref"
@@ -112,7 +112,7 @@
                 <td><fa-icon [icon]="icons.unchecked" aria-hidden="true" /></td>
                 <td>{{ row.type === 'missing' ? pt('Not allocated') : row.bin }}</td>
                 <td>
-                  <qrr-native-link
+                  <owt-native-link
                     type="product"
                     [id]="api.context()!.state.items[row.code]?.product_id"
                     [label]="row.product.ref"
@@ -136,16 +136,16 @@
       } @else if (previewed()) {
         <p role="status">{{ pt('Selected order has no pickable product lines.') }}</p>
       }
-    </qrr-card>
+    </owt-card>
   }
 </section>
 
 @if (api.context()!.permissions.orders) {
-  <qrr-card class="no-print" [title]="'Saved pick lists' | t">
+  <owt-card class="no-print" [title]="'Saved pick lists' | t">
     @for (list of lists(); track list.order_id) {
       <article>
         <h2>
-          <qrr-native-link
+          <owt-native-link
             type="salesorder"
             [id]="list.order_id"
             [label]="'Order #' + list.order_id"
@@ -178,7 +178,7 @@
             @for (line of list.lines; track line.product_id) {
               <tr>
                 <td>
-                  <qrr-native-link
+                  <owt-native-link
                     type="product"
                     [id]="line.product_id"
                     [label]="
@@ -224,7 +224,7 @@
           @if (completing === list.order_id) {
             <p>
               {{
-                'Confirm that all remaining quantities have been fulfilled with stock not tracked by QR Router. This closes the list without changing stock.'
+                'Confirm that all remaining quantities have been fulfilled with stock not tracked by Open Warehouse Tracker. This closes the list without changing stock.'
                   | t
               }}
             </p>
@@ -248,5 +248,5 @@
     } @empty {
       <p>{{ 'No saved pick lists' | t }}</p>
     }
-  </qrr-card>
+  </owt-card>
 }

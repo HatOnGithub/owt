@@ -1,7 +1,7 @@
 import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'qrr-card',
+  selector: 'owt-card',
   standalone: true,
   templateUrl: './card.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,

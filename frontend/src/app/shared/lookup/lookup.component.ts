@@ -15,7 +15,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'qrr-lookup',
+  selector: 'owt-lookup',
   standalone: true,
   imports: [SharedModule, MatAutocompleteModule],
   templateUrl: './lookup.component.html',

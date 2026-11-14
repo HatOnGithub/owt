@@ -1,4 +1,4 @@
-"""Check the native APIs used by QR Router against pinned official Dolibarr sources.
+"""Check the native APIs used by Open Warehouse Tracker against pinned official Dolibarr sources.
 
 This checks source contracts, not a running Dolibarr database. Use --download to
 populate the ignored source cache, or --source-dir for an existing htdocs checkout.
@@ -88,7 +88,7 @@ if __name__ == '__main__':
             for column in columns:
                 if not re.search(r'^\s*' + re.escape(column) + r'\s+\w+', sql, re.MULTILINE):
                     raise SystemExit(f'{version}: native column missing: {table}.{column}')
-        with tempfile.TemporaryDirectory(prefix='qrr-compat-') as fixture:
+        with tempfile.TemporaryDirectory(prefix='owt-compat-') as fixture:
             subprocess.run([
                 args.php, str(ROOT / 'tests/test_dolibarr_compatibility.php'),
                 str(source.resolve()), version, fixture,

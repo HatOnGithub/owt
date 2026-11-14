@@ -6,17 +6,17 @@ COPY frontend/ ./
 RUN npm run build
 
 FROM scratch AS dolibarr-module
-COPY dolibarr/qrrouter/ /qrrouter/
-COPY --from=frontend /frontend/dist/qrrouter/browser/ /qrrouter/spa/
-COPY --from=frontend /frontend/dist/qrrouter/3rdpartylicenses.txt /qrrouter/spa/3rdpartylicenses.txt
+COPY dolibarr/owt/ /owt/
+COPY --from=frontend /frontend/dist/owt/browser/ /owt/spa/
+COPY --from=frontend /frontend/dist/owt/3rdpartylicenses.txt /owt/spa/3rdpartylicenses.txt
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /source
 COPY LICENSE ./
-COPY src/QrRouterApi/QrRouterApi.csproj src/QrRouterApi/
-RUN dotnet restore src/QrRouterApi/QrRouterApi.csproj
-COPY src/QrRouterApi/ src/QrRouterApi/
-RUN dotnet publish src/QrRouterApi/QrRouterApi.csproj -c Release -o /app --no-restore /p:UseAppHost=false
+COPY src/OwtApi/OwtApi.csproj src/OwtApi/
+RUN dotnet restore src/OwtApi/OwtApi.csproj
+COPY src/OwtApi/ src/OwtApi/
+RUN dotnet publish src/OwtApi/OwtApi.csproj -c Release -o /app --no-restore /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
@@ -26,5 +26,5 @@ ENV ASPNETCORE_HTTP_PORTS=8080 \
     AppSettings__DataDirectory=/data
 USER app
 EXPOSE 8080
-HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 CMD ["dotnet", "QrRouterApi.dll", "--healthcheck"]
-ENTRYPOINT ["dotnet", "QrRouterApi.dll"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 CMD ["dotnet", "OwtApi.dll", "--healthcheck"]
+ENTRYPOINT ["dotnet", "OwtApi.dll"]

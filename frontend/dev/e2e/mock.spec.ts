@@ -53,7 +53,7 @@ test('location level rows add, validate and save without changing existing optio
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/#/locations?warehouse_id=1');
-  const editor = page.locator('qrr-location-levels-editor');
+  const editor = page.locator('owt-location-levels-editor');
   const save = editor.getByRole('button', { name: 'Save location levels', exact: true });
   const add = editor.getByRole('button', { name: 'Add level', exact: true });
   await editor.getByRole('textbox', { name: 'Level name 1', exact: true }).fill('Zone');
@@ -68,7 +68,7 @@ test('location level rows add, validate and save without changing existing optio
   await editor.getByRole('textbox', { name: 'Add location options: Zone', exact: true }).fill('C');
   await save.click();
   await expect(page.getByText('Location levels saved', { exact: true })).toBeVisible();
-  const response = await request.get('/custom/qrrouter/api.php?resource=levels&warehouse_id=1');
+  const response = await request.get('/custom/owt/api.php?resource=levels&warehouse_id=1');
   const levels = await response.json();
   expect(levels.map((level: { label: string }) => level.label)).toEqual([
     'Zone',
@@ -257,7 +257,7 @@ test('unsupported virtual camera streams show an actionable error', async ({ pag
     await page.evaluate(() => typeof document.createElement('canvas').captureStream === 'function'),
     'This browser supports virtual camera streams.'
   );
-  await expect(page.locator('qrr-scanner [role="alert"]')).toContainText(
+  await expect(page.locator('owt-scanner [role="alert"]')).toContainText(
     'This browser cannot create a virtual camera stream.'
   );
   await expect(page.getByRole('button', { name: 'Start camera', exact: true })).toBeVisible();
@@ -429,13 +429,13 @@ test('generic labels default to the Dolibarr product short name and support an o
   await expect(page).toHaveURL(/#\/labels\?batch=/);
   // The URL changes before the lazy labels page finishes loading. Finish that navigation
   // before opening the new item so pending imports are not aborted on slower browsers.
-  await expect(page.getByRole('heading', { name: 'Print QR labels', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Print labels', exact: true })).toBeVisible();
   const batch = new URL(page.url().split('#')[1], 'http://mock').searchParams.get('batch')!;
   const state = await mock.bootstrap();
   const code = state.state.batches[batch].codes[0];
   await page.goto('/#/items/' + code);
   await expect(page.getByRole('heading', { name: 'Cordless drill', exact: true })).toBeVisible();
-  await page.goto('/custom/qrrouter/label.php?code=' + code + '&format=dymo-25x54');
+  await page.goto('/custom/owt/label.php?code=' + code + '&format=dymo-25x54');
   await expect(page.locator('.label span')).toHaveText('Cordless drill');
   await page.goto('/#/edit/' + code);
   await page
@@ -443,7 +443,7 @@ test('generic labels default to the Dolibarr product short name and support an o
     .fill('Local short name');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Local short name', exact: true })).toBeVisible();
-  await page.goto('/custom/qrrouter/label.php?code=' + code + '&format=dymo-25x54');
+  await page.goto('/custom/owt/label.php?code=' + code + '&format=dymo-25x54');
   await expect(page.locator('.label span')).toHaveText('Local short name');
 });
 
@@ -483,8 +483,8 @@ test('a direct camera link starts muted without a user gesture @virtual-camera',
   });
   await page.goto('/#/scan?input=camera');
   await expect(page.getByRole('button', { name: 'Stop camera', exact: true })).toBeVisible();
-  await expect(page.locator('qrr-scanner video')).toHaveJSProperty('muted', true);
-  await expect(page.locator('qrr-scanner video')).toHaveJSProperty('paused', false);
+  await expect(page.locator('owt-scanner video')).toHaveJSProperty('muted', true);
+  await expect(page.locator('owt-scanner video')).toHaveJSProperty('paused', false);
   expect(await page.evaluate(() => (window as any).__physicalCameraRequests)).toBe(0);
   await expect(page.locator('#mock-camera-status')).toContainText(
     '1 active virtual camera stream.'
@@ -501,7 +501,7 @@ test('the current Angular app runs in the local Dolibarr shell', async ({ page }
   await expect(navigationIcon).toBeVisible();
   await expect(navigationIcon).toHaveAttribute('aria-hidden', 'true');
   await expect(page.getByText('Workshop drill', { exact: true })).toBeVisible();
-  await page.getByRole('link', { name: 'Scan QR', exact: true }).click();
+  await page.getByRole('link', { name: 'Scan codes', exact: true }).click();
   await expect(page.getByRole('navigation', { name: 'Warehouse operations' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Register items', exact: true })).toBeVisible();
   expect(errors).toEqual([]);
@@ -525,7 +525,7 @@ test('edits persist across refresh and real QR label previews open', async ({ pa
 
 test('serial checks and warehouse moves work through the dev proxy', async ({ page, request }) => {
   const bootstrap: Bootstrap = await (
-    await request.get('/custom/qrrouter/api.php?resource=bootstrap')
+    await request.get('/custom/owt/api.php?resource=bootstrap')
   ).json();
   const drill = Object.values(bootstrap.state.items).find(item => item.type === 'tracked')!;
   await page.goto('/#/workflow/move?code=' + drill.code);
@@ -533,12 +533,10 @@ test('serial checks and warehouse moves work through the dev proxy', async ({ pa
   await page.getByRole('option', { name: 'OTHER', exact: true }).click();
   await page.getByRole('button', { name: 'Confirm operation', exact: true }).click();
   await expect(page.getByText('Completed', { exact: true })).toBeVisible();
-  const updated = await (await request.get('/custom/qrrouter/api.php?resource=bootstrap')).json();
+  const updated = await (await request.get('/custom/owt/api.php?resource=bootstrap')).json();
   expect(updated.state.items[drill.code].warehouse_id).toBe(2);
   const check = await (
-    await request.get(
-      '/custom/qrrouter/api.php?resource=serial-check&product_id=2&serial=DRILL-001'
-    )
+    await request.get('/custom/owt/api.php?resource=serial-check&product_id=2&serial=DRILL-001')
   ).json();
   expect(check).toEqual({ exists: true, associated: true });
 });
@@ -558,7 +556,7 @@ test('scenario controls exercise empty, unavailable and translated dark states',
   await page.getByLabel('Mock language').selectOption('nl_NL');
   await page.getByRole('button', { name: 'Reset and apply' }).click();
   await expect(page.getByRole('heading', { name: 'Voorraad', exact: true })).toBeVisible();
-  await expect(page.locator('qrr-root')).toHaveCSS('color', 'rgb(238, 238, 238)');
+  await expect(page.locator('owt-root')).toHaveCSS('color', 'rgb(238, 238, 238)');
 });
 
 for (const mode of ['generic', 'box']) {
@@ -588,7 +586,7 @@ test('registration uses the current selection/details flow and existing serial w
   request,
 }) => {
   const bootstrap: Bootstrap = await (
-    await request.get('/custom/qrrouter/api.php?resource=bootstrap')
+    await request.get('/custom/owt/api.php?resource=bootstrap')
   ).json();
   const blank = Object.values(bootstrap.state.items).find(item => item.type === 'unassigned')!;
   await page.goto(`/#/register?code=${blank.code}&mode=unique&input=manual`);
@@ -627,7 +625,7 @@ test('inventory embeds borrowers and consumption references in statuses and link
   await expect(
     loan.locator('.inventory-status').getByRole('link', { name: 'Alex Operator' })
   ).toHaveAttribute('href', '/user/card.php?id=8');
-  await expect(page.locator('.inventory-summary qrr-card')).toHaveCount(0);
+  await expect(page.locator('.inventory-summary owt-card')).toHaveCount(0);
   const drill = page.locator('tbody tr').filter({ hasText: 'Workshop drill' });
   await expect(drill.getByRole('link', { name: 'DRILL-18V', exact: true })).toHaveAttribute(
     'href',
@@ -656,7 +654,7 @@ test('restricted readers receive no manufacturing references or internal audit p
 }) => {
   await request.post('/__mock/reset', { data: { scenario: 'read-only' } });
   const response: Bootstrap = await (
-    await request.get('/custom/qrrouter/api.php?resource=bootstrap')
+    await request.get('/custom/owt/api.php?resource=bootstrap')
   ).json();
   expect(response.state.history).toEqual([]);
   const consumed = Object.values(response.state.items).find(
@@ -679,7 +677,7 @@ test('virtual camera decodes fixtures and custom URLs through the real scanner @
   request,
 }) => {
   const bootstrap: Bootstrap = await (
-    await request.get('/custom/qrrouter/api.php?resource=bootstrap')
+    await request.get('/custom/owt/api.php?resource=bootstrap')
   ).json();
   const drill = Object.values(bootstrap.state.items).find(item => item.label === 'Workshop drill')!;
   const box = Object.values(bootstrap.state.items).find(item => item.label === 'Bolts box A')!;
@@ -695,7 +693,7 @@ test('virtual camera decodes fixtures and custom URLs through the real scanner @
   await expect(page.locator('#mock-camera-status')).toContainText('Showing QR code');
   await page
     .locator('.module-navigation')
-    .getByRole('link', { name: 'Scan QR', exact: true })
+    .getByRole('link', { name: 'Scan codes', exact: true })
     .click();
   await page
     .getByRole('navigation', { name: 'Warehouse operations' })
@@ -742,7 +740,7 @@ test('mobile camera controls fill the screen, trap focus and return to scanning 
   request,
 }) => {
   const bootstrap: Bootstrap = await (
-    await request.get('/custom/qrrouter/api.php?resource=bootstrap')
+    await request.get('/custom/owt/api.php?resource=bootstrap')
   ).json();
   const code = Object.keys(bootstrap.state.items)[0];
   await page.setViewportSize({ width: 390, height: 844 });
@@ -796,7 +794,7 @@ test('virtual camera is the default and failure modes never request a physical c
   await page.getByRole('button', { name: 'Camera mock', exact: true }).click();
   await page.getByLabel('Camera source', { exact: true }).selectOption('denied');
   await page.getByRole('button', { name: 'Restart camera', exact: true }).click();
-  await expect(page.locator('qrr-scanner [role="alert"]')).toHaveText(
+  await expect(page.locator('owt-scanner [role="alert"]')).toHaveText(
     'Permission denied by camera mock.'
   );
   await expect(page.locator('.camera-placeholder')).toBeVisible();
@@ -805,13 +803,13 @@ test('virtual camera is the default and failure modes never request a physical c
   );
   await page.getByLabel('Camera source', { exact: true }).selectOption('unavailable');
   await page.getByRole('button', { name: 'Start camera', exact: true }).click();
-  await expect(page.locator('qrr-scanner [role="alert"]')).toHaveText(
+  await expect(page.locator('owt-scanner [role="alert"]')).toHaveText(
     'No camera available in camera mock.'
   );
   expect(await page.evaluate(() => (window as any).__physicalCameraRequests)).toBe(0);
   await page.getByLabel('Camera source', { exact: true }).selectOption('real');
   await page.getByRole('button', { name: 'Start camera', exact: true }).click();
-  await expect(page.locator('qrr-scanner [role="alert"]')).toHaveText(
+  await expect(page.locator('owt-scanner [role="alert"]')).toHaveText(
     'No physical camera for test'
   );
   expect(await page.evaluate(() => (window as any).__physicalCameraRequests)).toBe(1);
@@ -827,7 +825,7 @@ for (const theme of ['light', 'dark']) {
     mock,
   }) => {
     await request.post('/__mock/reset', { data: { scenario: 'pending' } });
-    await page.addInitScript(value => localStorage.setItem('qrr-mock-theme', value), theme);
+    await page.addInitScript(value => localStorage.setItem('owt-mock-theme', value), theme);
     await page.route('**/', async route => {
       const response = await route.fetch();
       const css = `<style>
@@ -909,11 +907,11 @@ for (const theme of ['light', 'dark']) {
       )
     ).toBeLessThanOrEqual(1);
     const bootstrap: Bootstrap = await (
-      await request.get('/custom/qrrouter/api.php?resource=bootstrap')
+      await request.get('/custom/owt/api.php?resource=bootstrap')
     ).json();
     const code = Object.keys(bootstrap.state.items)[0];
     await page.goto('/#/scan?input=manual');
-    const textarea = page.getByRole('textbox', { name: 'QR identifiers' });
+    const textarea = page.getByRole('textbox', { name: 'Item identifiers' });
     await expect(textarea).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await textarea.fill(code);
     await page.getByRole('button', { name: 'Add codes', exact: true }).click();

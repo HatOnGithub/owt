@@ -39,7 +39,7 @@
       <p class="alert" role="alert">{{ error() | t }}</p>
     }
     @if (results().length) {
-      <qrr-card [title]="'Operation results' | t">
+      <owt-card [title]="'Operation results' | t">
         <table>
           <thead>
             <tr>
@@ -71,17 +71,17 @@
           <fa-icon [icon]="icons.restart" aria-hidden="true" />
           {{ 'Start another round' | t }}
         </button>
-      </qrr-card>
+      </owt-card>
     } @else if (!review()) {
       @if (kind() === 'consume' && api.context()!.permissions.orders && api.can('picking')) {
-        <qrr-card [title]="'Pick list safeguards' | t">
+        <owt-card [title]="'Pick list safeguards' | t">
           <p>
             {{
               'Optionally load a customer order pick list before scanning. Only listed QR labels and quantities will be accepted.'
                 | t
             }}
           </p>
-          <qrr-lookup
+          <owt-lookup
             resource="orders"
             label="Customer order"
             (selected)="pickOrder = $event?.id || 0; clearPickList()"
@@ -103,7 +103,7 @@
           </button>
           @if (pickRows(); as picks) {
             <p>
-              <qrr-native-link type="salesorder" [id]="pickOrder" [label]="'Order #' + pickOrder" />
+              <owt-native-link type="salesorder" [id]="pickOrder" [label]="'Order #' + pickOrder" />
             </p>
             <ul>
               @for (row of picks; track $index) {
@@ -116,10 +116,10 @@
               }
             </ul>
           }
-        </qrr-card>
+        </owt-card>
       }
-      <qrr-card class="capture-card" [title]="'Scan items' | t">
-        <qrr-capture
+      <owt-card class="capture-card" [title]="'Scan items' | t">
+        <owt-capture
           [initial]="codes()"
           [validate]="validateScan"
           [content]="kind() === 'move' ? 'items-or-bins' : 'items'"
@@ -135,9 +135,9 @@
           <fa-icon [icon]="icons.review" aria-hidden="true" />
           {{ 'Review selected items' | t }}
         </button>
-      </qrr-card>
+      </owt-card>
     } @else {
-      <qrr-card [title]="'Review and confirm' | t">
+      <owt-card [title]="'Review and confirm' | t">
         <form (ngSubmit)="perform()" #form="ngForm">
           <div class="table-scroll">
             <table>
@@ -168,7 +168,7 @@
                       @if (row.item?.native_batch) {
                         <small>
                           {{ 'Dolibarr lot/serial' | t }}:
-                          <qrr-native-link
+                          <owt-native-link
                             type="lot"
                             [id]="row.item.product_lot_id"
                             [label]="row.item.native_batch"
@@ -186,7 +186,7 @@
                       }
                     </td>
                     <td [attr.data-label]="'Location' | t">
-                      <qrr-native-link
+                      <owt-native-link
                         type="warehouse"
                         [id]="row.item?.warehouse_id"
                         [label]="api.context()!.warehouses[row.item?.warehouse_id || 0]?.ref || '—'"
@@ -303,7 +303,7 @@
           </div>
           @if (kind() === 'move' || kind() === 'return') {
             @if (kind() === 'move') {
-              <qrr-destination
+              <owt-destination
                 [warehouse]="warehouse"
                 [values]="levels"
                 (resolving)="destinationBusy.set($event)"
@@ -314,7 +314,7 @@
                 "
               />
             }
-            <qrr-location-fields
+            <owt-location-fields
               [warehouse]="warehouse"
               [initial]="destinationInitial"
               (selected)="levels = $event"
@@ -342,7 +342,7 @@
                 </mat-select>
               </mat-form-field>
               @if (referenceType) {
-                <qrr-lookup
+                <owt-lookup
                   resource="references"
                   [type]="referenceType"
                   label="Select an exact record"
@@ -401,7 +401,7 @@
             </button>
           </div>
         </form>
-      </qrr-card>
+      </owt-card>
     }
   }
 </section>

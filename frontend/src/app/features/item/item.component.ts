@@ -24,7 +24,7 @@ import {
 
 /** Public QR details with independently gated actions, pending intent and permission-scoped history. */
 @Component({
-  selector: 'qrr-item',
+  selector: 'owt-item',
   standalone: true,
   imports: [SharedModule, HistoryComponent],
   templateUrl: './item.component.html',

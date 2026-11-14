@@ -18,7 +18,7 @@ interface LocationData {
   native: Record<string, Record<string, number>>;
 }
 @Component({
-  selector: 'qrr-locations',
+  selector: 'owt-locations',
   standalone: true,
   imports: [SharedModule, LocationLevelsEditorComponent],
   templateUrl: './locations.component.html',
@@ -190,7 +190,7 @@ export class LocationsComponent {
       await this.api.command('location-import', {});
       await this.api.refresh();
       await this.load(true, this.bin);
-      this.notice.set('Locations imported into QR Router');
+      this.notice.set('Locations imported into Open Warehouse Tracker');
     } catch (error) {
       this.error.set(this.api.message(error));
     } finally {

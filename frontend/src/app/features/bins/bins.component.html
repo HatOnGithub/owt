@@ -26,7 +26,7 @@
   </mat-select>
 </mat-form-field>
 @if (selected(); as bin) {
-  <qrr-card [title]="bin.label">
+  <owt-card [title]="bin.label">
     <p>{{ bin.id }} · {{ api.context()!.warehouses[bin.warehouse_id]?.ref }} · {{ bin.bin }}</p>
     @if (api.can('print')) {
       <a
@@ -88,7 +88,7 @@
               | t
           }}
         </p>
-        <qrr-capture [initial]="codes()" [validate]="validatePack" (changed)="codes.set($event)" />
+        <owt-capture [initial]="codes()" [validate]="validatePack" (changed)="codes.set($event)" />
         <button mat-flat-button (click)="assign(false)" [disabled]="busy() || !codes().length">
           {{ 'Pack selected items' | t }}
         </button>
@@ -97,11 +97,11 @@
         </button>
       }
     }
-  </qrr-card>
+  </owt-card>
   @if (api.can('move') && api.context()!.permissions.stock) {
-    <qrr-card [title]="'Move whole physical bin' | t">
+    <owt-card [title]="'Move whole physical bin' | t">
       @if (!bin.pending_move) {
-        <qrr-destination
+        <owt-destination
           [warehouse]="warehouse"
           [values]="levels"
           (resolving)="resolving.set($event)"
@@ -117,7 +117,7 @@
             }
           </mat-select>
         </mat-form-field>
-        <qrr-location-fields
+        <owt-location-fields
           [warehouse]="warehouse"
           [initial]="initial"
           (selected)="levels = $event"
@@ -142,11 +142,11 @@
           : {{ result.message | t }}
         </p>
       }
-    </qrr-card>
+    </owt-card>
   }
 }
 @if (api.can('create')) {
-  <qrr-card [title]="'Create physical bin' | t">
+  <owt-card [title]="'Create physical bin' | t">
     <mat-form-field appearance="outline">
       <mat-label>{{ 'Physical bin name' | t }}</mat-label>
       <input matInput [(ngModel)]="name" maxlength="140" />
@@ -159,7 +159,7 @@
         }
       </mat-select>
     </mat-form-field>
-    <qrr-location-fields [warehouse]="createWarehouse" (selected)="createLevels = $event" />
+    <owt-location-fields [warehouse]="createWarehouse" (selected)="createLevels = $event" />
     <button
       mat-flat-button
       (click)="create()"
@@ -167,5 +167,5 @@
     >
       {{ 'Create physical bin' | t }}
     </button>
-  </qrr-card>
+  </owt-card>
 }

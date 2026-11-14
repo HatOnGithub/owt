@@ -31,7 +31,7 @@ import {
  * Capturing a valid identifier never proves access or reserves stock; the gateway rechecks it.
  */
 @Component({
-  selector: 'qrr-scanner',
+  selector: 'owt-scanner',
   standalone: true,
   imports: [SharedModule],
   templateUrl: './scanner.component.html',

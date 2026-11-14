@@ -1,5 +1,37 @@
 import { test, expect } from './fixtures';
 
+test('six/eight-character labels can be entered together after range expansion', async ({
+  page,
+  mock,
+}) => {
+  await mock.reset('expanded');
+  const short = await mock.item('Network cable');
+  const long = await mock.item('Long ID cable');
+  expect(short.code).toHaveLength(6);
+  expect(long.code).toHaveLength(8);
+  await page.goto('/#/workflow/move');
+  await page.getByRole('button', { name: 'Manual / USB entry', exact: true }).click();
+  await page.getByLabel('Item identifiers').fill(short.code + ' ' + long.code);
+  await page.getByRole('button', { name: 'Add codes', exact: true }).click();
+  for (const code of [short.code, long.code])
+    await expect(page.getByRole('button', { name: 'Remove ' + code, exact: true })).toBeVisible();
+  await page.goto('/#/items/' + long.code);
+  await expect(page.getByRole('heading', { name: 'Long ID cable', exact: true })).toBeVisible();
+});
+
+test('camera accepts an eight-character ID after range expansion @virtual-camera', async ({
+  page,
+  mock,
+}) => {
+  await mock.reset('expanded');
+  const item = await mock.item('Long ID cable');
+  await page.goto('/#/workflow/move');
+  await expect(page.getByText('Camera running', { exact: true })).toBeVisible();
+  await mock.scan(item.code);
+  await page.getByRole('button', { name: 'Stop camera', exact: true }).click();
+  await mock.expectCameraReleased();
+});
+
 for (const symbology of ['QRCODE', 'DATAMATRIX', 'C128', 'PDF417']) {
   test(`camera reads ${symbology} without changing its six-character identifier @virtual-camera`, async ({
     page,

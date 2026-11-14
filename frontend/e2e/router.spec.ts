@@ -8,7 +8,7 @@ import { BarcodeDecoder } from '../src/app/shared/scanner/barcode-decoder';
 
 async function open(page: Page, route: string): Promise<void> {
   await page.goto('index.php#/' + route);
-  await expect(page.locator('qrr-root router-outlet')).toBeAttached();
+  await expect(page.locator('owt-root router-outlet')).toBeAttached();
 }
 async function choose(page: Page, label: string, option: string): Promise<void> {
   await page.getByRole('combobox', { name: label, exact: true }).click();
@@ -30,21 +30,21 @@ test('print language preserves label size and identifiers when switching to A4',
   await page.getByLabel('Output language', { exact: true }).selectOption('fr_FR');
   await page.getByRole('button', { name: 'Apply settings', exact: true }).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr-FR');
-  await expect(page.locator('.qrr-id-code')).toHaveText(item.code);
-  await expect(page.locator('.qrr-label-detail.name')).toContainText(item.label);
+  await expect(page.locator('.owt-id-code')).toHaveText(item.code);
+  await expect(page.locator('.owt-label-detail.name')).toContainText(item.label);
   await expect(page.getByLabel('Langue de sortie', { exact: true })).toHaveValue('fr_FR');
   const a4 = page.locator('a[href*="format=a4"]');
   await expect(a4).toHaveAttribute('href', /lang=fr_FR/);
   await a4.click();
   await expect(page.getByLabel('Langue de sortie', { exact: true })).toHaveValue('fr_FR');
-  await expect(page.locator('.qrr-printed-code')).toContainText(item.code);
+  await expect(page.locator('.owt-printed-code')).toContainText(item.code);
 });
 async function blank(page: Page): Promise<string> {
   const bootstrap = await (await page.request.get('api.php?resource=bootstrap')).json();
   const response = await page.request.post('api.php?action=bulk', {
     form: {
       token: bootstrap.token,
-      qrr_token: bootstrap.csrf,
+      owt_token: bootstrap.csrf,
       payload: JSON.stringify({ type: 'unassigned', count: 1 }),
     },
   });
@@ -59,7 +59,7 @@ async function scannerScreenshot(page: Page, path: string): Promise<void> {
     path,
     // Expand the nested scroll container only while capturing the complete screen.
     style:
-      'qrr-root .app-shell, qrr-root main, qrr-root .content { display: block !important; height: auto !important; max-height: none !important; overflow: visible !important; }',
+      'owt-root .app-shell, owt-root main, owt-root .content { display: block !important; height: auto !important; max-height: none !important; overflow: visible !important; }',
   });
 }
 
@@ -92,7 +92,7 @@ test('inventory searches native tags and readable extra fields', async ({ page }
 });
 
 test('native product and warehouse location tabs open the related QR entries', async ({ page }) => {
-  const code = process.env['QRR_E2E_BOX']!;
+  const code = process.env['OWT_E2E_BOX']!;
   const bootstrap = await (await page.request.get('api.php?resource=bootstrap')).json();
   const item = bootstrap.state.items[code];
   await page.goto('native.php?kind=product&id=' + item.product_id);
@@ -100,21 +100,23 @@ test('native product and warehouse location tabs open the related QR entries', a
     page.locator('[data-native-tabs]').getByRole('link', { name: 'QR entries', exact: true })
   ).toBeVisible();
   await expect(
-    page.getByRole('link', { name: 'QR Router locations', exact: true })
+    page.getByRole('link', { name: 'Open Warehouse Tracker locations', exact: true })
   ).toHaveAttribute('href', /native\.php\?kind=product/);
   await expect(page.locator('a[href$="#/items/' + code + '"]')).toHaveAttribute(
     'href',
     new RegExp('#/items/' + code + '$')
   );
   await page.goto('native.php?kind=warehouse&id=' + item.warehouse_id);
-  await page.getByRole('combobox', { name: 'QR Router locations' }).selectOption(item.bin_key);
+  await page
+    .getByRole('combobox', { name: 'Open Warehouse Tracker locations' })
+    .selectOption(item.bin_key);
   await page.getByRole('button', { name: 'Filter', exact: true }).click();
   await expect(page).toHaveURL(new RegExp('bin_key='));
   await page.locator('a[href$="#/items/' + code + '"]').click();
   await expect(page.getByRole('heading', { name: item.label, exact: true })).toBeVisible();
 });
 test('DYMO labels add details and preserve physical dimensions at every size', async ({ page }) => {
-  const code = process.env['QRR_E2E_ITEM']!;
+  const code = process.env['OWT_E2E_ITEM']!;
   // The native QR endpoint needs TCPDF/GD, absent in the Dolibarr-shaped fixture.
   // Stub only its image response; label identity, metadata, CSS and pagination stay real.
   await page.route('**/qr.php?code=*', route =>
@@ -128,19 +130,19 @@ test('DYMO labels add details and preserve physical dimensions at every size', a
   );
   await page.goto('label.php?code=' + code + '&format=dymo-25x54');
   await expect(page.getByRole('button', { name: 'Print DYMO labels', exact: true })).toBeEnabled();
-  await expect(page.locator('.qrr-label-detail')).toHaveCount(3);
+  await expect(page.locator('.owt-label-detail')).toHaveCount(3);
   expect(
     await page
-      .locator('.qrr-label-detail')
+      .locator('.owt-label-detail')
       .evaluateAll(fields => fields.map(field => field.getAttribute('data-kind')))
   ).toEqual(['name', 'serial', 'ref']);
-  await expect(page.locator('.qrr-label-detail.serial')).toContainText('SN-REGISTER');
-  await expect(page.locator('.qrr-id-code')).toHaveText(code);
-  await expect(page.locator('.qrr-qr-column img')).toHaveAttribute(
+  await expect(page.locator('.owt-label-detail.serial')).toContainText('SN-REGISTER');
+  await expect(page.locator('.owt-id-code')).toHaveText(code);
+  await expect(page.locator('.owt-qr-column img')).toHaveAttribute(
     'src',
     new RegExp('qr.php\\?code=' + code)
   );
-  const size = await page.locator('.qrr-thermal-label').boundingBox();
+  const size = await page.locator('.owt-thermal-label').boundingBox();
   expect(size!.width).toBeCloseTo((54 * 96) / 25.4, 0);
   expect(size!.height).toBeCloseTo((25 * 96) / 25.4, 0);
   const pdf = await page.pdf({
@@ -155,7 +157,7 @@ test('DYMO labels add details and preserve physical dimensions at every size', a
   expect(Number(dimensions[2])).toBeCloseTo((25 * 72) / 25.4, 0);
   await writeFile('../artifacts/dymo-label-layout-test.pdf', pdf);
   // Even very long serials and names remain within their allotted rows; the QR ID is never fitted away.
-  await page.locator('.qrr-label-detail span').evaluateAll(fields =>
+  await page.locator('.owt-label-detail span').evaluateAll(fields =>
     fields.forEach(field => {
       field.textContent = 'Very long detail '.repeat(12);
       (field as HTMLElement).dataset['original'] = field.textContent;
@@ -163,7 +165,7 @@ test('DYMO labels add details and preserve physical dimensions at every size', a
   );
   await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')));
   expect(
-    await page.locator('.qrr-label-detail').evaluateAll(fields =>
+    await page.locator('.owt-label-detail').evaluateAll(fields =>
       fields.every(field => {
         const span = field.querySelector('span')!;
         return (
@@ -172,7 +174,7 @@ test('DYMO labels add details and preserve physical dimensions at every size', a
       })
     )
   ).toBe(true);
-  await expect(page.locator('.qrr-id-code')).toHaveText(code);
+  await expect(page.locator('.owt-id-code')).toHaveText(code);
 
   let previousDetails = 2;
   for (const [format, width, height] of [
@@ -185,11 +187,11 @@ test('DYMO labels add details and preserve physical dimensions at every size', a
     await expect(
       page.getByRole('button', { name: 'Print DYMO labels', exact: true })
     ).toBeEnabled();
-    const count = await page.locator('.qrr-label-detail').count();
+    const count = await page.locator('.owt-label-detail').count();
     expect(count).toBeGreaterThanOrEqual(previousDetails);
     previousDetails = count;
-    await expect(page.locator('.qrr-id-code')).toHaveText(code);
-    const label = await page.locator('.qrr-thermal-label').boundingBox();
+    await expect(page.locator('.owt-id-code')).toHaveText(code);
+    const label = await page.locator('.owt-thermal-label').boundingBox();
     expect(label!.width).toBeCloseTo((width * 96) / 25.4, 0);
     expect(label!.height).toBeCloseTo((height * 96) / 25.4, 0);
     const sheet = (
@@ -200,7 +202,7 @@ test('DYMO labels add details and preserve physical dimensions at every size', a
     expect(Number(box[1])).toBeCloseTo((width * 72) / 25.4, 0);
     expect(Number(box[2])).toBeCloseTo((height * 72) / 25.4, 0);
     expect(
-      await page.locator('.qrr-label-detail').evaluateAll(fields =>
+      await page.locator('.owt-label-detail').evaluateAll(fields =>
         fields.every(field => {
           const span = field.querySelector('span')!;
           return (
@@ -224,16 +226,16 @@ test('DYMO labels add details and preserve physical dimensions at every size', a
   await expect(printLink).toHaveAttribute('href', /format=dymo-25x54/);
   await page.goto((await printLink.getAttribute('href'))!);
   await expect(page.getByRole('button', { name: 'Print DYMO labels', exact: true })).toBeEnabled();
-  await expect(page.locator('.qrr-thermal-label')).toHaveCount(2);
-  await expect(page.locator('.qrr-label-detail')).toHaveCount(0);
-  await expect(page.locator('.qrr-id-code')).toHaveCount(2);
+  await expect(page.locator('.owt-thermal-label')).toHaveCount(2);
+  await expect(page.locator('.owt-label-detail')).toHaveCount(0);
+  await expect(page.locator('.owt-id-code')).toHaveCount(2);
   const batchUrl = page.url();
-  const blankCode = await page.locator('.qrr-id-code').first().innerText();
+  const blankCode = await page.locator('.owt-id-code').first().innerText();
   for (const format of ['dymo-25x54', 'dymo-32x57', 'dymo-36x89', 'dymo-54x101']) {
     const url = new URL(batchUrl);
     url.searchParams.set('format', format);
     await page.goto(url.href);
-    await expect(page.locator('.qrr-label-detail')).toHaveCount(0);
+    await expect(page.locator('.owt-label-detail')).toHaveCount(0);
     await expect(
       page.getByRole('button', { name: 'Print DYMO labels', exact: true })
     ).toBeEnabled();
@@ -243,16 +245,16 @@ test('DYMO labels add details and preserve physical dimensions at every size', a
   await page.goto(
     new URL('label.php?' + new URLSearchParams({ code: blankCode, format: 'a4' }), batchUrl).href
   );
-  await expect(page.locator('.qrr-qr-label')).toHaveText(blankCode);
-  await expect(page.locator('.qrr-qr-label img')).toHaveCount(1);
+  await expect(page.locator('.owt-qr-label')).toHaveText(blankCode);
+  await expect(page.locator('.owt-qr-label img')).toHaveCount(1);
   await page.goto(
     new URL('label.php?' + new URLSearchParams({ code, format: 'a4' }), batchUrl).href
   );
-  await page.locator('.qrr-printed-name').evaluate(element => {
+  await page.locator('.owt-printed-name').evaluate(element => {
     element.textContent = 'Long item name '.repeat(50);
   });
-  const a4Label = (await page.locator('.qrr-qr-label').boundingBox())!;
-  const a4Image = (await page.locator('.qrr-qr-label img').boundingBox())!;
+  const a4Label = (await page.locator('.owt-qr-label').boundingBox())!;
+  const a4Image = (await page.locator('.owt-qr-label img').boundingBox())!;
   expect(a4Label.width).toBeCloseTo((65 * 96) / 25.4, 0);
   expect(a4Label.height).toBeCloseTo((65 * 96) / 25.4, 0);
   expect(a4Image.y + a4Image.height).toBeLessThan(a4Label.y + a4Label.height);
@@ -269,7 +271,7 @@ test('DYMO labels add details and preserve physical dimensions at every size', a
 test('barcode formats preserve identifiers and position 2D and 1D labels correctly', async ({
   page,
 }) => {
-  const code = process.env['QRR_E2E_ITEM']!;
+  const code = process.env['OWT_E2E_ITEM']!;
   const decoder = new BarcodeDecoder();
   // Use the real native SVG renderer for QR too: this fixture deliberately has no GD.
   await page.route('**/qr.php?code=*', async route => {
@@ -284,23 +286,23 @@ test('barcode formats preserve identifiers and position 2D and 1D labels correct
       await expect(
         page.getByRole('button', { name: 'Print DYMO labels', exact: true })
       ).toBeEnabled();
-      await expect(page.locator('.qrr-id-code')).toHaveText(code);
-      const qr = (await page.locator('.qrr-qr-column').boundingBox())!;
-      const top = (await page.locator('.qrr-label-details').first().boundingBox())!;
+      await expect(page.locator('.owt-id-code')).toHaveText(code);
+      const qr = (await page.locator('.owt-qr-column').boundingBox())!;
+      const top = (await page.locator('.owt-label-details').first().boundingBox())!;
       if (symbology === 'C128') {
         expect(qr.y).toBeGreaterThanOrEqual(top.y + top.height - 1);
         expect(qr.width).toBeGreaterThan(top.width - 2);
       } else {
         expect(qr.x + qr.width).toBeLessThanOrEqual(top.x + 1);
         if (format === 'dymo-54x101') {
-          const bottom = (await page.locator('.qrr-label-bottom-details').boundingBox())!;
+          const bottom = (await page.locator('.owt-label-bottom-details').boundingBox())!;
           expect(bottom.y).toBeGreaterThanOrEqual(qr.y + qr.height - 1);
           expect(bottom.x).toBeLessThanOrEqual(qr.x + 1);
           expect(bottom.width).toBeGreaterThan(qr.width);
         }
       }
       expect(
-        await page.locator('.qrr-label-detail').evaluateAll(fields =>
+        await page.locator('.owt-label-detail').evaluateAll(fields =>
           fields.every(field => {
             const span = field.querySelector('span')!;
             return (
@@ -310,7 +312,7 @@ test('barcode formats preserve identifiers and position 2D and 1D labels correct
           })
         )
       ).toBe(true);
-      const raster = await page.locator('.qrr-print-image').evaluate((image: HTMLImageElement) => {
+      const raster = await page.locator('.owt-print-image').evaluate((image: HTMLImageElement) => {
         const canvas = document.createElement('canvas');
         // Round-trip at the actual label dimensions rasterized at 300 DPI, including
         // padding and object-fit, rather than only decoding an unconstrained source image.
@@ -347,7 +349,7 @@ test('barcode formats preserve identifiers and position 2D and 1D labels correct
       ).toBe(code);
       if (format === 'dymo-54x101' && ['DATAMATRIX', 'C128'].includes(symbology)) {
         await page
-          .locator('.qrr-thermal-label')
+          .locator('.owt-thermal-label')
           .screenshot({ path: `../artifacts/barcode-layout-${symbology.toLowerCase()}.png` });
       }
     }
@@ -355,13 +357,13 @@ test('barcode formats preserve identifiers and position 2D and 1D labels correct
   await page.getByRole('combobox', { name: 'Barcode format' }).selectOption('DATAMATRIX');
   await page.getByRole('button', { name: 'Apply settings' }).click();
   await expect(page).toHaveURL(/symbology=DATAMATRIX/);
-  await expect(page.locator('.qrr-id-code')).toHaveText(code);
+  await expect(page.locator('.owt-id-code')).toHaveText(code);
 });
 
 test('scanner workstation shows product context and touch quantity controls on mobile', async ({
   page,
 }) => {
-  const code = process.env['QRR_E2E_BOX']!;
+  const code = process.env['OWT_E2E_BOX']!;
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'mediaDevices', {
       configurable: true,
@@ -375,13 +377,13 @@ test('scanner workstation shows product context and touch quantity controls on m
   await page.setViewportSize({ width: 390, height: 844 });
   await open(page, 'scan?input=camera');
   await page.getByRole('button', { name: 'Manual / USB entry', exact: true }).click();
-  await page.getByRole('textbox', { name: 'QR identifiers' }).fill(code);
+  await page.getByRole('textbox', { name: 'Item identifiers' }).fill(code);
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await page.getByRole('link', { name: 'Review selected items', exact: true }).click();
   await expect(page.locator('.scanned-product')).toContainText('Fixture box');
   await expect(page.locator('.scan-product-facts')).toContainText('Dolibarr lot/serial');
   expect(
-    await page.locator('qrr-root .content').evaluate(el => el.scrollWidth <= el.clientWidth)
+    await page.locator('owt-root .content').evaluate(el => el.scrollWidth <= el.clientWidth)
   ).toBe(true);
   await scannerScreenshot(page, '../artifacts/scanner-mobile.png');
   await page.setViewportSize({ width: 1440, height: 1000 });
@@ -405,7 +407,7 @@ test('scanner workstation shows product context and touch quantity controls on m
   );
   await expect(page.locator('.review-product')).toHaveCSS('display', 'grid');
   expect(
-    await page.locator('qrr-root .content').evaluate(el => el.scrollWidth <= el.clientWidth)
+    await page.locator('owt-root .content').evaluate(el => el.scrollWidth <= el.clientWidth)
   ).toBe(true);
   await page
     .getByRole('button', { name: 'Confirm operation', exact: true })
@@ -416,7 +418,7 @@ test('scanner workstation shows product context and touch quantity controls on m
 
 test('product results remain selectable outside a clipping form container', async ({ page }) => {
   await open(page, 'create');
-  await page.locator('qrr-lookup').evaluate(host => {
+  await page.locator('owt-lookup').evaluate(host => {
     const wrapper = document.createElement('div');
     wrapper.style.height = host.getBoundingClientRect().height + 'px';
     wrapper.style.overflow = 'hidden';
@@ -431,7 +433,7 @@ test('product results remain selectable outside a clipping form container', asyn
   await input.press('ArrowDown');
   await input.press('Enter');
   await expect(input).toHaveValue('PART-003 — Fixture Part');
-  await expect(page.locator('qrr-lookup small')).toContainText('PART-003 — Fixture Part');
+  await expect(page.locator('owt-lookup small')).toContainText('PART-003 — Fixture Part');
   await expect(result).not.toBeVisible();
 });
 
@@ -451,7 +453,7 @@ test('product lookup failures are visible and do not leave stale results', async
 
 test('pages scroll below navigation and expand fully for printing', async ({ page }) => {
   await open(page, 'create');
-  const content = page.locator('qrr-root .content');
+  const content = page.locator('owt-root .content');
   await content.evaluate(element => {
     const spacer = document.createElement('div');
     spacer.style.height = '2000px';
@@ -461,12 +463,12 @@ test('pages scroll below navigation and expand fully for printing', async ({ pag
   await expect(content).toHaveCSS('overflow-y', 'auto');
   expect(await content.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
   const navigationTop = await page
-    .locator('qrr-root nav')
+    .locator('owt-root nav')
     .evaluate(element => element.getBoundingClientRect().top);
   await content.evaluate(element => (element.scrollTop = element.scrollHeight));
   expect(await content.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
   expect(
-    await page.locator('qrr-root nav').evaluate(element => element.getBoundingClientRect().top)
+    await page.locator('owt-root nav').evaluate(element => element.getBoundingClientRect().top)
   ).toBe(navigationTop);
   await page.setViewportSize({ width: 1100, height: 700 });
   await expect
@@ -486,7 +488,7 @@ test('inventory and item deep links render the Angular app', async ({ page }) =>
   await expect(page.getByRole('heading', { name: 'Inventory', exact: true })).toBeVisible();
   await page.getByRole('textbox', { name: 'Search inventory' }).fill('does-not-exist');
   await expect(page.getByText('No matching items')).toBeVisible();
-  await page.goto('index.php#/items/' + process.env['QRR_E2E_ITEM']);
+  await page.goto('index.php#/items/' + process.env['OWT_E2E_ITEM']);
   await expect(page.getByRole('heading', { name: 'Fixture tracked', exact: true })).toBeVisible();
   expect(page.url()).toContain('#/items/');
   expect(errors).toEqual([]);
@@ -521,12 +523,12 @@ test('manual scanner rejects invalid input, deduplicates and handles camera deni
   await expect(page.getByRole('button', { name: 'Start camera', exact: true })).toBeEnabled();
   await page.getByRole('button', { name: 'Manual / USB entry', exact: true }).click();
   await expect(page.locator('.camera-preview')).toBeHidden();
-  await page.getByRole('textbox', { name: 'QR identifiers' }).fill('bad-code');
+  await page.getByRole('textbox', { name: 'Item identifiers' }).fill('bad-code');
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('Invalid identifier');
-  const code = process.env['QRR_E2E_ITEM']!;
+  const code = process.env['OWT_E2E_ITEM']!;
   expect(validCode(code)).toBeTruthy();
-  await page.getByRole('textbox', { name: 'QR identifiers' }).fill(code + '\n' + code);
+  await page.getByRole('textbox', { name: 'Item identifiers' }).fill(code + '\n' + code);
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Remove ' + code, exact: true })).toHaveCount(1);
   await page.getByRole('button', { name: 'QR camera', exact: true }).click();
@@ -588,7 +590,7 @@ test('create a named Dolibarr serial with an independent QR identity and interna
 test('move workflow confirms native transfer and refreshes authoritative state', async ({
   page,
 }) => {
-  const code = process.env['QRR_E2E_BOX']!;
+  const code = process.env['OWT_E2E_BOX']!;
   await open(page, 'workflow/move?code=' + code);
   await expect(page.getByRole('button', { name: 'Confirm operation', exact: true })).toBeVisible();
   await choose(page, 'Destination warehouse', 'OTHER');
@@ -611,7 +613,7 @@ for (const destination of [
     const created = await page.request.post('api.php?action=update', {
       form: {
         token: bootstrap.token,
-        qrr_token: bootstrap.csrf,
+        owt_token: bootstrap.csrf,
         payload: JSON.stringify({
           type: 'box',
           code,
@@ -639,7 +641,7 @@ for (const destination of [
       await choose(page, 'Transaction reference', 'Manufacturing order');
       await expect(record).toHaveValue('');
       await expect(confirm).toBeDisabled();
-      await expect(page.locator('qrr-lookup').getByRole('link', { name: /SO-0039/ })).toHaveCount(
+      await expect(page.locator('owt-lookup').getByRole('link', { name: /SO-0039/ })).toHaveCount(
         0
       );
       await record.fill('MO');
@@ -694,7 +696,7 @@ test('manufacturing pick sheets load native components without produced or consu
   await expect(
     page.locator('h2').getByRole('link', { name: 'MO-0019', exact: true })
   ).toHaveAttribute('href', /mrp\/mo_card.php\?id=19/);
-  const sheet = page.locator('qrr-card').first();
+  const sheet = page.locator('owt-card').first();
   await expect(sheet.locator('tbody')).toContainText('PART-003');
   await expect(sheet.locator('tbody')).not.toContainText('SERIAL-004');
   const quantities = await sheet.locator('tbody tr td:last-child').allTextContents();
@@ -711,7 +713,7 @@ test('box transfer is available from navigation and updates both container quant
     const response = await page.request.post('api.php?action=update', {
       form: {
         token: bootstrap.token,
-        qrr_token: bootstrap.csrf,
+        owt_token: bootstrap.csrf,
         payload: JSON.stringify({
           type: 'box',
           code,
@@ -733,7 +735,7 @@ test('box transfer is available from navigation and updates both container quant
     .getByRole('link', { name: 'Transfer contents between containers', exact: true })
     .click();
   await page.getByRole('button', { name: 'Manual / USB entry', exact: true }).click();
-  await page.getByRole('textbox', { name: 'QR identifiers' }).fill(source + '\n' + destination);
+  await page.getByRole('textbox', { name: 'Item identifiers' }).fill(source + '\n' + destination);
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await page.getByRole('button', { name: 'Review selected items', exact: true }).click();
   await page.getByRole('spinbutton', { name: 'Quantity', exact: true }).first().fill('2');
@@ -775,18 +777,18 @@ test('responsive navigation inherits the host styling', async ({ page }) => {
   await expect(page.locator('#id-left')).toHaveCount(0);
   const nativePage = await page.request.get('../../native.php');
   expect(await nativePage.text()).toContain('id="id-left"');
-  await expect(page.locator('qrr-card article').first()).toHaveCSS('background-image', 'none');
-  await expect(page.locator('qrr-card article').first()).toHaveCSS(
+  await expect(page.locator('owt-card article').first()).toHaveCSS('background-image', 'none');
+  await expect(page.locator('owt-card article').first()).toHaveCSS(
     'background-color',
     'rgba(0, 0, 0, 0)'
   );
-  await expect(page.locator('qrr-root')).toHaveCSS('font-family', 'Arial, sans-serif');
+  await expect(page.locator('owt-root')).toHaveCSS('font-family', 'Arial, sans-serif');
   await page.screenshot({ path: '../artifacts/angular-inventory.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('#id-left')).toHaveCount(0);
   await page.getByRole('button', { name: /Menu/ }).click();
-  await page.locator('nav').getByRole('link', { name: 'Scan QR', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Scan QR', exact: true })).toBeVisible();
+  await page.locator('nav').getByRole('link', { name: 'Scan codes', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Scan codes', exact: true })).toBeVisible();
   await expect(page.locator('.module-navigation')).not.toBeVisible();
 });
 
@@ -799,7 +801,7 @@ test('fresh install with no employees explains setup and blocks checkout confirm
     bootstrap.users = {};
     await route.fulfill({ response, json: bootstrap });
   });
-  await open(page, 'workflow/checkout?code=' + process.env['QRR_E2E_ITEM']);
+  await open(page, 'workflow/checkout?code=' + process.env['OWT_E2E_ITEM']);
   await expect(
     page.getByText(
       'No employees yet. Create active employee users in Dolibarr before checking out items.'
@@ -828,7 +830,7 @@ test('camera auto-starts on scanning pages and stops when leaving them', async (
   });
   await open(page, 'scan?input=camera');
   await expect(page.getByRole('button', { name: 'Stop camera', exact: true })).toBeVisible();
-  const content = (await page.locator('qrr-root .content').boundingBox())!;
+  const content = (await page.locator('owt-root .content').boundingBox())!;
   const capture = (await page.locator('.scanner-page').boundingBox())!;
   expect(Math.abs(capture.height - content.height)).toBeLessThanOrEqual(1);
   const preview = (await page.locator('.camera-preview').boundingBox())!;
@@ -864,7 +866,7 @@ test('camera auto-starts on scanning pages and stops when leaving them', async (
   ]) {
     await page
       .locator('.module-navigation')
-      .getByRole('link', { name: 'Scan QR', exact: true })
+      .getByRole('link', { name: 'Scan codes', exact: true })
       .click();
     await page
       .getByRole('navigation', { name: 'Warehouse operations' })
@@ -907,7 +909,7 @@ test('a camera granted after leaving the scanning page is released immediately',
   await expect(page.locator('.camera-placeholder')).toHaveText('Starting camera…');
   await expect(page.locator('.camera-placeholder')).toBeVisible();
   await page.locator('nav').getByRole('link', { name: 'Inventory', exact: true }).click();
-  await expect(page.locator('qrr-scanner')).toHaveCount(0);
+  await expect(page.locator('owt-scanner')).toHaveCount(0);
   await page.evaluate(() => (window as any).__grantCamera());
   await expect.poll(() => page.evaluate(() => (window as any).__stoppedTracks)).toBe(1);
 });
@@ -923,7 +925,7 @@ test('a clean inventory renders without seeded items or batches', async ({ page 
   });
   await open(page, 'inventory');
   await expect(page.getByText('No matching items')).toBeVisible();
-  await page.locator('nav').getByRole('link', { name: 'Print QR labels', exact: true }).click();
+  await page.locator('nav').getByRole('link', { name: 'Print labels', exact: true }).click();
   await expect(page.getByText('No label batches yet')).toBeVisible();
 });
 
@@ -940,7 +942,7 @@ test('controls and dropdowns follow a dark Dolibarr host without changing its th
   });
   await open(page, 'inventory');
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(32, 33, 36)');
-  await expect(page.locator('qrr-root')).toHaveCSS('color', 'rgb(238, 238, 238)');
+  await expect(page.locator('owt-root')).toHaveCSS('color', 'rgb(238, 238, 238)');
   await expect(page.getByRole('textbox', { name: 'Search inventory' })).toHaveCSS(
     'color',
     'rgb(238, 238, 238)'
@@ -965,7 +967,7 @@ test('translation entities render as text characters while decoded markup stays 
     'Tools & parts… — "quoted" \'single\' ' +
     '<img src="entity-regression" onerror="window.__entityExecuted=true">';
   await expect(page.getByRole('heading', { name: expected, exact: true })).toBeVisible();
-  await expect(page.locator('qrr-root img[src="entity-regression"]')).toHaveCount(0);
+  await expect(page.locator('owt-root img[src="entity-regression"]')).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).__entityExecuted)).toBeUndefined();
 });
 
@@ -977,7 +979,7 @@ test('navigation decodes repeated HTML entities from the translation response', 
     const bootstrap = await response.json();
     bootstrap.translations.Inventory =
       'Inventory &amp; tools &amp;hellip; &amp;mdash; &quot;quoted&quot;';
-    bootstrap.translations['Scan QR'] =
+    bootstrap.translations['Scan codes'] =
       '&amp;lt;img src=&amp;quot;entity-regression&amp;quot; ' +
       'onerror=&amp;quot;window.__entityExecuted=true&amp;quot;&amp;gt;';
     await route.fulfill({ response, json: bootstrap });
@@ -1027,22 +1029,22 @@ test('scan selection and camera pages fit mobile portrait without page scrolling
       await open(page, route);
       if (route.includes('camera')) {
         await expect(page.getByRole('button', { name: 'Stop camera', exact: true })).toBeVisible();
-        await expect(page.getByRole('textbox', { name: 'QR identifiers' })).toHaveCount(0);
-        const content = (await page.locator('qrr-root .content').boundingBox())!;
+        await expect(page.getByRole('textbox', { name: 'Item identifiers' })).toHaveCount(0);
+        const content = (await page.locator('owt-root .content').boundingBox())!;
         const capture = (await page.locator('.scanner-page').boundingBox())!;
         expect(Math.abs(capture.height - content.height), route).toBeLessThanOrEqual(1);
         const frame = (await page.locator('.viewfinder').boundingBox())!;
         expect(Math.abs(frame.width - frame.height), route).toBeLessThanOrEqual(1);
       }
       if (route.includes('manual')) {
-        const code = route.startsWith('register') ? registrationCode : process.env['QRR_E2E_ITEM']!;
-        await page.getByRole('textbox', { name: 'QR identifiers' }).fill(code);
+        const code = route.startsWith('register') ? registrationCode : process.env['OWT_E2E_ITEM']!;
+        await page.getByRole('textbox', { name: 'Item identifiers' }).fill(code);
         await page.getByRole('button', { name: 'Add codes', exact: true }).click();
         await expect(
           page.getByRole('button', { name: 'Remove ' + code, exact: true })
         ).toBeVisible();
       }
-      const bounds = await page.locator('qrr-root .content').evaluate(el => ({
+      const bounds = await page.locator('owt-root .content').evaluate(el => ({
         width: el.clientWidth,
         scrollWidth: el.scrollWidth,
         height: el.clientHeight,
@@ -1085,7 +1087,7 @@ test('warehouse links configure internal locations and edit assignments without 
   const response = await page.request.post('api.php?action=create', {
     form: {
       token: bootstrap.token,
-      qrr_token: bootstrap.csrf,
+      owt_token: bootstrap.csrf,
       payload: JSON.stringify({
         type: 'generic',
         label: 'Internal location browser item',
@@ -1141,7 +1143,7 @@ test('unassigned deletion uses the native gateway and rejects assigned QR codes'
   const rejected = await page.request.post('api.php?action=delete-unassigned', {
     form: {
       token: bootstrap.token,
-      qrr_token: bootstrap.csrf,
+      owt_token: bootstrap.csrf,
       payload: JSON.stringify({ code: assigned.code }),
     },
   });

@@ -6,9 +6,9 @@
 
 1. Open the product card in Dolibarr and edit its additional attributes.
 2. Set **QR serial number prefix**, for example `DRILL-`, and save the product.
-3. Create or register a new **Tracked Individual** in QR Router. Its serial uses that prefix followed by 24 random hexadecimal characters. Single creation, registration and bulk creation use the same setting.
+3. Create or register a new **Tracked Individual** in Open Warehouse Tracker. Its serial uses that prefix followed by 24 random hexadecimal characters. Single creation, registration and bulk creation use the same setting.
 
-Leave the prefix blank to use `SN-`. Include any desired separator in the prefix. Prefixes allow up to 76 UTF-8 bytes, without whitespace or markup; the complete serial stays within 100 bytes. Existing serials and container lot names keep their identities. If the field is missing after updating, disable and re-enable QR Router once to add it; existing prefix values are preserved.
+Leave the prefix blank to use `SN-`. Include any desired separator in the prefix. Prefixes allow up to 76 UTF-8 bytes, without whitespace or markup; the complete serial stays within 100 bytes. Existing serials and container lot names keep their identities. If the field is missing after updating, disable and re-enable Open Warehouse Tracker once to add it; existing prefix values are preserved.
 
 ## Find an item
 
@@ -27,11 +27,11 @@ Use **Print label** for an A4 label or **DYMO label sizes** for a roll label. Av
 
 ## Create one assigned item
 
-1. Open **Inventory > Create QR item**.
+1. Open **Inventory > Create warehouse item**.
 2. Select the **QR type**.
 3. Enter the item name or box name. For **Tracked Generic**, leave the name blank to use the product short name, or enter an override.
 4. Search for the **Dolibarr product** and select the exact result.
-5. Choose the **Warehouse** and available QR Router location fields.
+5. Choose the **Warehouse** and available Open Warehouse Tracker location fields.
 6. Complete the fields for your type:
    - **Tracked Individual:** a random Dolibarr serial is generated automatically, independently of the item name and QR ID. To link a serial already in Dolibarr, use **Register items**.
    - **Counted Container:** enter a unique **Box name / Dolibarr lot** and its **Dolibarr lot quantity**.
@@ -47,6 +47,6 @@ For labels you have already printed, use [Register items](scanner.md#register-it
 2. Select **Edit metadata**, change the editable fields, then **Save**.
 3. To restore a generic item's default product name, clear its name override.
 
-Linked product, warehouse and native identity fields may be locked. Use the move workflow to relocate stock. Make native serial/lot identity changes in Dolibarr and refresh QR Router.
+Linked product, warehouse and native identity fields may be locked. Use the move workflow to relocate stock. Make native serial/lot identity changes in Dolibarr and refresh Open Warehouse Tracker.
 
 To start another item with similar details, select **Copy item**, review the copied fields and save. A copied item receives a separate QR ID; an individual serial is generated again using the product's current prefix.

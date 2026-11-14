@@ -15,7 +15,7 @@ h2 {
 }
 section {
   display: grid;
-  gap: var(--qrr-control-gap, 16px);
+  gap: var(--owt-control-gap, 16px);
   min-width: 0;
   overflow: auto;
   padding-top: 8px;
@@ -42,7 +42,7 @@ footer > div {
   border: 0;
 }
 :host-context(.scanner-page) h2 {
-  color: var(--qrr-text, inherit);
+  color: var(--owt-text, inherit);
   border: 0;
   padding: 0 0 4px;
   font-size: 1.1em;

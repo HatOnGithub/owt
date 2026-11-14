@@ -7,7 +7,7 @@
           ? 'Register items'
           : bulkAssigned
             ? 'Create assigned QR batch'
-            : 'Create QR item'
+            : 'Create warehouse item'
       ) | t
     }}
   </h1>
@@ -38,7 +38,7 @@
         }}
       </p>
     }
-    <qrr-card [title]="'Item registration' | t">
+    <owt-card [title]="'Item registration' | t">
       <form (ngSubmit)="save()" #form="ngForm">
         <fieldset [disabled]="busy()">
           <mat-form-field appearance="outline">
@@ -93,14 +93,14 @@
                 </mat-form-field>
               }
               <div>
-                <qrr-lookup
+                <owt-lookup
                   [label]="'Dolibarr product'"
                   (selected)="productSelected($event)"
                   [disabled]="editing && !!original?.product_id"
                 />
                 <p class="muted">
                   {{ 'Selected product' | t }}:
-                  <qrr-native-link
+                  <owt-native-link
                     type="product"
                     [id]="model.product_id"
                     [label]="
@@ -144,7 +144,7 @@
                 </mat-form-field>
               }
             </div>
-            <qrr-location-fields
+            <owt-location-fields
               [warehouse]="model.warehouse_id"
               [initial]="initialLevels"
               [initialLabel]="initialBin"
@@ -240,7 +240,7 @@
             @if (model.type === 'tracked' || model.type === 'box') {
               <p class="muted">
                 {{
-                  'Choose a Dolibarr product with lot/serial tracking enabled. The serial or box name is separate from the QR lookup ID. Locations are saved in QR Router.'
+                  'Choose a Dolibarr product with lot/serial tracking enabled. The serial or box name is separate from the QR lookup ID. Locations are saved in Open Warehouse Tracker.'
                     | t
                 }}
               </p>
@@ -290,6 +290,6 @@
           </div>
         </fieldset>
       </form>
-    </qrr-card>
+    </owt-card>
   }
 </div>

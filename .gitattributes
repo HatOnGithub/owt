@@ -1,0 +1,2 @@
+# Translation fragments intentionally retain trailing spaces; their text also determines keys.
+dolibarr/owt/langs/**/*.lang whitespace=-blank-at-eol

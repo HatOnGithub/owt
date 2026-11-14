@@ -1,5 +1,5 @@
 <section class="scanner-page scan-home" [class.scan-capture]="inputMode()">
-  <h1>{{ 'Scan QR' | t }}</h1>
+  <h1>{{ 'Scan codes' | t }}</h1>
   <p class="subtitle">{{ 'Scan or enter an inventory identifier to open its details.' | t }}</p>
   @if (!inputMode()) {
     <nav class="scanner-operations" [attr.aria-label]="'Warehouse operations' | t">
@@ -75,11 +75,11 @@
       {{ 'Warehouse operations' | t }}
     </a>
     @if (!reviewing()) {
-      <qrr-card
+      <owt-card
         class="capture-card"
         [title]="(inputMode() === 'manual' ? 'Manual / USB entry' : 'QR camera') | t"
       >
-        <qrr-capture
+        <owt-capture
           [initial]="codes()"
           [multiple]="true"
           content="any"
@@ -96,7 +96,7 @@
           <fa-icon [icon]="icons.next" aria-hidden="true" />
           {{ 'Review selected items' | t }}
         </a>
-      </qrr-card>
+      </owt-card>
     }
     @if (reviewing() && codes().length) {
       <a
@@ -126,14 +126,14 @@
           <fa-icon [icon]="icons.next" aria-hidden="true" />
         </button>
       </div>
-      <qrr-card [title]="'Scanned product' | t">
+      <owt-card [title]="'Scanned product' | t">
         @for (code of codes().slice(resultIndex(), resultIndex() + 1); track code) {
           <div class="scanned-product">
             @if (api.context()!.state.items[code]; as item) {
               <div class="product-identity">
                 <strong>{{ api.itemName(item) }}</strong>
                 <span>
-                  <qrr-native-link
+                  <owt-native-link
                     type="product"
                     [id]="item.product_id"
                     [label]="api.context()!.products[item.product_id]?.ref || code"
@@ -145,7 +145,7 @@
                 <div>
                   <dt>{{ 'Dolibarr lot/serial' | t }}</dt>
                   <dd>
-                    <qrr-native-link
+                    <owt-native-link
                       type="lot"
                       [id]="item.product_lot_id"
                       [label]="item.native_batch || '—'"
@@ -155,7 +155,7 @@
                 <div>
                   <dt>{{ 'Location' | t }}</dt>
                   <dd>
-                    <qrr-native-link
+                    <owt-native-link
                       type="warehouse"
                       [id]="item.warehouse_id"
                       [label]="api.context()!.warehouses[item.warehouse_id]?.ref || '—'"
@@ -177,7 +177,7 @@
             }
           </div>
         }
-      </qrr-card>
+      </owt-card>
     }
   }
 </section>

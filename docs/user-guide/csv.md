@@ -8,7 +8,7 @@
 2. Select **Export current view as CSV** to download exactly those rows.
 3. For a complete inventory export, open **CSV import and export** and select **Export all accessible inventory**. This includes unassigned and consumed entries you may view.
 
-Exports use UTF-8 with a BOM for spreadsheet compatibility. Commas, quotes and multiline details are quoted. Values that could be interpreted as spreadsheet formulas receive a protective apostrophe; QR Router removes that protection when reading its CSV again. Exported fields respect your Dolibarr permissions. Keep database backups for audit history, loans, settings and pending-operation recovery.
+Exports use UTF-8 with a BOM for spreadsheet compatibility. Commas, quotes and multiline details are quoted. Values that could be interpreted as spreadsheet formulas receive a protective apostrophe; Open Warehouse Tracker removes that protection when reading its CSV again. Exported fields respect your Dolibarr permissions. Keep database backups for audit history, loans, settings and pending-operation recovery.
 
 ## Create or register items
 
@@ -36,22 +36,22 @@ Omitted columns preserve existing values. Empty label/details cells clear those 
 
 ## Columns
 
-| Column | Meaning |
-| --- | --- |
-| `code` | Existing QR ID for update/registration; blank creates a new ID. |
-| `type` | Required header; values are `generic`, `tracked`, `box` or `unassigned`. An empty cell preserves an existing entry's type. |
-| `label` | QR name override, individual name or container lot name. |
-| `product_ref`, `product_id` | Dolibarr product reference; optional ID disambiguates shared references. For a new product absent from the current inventory, provide its reference. |
-| `product_name` | Informational product display name; does not change the product. |
-| `warehouse_ref`, `warehouse_id` | Accessible warehouse reference, optionally disambiguated by ID. |
-| `quantity` | Known container quantity; one for new individuals/generics. Existing quantities are read-only. |
-| `serial` | Existing native serial to link, or blank for automatic generation of new individuals. Existing identities are read-only. |
-| `lot` | Native identity on export; if supplied for an individual it must match `serial`, or for a container it must match `label`. |
-| `location` | Location text for a warehouse with one level. |
-| `location_values` | JSON object for structured locations, using existing level IDs and option IDs. Preserve the exported keys when editing; for example `{"1":101,"2":"3"}`. |
-| `status` | Informational, read-only stock status. |
-| `details` | Individual-item notes. |
-| `import_status`, `import_message` | Informational results; ignored when reading a results file again. |
+| Column                            | Meaning                                                                                                                                                  |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `code`                            | Existing QR ID for update/registration; blank creates a new ID.                                                                                          |
+| `type`                            | Required header; values are `generic`, `tracked`, `box` or `unassigned`. An empty cell preserves an existing entry's type.                               |
+| `label`                           | QR name override, individual name or container lot name.                                                                                                 |
+| `product_ref`, `product_id`       | Dolibarr product reference; optional ID disambiguates shared references. For a new product absent from the current inventory, provide its reference.     |
+| `product_name`                    | Informational product display name; does not change the product.                                                                                         |
+| `warehouse_ref`, `warehouse_id`   | Accessible warehouse reference, optionally disambiguated by ID.                                                                                          |
+| `quantity`                        | Known container quantity; one for new individuals/generics. Existing quantities are read-only.                                                           |
+| `serial`                          | Existing native serial to link, or blank for automatic generation of new individuals. Existing identities are read-only.                                 |
+| `lot`                             | Native identity on export; if supplied for an individual it must match `serial`, or for a container it must match `label`.                               |
+| `location`                        | Location text for a warehouse with one level.                                                                                                            |
+| `location_values`                 | JSON object for structured locations, using existing level IDs and option IDs. Preserve the exported keys when editing; for example `{"1":101,"2":"3"}`. |
+| `status`                          | Informational, read-only stock status.                                                                                                                   |
+| `details`                         | Individual-item notes.                                                                                                                                   |
+| `import_status`, `import_message` | Informational results; ignored when reading a results file again.                                                                                        |
 
 Product and warehouse references must match the accessible Dolibarr records. A structured location's option IDs belong to its warehouse configuration; adjust them before importing into another warehouse or entity.
 

@@ -8,7 +8,7 @@ import { TranslatePipe } from '../translate.pipe';
  * Optional/empty details support unavailable or older metadata without exposing raw recovery state.
  */
 @Component({
-  selector: 'qrr-pending-details',
+  selector: 'owt-pending-details',
   standalone: true,
   imports: [DatePipe, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,

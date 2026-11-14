@@ -12,18 +12,18 @@ parser.add_argument('--skip-build', action='store_true', help='Deploy bundles al
 args = parser.parse_args()
 if not args.skip_build:
     subprocess.run(['npm.cmd' if os.name == 'nt' else 'npm', 'run', 'build'], cwd=frontend, check=True)
-source = frontend / 'dist/qrrouter/browser'
+source = frontend / 'dist/owt/browser'
 if not (source / 'index.html').is_file():
     raise SystemExit('Angular output is missing. Run npm run build first.')
 # This is generated deployment output, not service inventory. Clear obsolete top-level bundle
 # names before copying the new index/chunks so packaging cannot retain an old entry point.
-target = root / 'dolibarr/qrrouter/spa'
+target = root / 'dolibarr/owt/spa'
 target.mkdir(parents=True, exist_ok=True)
 for old in target.iterdir():
     if old.is_file() and old.suffix in {'.js', '.css', '.html', '.txt', '.json', '.map'}:
         old.unlink()
 shutil.copytree(source, target, dirs_exist_ok=True)
-licenses = frontend / 'dist/qrrouter/3rdpartylicenses.txt'
+licenses = frontend / 'dist/owt/3rdpartylicenses.txt'
 if licenses.is_file():
     shutil.copyfile(licenses, target / licenses.name)
-print('Deployed Angular production bundles into dolibarr/qrrouter/spa')
+print('Deployed Angular production bundles into dolibarr/owt/spa')

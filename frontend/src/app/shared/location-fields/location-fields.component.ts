@@ -12,7 +12,7 @@ import { Level } from '@core/models/inventory';
 import { InventoryService } from '@services/inventory.service';
 
 @Component({
-  selector: 'qrr-location-fields',
+  selector: 'owt-location-fields',
   standalone: true,
   imports: [SharedModule],
   changeDetection: ChangeDetectionStrategy.Eager,

@@ -4,6 +4,8 @@ This folder documents the implementation in this checkout, including permissions
 
 ## Reading order
 
+See [project identity](project-identity.md) for canonical OWT names, module paths, settings, headers and package names.
+
 1. [Architecture and request flow](architecture.md): responsibilities, authority and trust boundaries.
 2. [State and persistence](state-and-persistence.md): item types, durable intents, SQLite records and migrations.
 3. [Permissions and public projections](permissions.md): independent grants, native visibility and information filtering.

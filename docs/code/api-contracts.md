@@ -2,7 +2,7 @@
 
 ## Browser gateway
 
-The public application uses `dolibarr/qrrouter/api.php` under the current Dolibarr session. The endpoint applies base inventory authorization before dispatch. Reads use `GET ?resource=...`; commands use `POST ?action=...`. Normal reads return the resource directly. Successful commands return `{ "result": ... }`; errors return `{ "message": ... }` with a failure status.
+The public application uses `dolibarr/owt/api.php` under the current Dolibarr session. The endpoint applies base inventory authorization before dispatch. Reads use `GET ?resource=...`; commands use `POST ?action=...`. Normal reads return the resource directly. Successful commands return `{ "result": ... }`; errors return `{ "message": ... }` with a failure status.
 
 The Angular `InventoryService` derives the gateway path from the host's `data-api` attribute, allowing installation under a custom Dolibarr path. Do not hardcode a service URL or service key into a component.
 
@@ -24,7 +24,7 @@ The Angular `InventoryService` derives the gateway path from the host's `data-ap
 | `pick-lists`                         | Saved visible sales-order pick-list progress                                 | Native sales-order access                                                                     |
 | `print-translations`                 | Localized strings for print pages                                            | Supported language selection                                                                  |
 
-These are application contracts, not generic database access. Inspect `qrr_api_get()` for resource-specific filters and response fields before extending a client.
+These are application contracts, not generic database access. Inspect `owt_api_get()` for resource-specific filters and response fields before extending a client.
 
 ### Commands
 
@@ -39,7 +39,7 @@ These are application contracts, not generic database access. Inspect `qrr_api_g
 | `pick-list-save`, `pick-list-complete`                               | Load trusted order requirements or record manual completion with reason                                                             |
 | `mapping`, `label-settings`, `location-configure`, `location-import` | Apply configuration/administrative checks and prepared configuration data                                                           |
 
-Commands carry a form body containing `token` (Dolibarr's native token), `qrr_token` (the module's session token) and `payload` (JSON). `qrr_check_post()` validates the module token after native bootstrap checks. The gateway rejects payloads larger than 262144 bytes. It rebuilds command-specific data rather than forwarding the decoded object wholesale.
+Commands carry a form body containing `token` (Dolibarr's native token), `owt_token` (the module's session token) and `payload` (JSON). `owt_check_post()` validates the module token after native bootstrap checks. The gateway rejects payloads larger than 262144 bytes. It rebuilds command-specific data rather than forwarding the decoded object wholesale.
 
 For an authorized browser client with a loaded bootstrap, a read can look like:
 
@@ -69,15 +69,15 @@ The ASP.NET Core controller exposes `GET /api/inventory` and `POST /api/inventor
 
 | Header                       | Meaning                                                          |
 | ---------------------------- | ---------------------------------------------------------------- |
-| `X-Qrr-Entity`, `X-Qrr-User` | Positive entity/user IDs                                         |
-| `X-Qrr-Use`, `X-Qrr-Read`    | Base QR module/inventory access                                  |
-| `X-Qrr-Permissions`          | Comma-separated independent action grants                        |
-| `X-Qrr-Stock`                | Native stock-write capability                                    |
-| `X-Qrr-History`              | Authorized operation-history access                              |
-| `X-Qrr-Admin`                | Native administrator context after PHP session checks            |
-| `X-Qrr-Manage`               | Configuration/legacy context; not a substitute for action grants |
+| `X-Owt-Entity`, `X-Owt-User` | Positive entity/user IDs                                         |
+| `X-Owt-Use`, `X-Owt-Read`    | Base QR module/inventory access                                  |
+| `X-Owt-Permissions`          | Comma-separated independent action grants                        |
+| `X-Owt-Stock`                | Native stock-write capability                                    |
+| `X-Owt-History`              | Authorized operation-history access                              |
+| `X-Owt-Admin`                | Native administrator context after PHP session checks            |
+| `X-Owt-Manage`               | Configuration/legacy context; not a substitute for action grants |
 
-Only the server-side adapter should send these headers. `qrr_service()` constructs them from `$user` and `$conf`, ignoring browser-supplied identity headers. Keep the private service on the trusted deployment network; it does not independently query Dolibarr permissions.
+Only the server-side adapter should send these headers. `owt_service()` constructs them from `$user` and `$conf`, ignoring browser-supplied identity headers. Keep the private service on the trusted deployment network; it does not independently query Dolibarr permissions.
 
 ### Internal command families
 

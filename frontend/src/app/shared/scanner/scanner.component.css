@@ -19,7 +19,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: color-mix(in srgb, var(--qrr-text, currentColor) 6%, transparent);
+  background: color-mix(in srgb, var(--owt-text, currentColor) 6%, transparent);
   border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent);
   font-size: 0.9em;
 }
@@ -33,7 +33,7 @@
   opacity: 0.5;
 }
 .camera-state.live .camera-state-icon {
-  color: var(--qrr-success-color, currentColor);
+  color: var(--owt-success-color, currentColor);
   opacity: 1;
 }
 .scan-count {
@@ -55,7 +55,7 @@
   position: relative;
   min-height: 72px;
   container-type: size;
-  background: var(--qrr-surface, Canvas);
+  background: var(--owt-surface, Canvas);
   overflow: hidden;
 }
 .camera-preview[hidden],
@@ -81,8 +81,8 @@ video {
   gap: 12px;
   padding: 16px;
   text-align: center;
-  color: var(--qrr-text, currentColor);
-  background: color-mix(in srgb, var(--qrr-text, currentColor) 6%, var(--qrr-surface, Canvas));
+  color: var(--owt-text, currentColor);
+  background: color-mix(in srgb, var(--owt-text, currentColor) 6%, var(--owt-surface, Canvas));
 }
 .camera-placeholder fa-icon {
   font-size: 2em;
@@ -135,7 +135,7 @@ video {
 h3 {
   font-size: 1.05em;
   margin: 0 0 8px;
-  color: var(--qrr-text, inherit);
+  color: var(--owt-text, inherit);
 }
 .entry-hint {
   margin: 0 0 18px;
@@ -152,10 +152,10 @@ textarea {
   height: auto;
   padding-block: 12px;
   margin-top: 14px;
-  background: var(--qrr-action-background, ButtonFace);
-  color: var(--qrr-action-text, ButtonText);
-  --mat-button-filled-container-color: var(--qrr-action-bg, ButtonFace);
-  --mat-button-filled-label-text-color: var(--qrr-action-text, ButtonText);
+  background: var(--owt-action-background, ButtonFace);
+  color: var(--owt-action-text, ButtonText);
+  --mat-button-filled-container-color: var(--owt-action-bg, ButtonFace);
+  --mat-button-filled-label-text-color: var(--owt-action-text, ButtonText);
 }
 .camera-actions {
   display: flex;

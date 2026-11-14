@@ -27,13 +27,13 @@ Open `http://127.0.0.1:4200`. The local mock includes sample inventory and a too
 
 Use **Camera mock** to select an inventory label or enter QR content, then choose **Show QR code**. A virtual camera feeds the real decoder without requiring a physical device. **Clear frame**, rotation, size and failure modes help exercise capture behavior. Real camera access is an explicit option.
 
-Use `npm run start:mock -- --port 4300` for another frontend port. Set `QRR_MOCK_PORT` if the default mock API port 8089 is occupied. Ctrl+C stops both servers. Restart after changing mock API code or fixtures. Mock tools are excluded from production builds.
+Use `npm run start:mock -- --port 4300` for another frontend port. Set `OWT_MOCK_PORT` if the default mock API port 8089 is occupied. Ctrl+C stops both servers. Restart after changing mock API code or fixtures. Mock tools are excluded from production builds.
 
 ## Persistent service configuration
 
 The service persists each entity in `state.sqlite3` through Entity Framework Core with SQLite transactions. Item/settings records and append-only audit history are stored separately; warehouse queries use an index. Full state exports remain schema-2 JSON. The private inventory endpoint omits audit history by default; `?includeHistory=true` includes it for exports. Existing `state.json` files are imported once and retained unchanged.
 
-Real service runs require an absolute `AppSettings.DataDirectory` outside the service application's directory. Set it and the API key through environment variables, or point `QRR_CONFIG_FILE` to an external JSON settings file. A configured file must exist. See the [update guide](updating.md) for storage layout and migration from earlier application-local data.
+Real service runs require an absolute `AppSettings.DataDirectory` outside the service application's directory. Set it and the API key through environment variables, or point `OWT_CONFIG_FILE` to an external JSON settings file. A configured file must exist. See the [update guide](updating.md) for storage layout and migration from earlier application-local data.
 
 The frontend mock remains temporary, in-memory sample data for development; it does not replace persistent service storage.
 
@@ -44,9 +44,9 @@ The [code documentation](code/README.md) explains the implementation contracts i
 - `frontend/src/app/features`: interface pages and workflow interaction. Keep styles with the component that owns them.
 - `frontend/src/app/shared`: reusable controls, capture and location input.
 - `frontend/src/app/core`: browser models and services.
-- `dolibarr/qrrouter/api.php`: authenticated gateway routing and orchestration.
-- `dolibarr/qrrouter/lib`: trusted request preparation, native Dolibarr integration, optional location import, authorization, metadata and printing adapters.
-- `src/QrRouterApi`: QR identities, inventory state, business validation, planning and durable operation handling.
+- `dolibarr/owt/api.php`: authenticated gateway routing and orchestration.
+- `dolibarr/owt/lib`: trusted request preparation, native Dolibarr integration, optional location import, authorization, metadata and printing adapters.
+- `src/OwtApi`: QR identities, inventory state, business validation, planning and durable operation handling.
 - `frontend/dev` and `tests`: development mocks and integration fixtures.
 
 Keep stock and native identity authority in the server integration. Browser requests do not supply trusted movement evidence or service keys. Product search metadata is a read-only projection that must respect native visibility and permissions.
@@ -60,12 +60,12 @@ python tools/build-frontend.py
 python tools/package.py
 ```
 
-The first command builds Angular and copies its production output into `dolibarr/qrrouter/spa`. Packaging validates the project versions and creates `artifacts/module_qrrouter-v0.3.10.zip`. Rebuild before packaging frontend changes; a service build alone does not deploy PHP or frontend changes.
+The first command builds Angular and copies its production output into `dolibarr/owt/spa`. Packaging validates the project versions and creates `artifacts/module_owt-v0.4.0.zip`. Rebuild before packaging frontend changes; a service build alone does not deploy PHP or frontend changes.
 
 Build the service separately:
 
 ```sh
-dotnet build QrRouter.sln -c Release
+dotnet build OpenWarehouseTracker.sln -c Release
 ```
 
 To export a built module directory using Docker:
@@ -74,7 +74,7 @@ To export a built module directory using Docker:
 docker buildx build --target dolibarr-module --output type=local,dest=artifacts/docker-module .
 ```
 
-The result is `artifacts/docker-module/qrrouter`. For installation from published assets, see [Installation](installation.md).
+The result is `artifacts/docker-module/owt`. For installation from published assets, see [Installation](installation.md).
 
 ## Validate changes
 
@@ -83,7 +83,7 @@ The gateway tests use pinned official barcode renderers. Prepare their source ca
 ### Service and gateway
 
 ```sh
-dotnet run --project tests/QrRouterApi.Tests -c Release
+dotnet run --project tests/OwtApi.Tests -c Release
 python tests/http_smoke.py
 python tests/angular_integration.py --php /path/to/php
 python tests/dolibarr_compatibility.py --download --php /path/to/php
@@ -95,13 +95,13 @@ The Dolibarr compatibility suite downloads official sources for 21.0.2, 22.0.5, 
 
 ### Database migrations
 
-The EF model lives in `src/QrRouterApi/Repositories/InventoryDbContext.cs`; versioned migrations and the model snapshot live in `src/QrRouterApi/Migrations`. Change the model, then scaffold a migration from the repository root:
+The EF model lives in `src/OwtApi/Repositories/InventoryDbContext.cs`; versioned migrations and the model snapshot live in `src/OwtApi/Migrations`. Change the model, then scaffold a migration from the repository root:
 
 ```sh
 dotnet tool restore
-dotnet tool run dotnet-ef migrations add DescribeTheChange --project src/QrRouterApi
-dotnet tool run dotnet-ef migrations has-pending-model-changes --project src/QrRouterApi
-dotnet run --project tests/QrRouterApi.Tests -c Release
+dotnet tool run dotnet-ef migrations add DescribeTheChange --project src/OwtApi
+dotnet tool run dotnet-ef migrations has-pending-model-changes --project src/OwtApi
+dotnet run --project tests/OwtApi.Tests -c Release
 ```
 
 Review generated `Up` and `Down` methods and add a data-preservation test for any data conversion. Commit the migration, designer and snapshot together. The design-time factory uses an in-memory connection so scaffolding cannot touch live inventory. `database update` requires an explicit `--connection` to affect a persistent database; use a test copy for manual verification.

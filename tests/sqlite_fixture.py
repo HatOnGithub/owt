@@ -3,7 +3,7 @@ import json
 import sqlite3
 from contextlib import closing
 
-MAPS = ('items', 'batches', 'personal_warehouses', 'location_label_settings', 'location_levels')
+MAPS = ('items', 'batches', 'personal_warehouses', 'location_label_settings', 'location_levels', 'physical_bins', 'pick_lists')
 
 
 def read_state(path):

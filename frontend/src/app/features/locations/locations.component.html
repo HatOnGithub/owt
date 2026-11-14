@@ -1,6 +1,6 @@
 <h1>{{ 'Bins and locations' | t }}</h1>
 <p class="subtitle">
-  {{ 'Manage QR Router locations, view inventory and compare native stock.' | t }}
+  {{ 'Manage Open Warehouse Tracker locations, view inventory and compare native stock.' | t }}
 </p>
 @if (error()) {
   <p class="alert" role="alert">{{ error() }}</p>
@@ -18,7 +18,7 @@
       <small>{{ 'Updated' | t }}: {{ updated() | date: 'short' }}</small>
     }
   </p>
-  <qrr-card [title]="'Location inventory' | t">
+  <owt-card [title]="'Location inventory' | t">
     <div class="grid">
       <mat-form-field appearance="outline">
         <mat-label>{{ 'Warehouse' | t }}</mat-label>
@@ -101,14 +101,14 @@
                 }
               </td>
               <td>
-                <qrr-native-link
+                <owt-native-link
                   type="product"
                   [id]="item.product_id"
                   [label]="item._product.ref"
                 />
               </td>
               <td>
-                <qrr-native-link type="lot" [id]="item.product_lot_id" [label]="item.serial" />
+                <owt-native-link type="lot" [id]="item.product_lot_id" [label]="item.serial" />
               </td>
             </tr>
           }
@@ -127,7 +127,7 @@
           @for (row of data.summary.totals; track row.product_id) {
             <tr>
               <td>
-                <qrr-native-link type="product" [id]="row.product_id" [label]="row.product.ref" />
+                <owt-native-link type="product" [id]="row.product_id" [label]="row.product.ref" />
               </td>
               <td>
                 {{ row.generic }}
@@ -207,7 +207,7 @@
           @for (row of data.qr | keyvalue; track row.key) {
             <tr>
               <td>
-                <qrr-native-link
+                <owt-native-link
                   type="product"
                   [id]="row.key"
                   [label]="api.context()!.products[row.key]?.ref || row.key"
@@ -221,31 +221,31 @@
         </tbody>
       </table>
     }
-  </qrr-card>
+  </owt-card>
   @if (warehouse && api.context()!.permissions.manage) {
-    <qrr-card [title]="'Location levels' | t">
-      <qrr-location-levels-editor
+    <owt-card [title]="'Location levels' | t">
+      <owt-location-levels-editor
         [levels]="levels()"
         [disabled]="busy()"
         (saved)="saveLevels($event)"
       />
-    </qrr-card>
+    </owt-card>
   }
   @if (api.context()!.permissions.admin && api.context()!.location_import_available) {
-    <qrr-card [title]="'Import existing locations' | t">
+    <owt-card [title]="'Import existing locations' | t">
       <p>
         {{
-          'Import Binloc definitions and assignments once, before changing locations in QR Router. Future changes stay in QR Router.'
+          'Import Binloc definitions and assignments once, before changing locations in Open Warehouse Tracker. Future changes stay in Open Warehouse Tracker.'
             | t
         }}
       </p>
       <button mat-stroked-button [disabled]="busy()" (click)="importLocations()">
         {{ 'Import Binloc locations' | t }}
       </button>
-    </qrr-card>
+    </owt-card>
   }
   @if (levels().length && api.context()!.permissions.manage) {
-    <qrr-card [title]="'Location label format' | t">
+    <owt-card [title]="'Location label format' | t">
       <p>{{ 'Display only. Full inventory location identity remains unchanged.' | t }}</p>
       @for (level of levels(); track level.id) {
         <div class="grid">
@@ -261,6 +261,6 @@
         <fa-icon [icon]="icons.save" aria-hidden="true" />
         {{ 'Save format' | t }}
       </button>
-    </qrr-card>
+    </owt-card>
   }
 </div>

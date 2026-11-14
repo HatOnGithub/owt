@@ -1,0 +1,603 @@
+# Open Warehouse Tracker UI translations; generated keys are derived from the source English phrase.
+OWTUI_d3c7366db5a3=Les étiquettes attribuées affichent les détails du produit. Les étiquettes non attribuées affichent uniquement le code QR et son identifiant.
+Module503871Name=Open Warehouse Tracker (OWT)
+Module503871Desc=Extension native de gestion des entrepôts Dolibarr : codes-barres, stocks, emplacements, préparation et prêts
+OWTSerialPrefix=Préfixe des numéros de série QR
+OWTSerialPrefixHelp=Préfixe des nouveaux numéros de série individuels Open Warehouse Tracker, suivi de 24 caractères hexadécimaux aléatoires. Vide utilise SN-. Maximum 76 octets UTF-8 ; sans espaces ni balisage. Les numéros existants et les noms des contenants restent inchangés.
+Owt=Open Warehouse Tracker (OWT)
+# Module connection settings
+OWTUI_3f8fde308d07=Configuration de Open Warehouse Tracker
+OWTUI_036d1f48cbe4=Connexion au service métier
+OWTUI_077225837f3d=URL du service
+OWTUI_2d01608ddd59=Clé API du service
+OWTUI_8d6aed881594=Utilisez http://127.0.0.1:5087 pour PHP sur le même hôte, ou http://owt-api:8080 pour des conteneurs sur un réseau partagé.
+OWTUI_25bca30448a4=Une clé API est enregistrée. Laissez ce champ vide pour la conserver.
+OWTUI_b24ae0f4bd5e=Saisissez la même clé API que celle configurée sur le service métier.
+OWTUI_f133b2924e9e=Paramètres enregistrés.
+OWTUI_c8b0991b4f02=Impossible d'enregistrer les paramètres de connexion.
+OWTUI_8fae2dcb2134=Saisissez une URL de service HTTP ou HTTPS valide sans identifiants, paramètres de requête ni fragment.
+OWTUI_74bc0066fef5=La clé API du service doit contenir de 32 à 512 caractères imprimables sans espaces.
+# 1. Get QR labels
+OWTUI_5c569a935e50=1. Obtenir des étiquettes QR
+# 2. What do you want to register?
+OWTUI_d1b9fcc463a3=2. Que souhaitez-vous enregistrer ?
+# A QR-labelled container holding a known quantity of a single Dolibarr SKU.
+OWTUI_a1548d8b8272=Un contenant identifié par QR avec une quantité connue d’un produit Dolibarr.
+# Add
+OWTUI_61cc55aa0453=Ajouter
+# All
+OWTUI_6a72085653e4=Tous
+# All Open Warehouse Tracker actions
+OWTUI_775d712998f2=Toutes les actions Open Warehouse Tracker
+# Already deducted by Dolibarr (QR registry only)
+OWTUI_f1615f45c157=Déjà déduit par Dolibarr (registre QR uniquement)
+# Back
+OWTUI_b52b36b7269f=Retour
+# Bin
+OWTUI_4c5ec7b06df2=Emplacement
+# Bin content printouts
+OWTUI_6cccc3c0a46b=Imprimer le contenu des emplacements
+# Bin printouts
+OWTUI_1c7b15d02519=Impressions des emplacements
+# Binloc location
+OWTUI_2ccae8819b0a=Emplacement Binloc
+# Browse existing unregistered QR batches
+OWTUI_5d38d6d2e834=Parcourir les lots QR non enregistrés
+# Bulk create / copy
+OWTUI_3cc8ba40f339=Créer en lot / copier
+# Cancel
+OWTUI_77dfd2135f4d=Annuler
+# Check in
+OWTUI_81a3e8b7e79b=Réintégrer
+# Check in items
+OWTUI_262168361046=Réintégrer des articles
+# Check out
+OWTUI_e9f38d0f847d=Sortir du stock
+# Check out items
+OWTUI_db5509c0023b=Sortir des articles
+# Checked out
+OWTUI_4adc7a618044=Sorti
+# Checked-out items
+OWTUI_cf5e9e516db8=Articles sortis
+# Choose a warehouse first.
+OWTUI_11e898f1a400=Choisissez d’abord un entrepôt.
+# Clear
+OWTUI_719ea396ad92=Effacer
+# Completed
+OWTUI_1798b3ba42ee=Terminé
+# Confirm
+OWTUI_04a212215ef9=Confirmer
+# Consume
+OWTUI_79976df6c472=Consommer
+# Consume items
+OWTUI_ba6d99d4757e=Consommer des articles
+# Consume this item
+OWTUI_260aa48f1777=Consommer cet article
+# Consumed
+OWTUI_cf12704be37b=Consommé
+# Continue to details
+OWTUI_878d159ca7a9=Continuer vers les détails
+# Continue with selected labels
+OWTUI_b3f5d46a2183=Continuer avec les étiquettes sélectionnées
+# Copy / bulk create from this QR
+OWTUI_1ff314e44a32=Copier / créer en lot depuis ce QR
+# Counted Container
+OWTUI_eb31333d9b92=Contenant compté
+# Create warehouse item manually
+OWTUI_e553b73c7d1b=Créer un article QR manuellement
+# Create unique QR
+OWTUI_5c3b71f38f7d=Créer un QR unique
+# Customer / sales order
+OWTUI_075267986484=Commande client / de vente
+# Deduct native Dolibarr warehouse stock now
+OWTUI_db7649d7b9e1=Déduire maintenant du stock de l’entrepôt Dolibarr
+# Deselect all
+OWTUI_85cce1e14782=Tout désélectionner
+# Destination Binloc levels
+OWTUI_412e67c724d9=Niveaux Binloc de destination
+# Destination Dolibarr warehouse
+OWTUI_ea3866d5dd41=Entrepôt Dolibarr de destination
+# Details
+OWTUI_dc3decbb9384=Détails
+# Dolibarr product
+OWTUI_c8411dfe1267=Produit Dolibarr
+# Dolibarr stock adjustment
+OWTUI_12dd728c0156=Ajustement du stock Dolibarr
+# Dolibarr warehouse
+OWTUI_b2745c45895e=Entrepôt Dolibarr
+# Edit
+OWTUI_5301648dcf6b=Modifier
+# Edit item
+OWTUI_3f2add2a611d=Modifier l’article
+# Employee
+OWTUI_079711ea16f3=Employé
+# Enter QR codes manually
+OWTUI_f466dd4e779e=Saisir les codes QR manuellement
+# Enter a code
+OWTUI_1263744a3b4d=Saisir un code
+# Enter codes manually
+OWTUI_823e1e7fe780=Saisir les codes manuellement
+# External serial / DeltaCube ID
+OWTUI_69c5bb5951c6=Numéro de série externe / ID DeltaCube
+# FAILED
+OWTUI_8d33f3064fd0=ÉCHEC
+# Find the transaction
+OWTUI_82a4c6d7c1d7=Rechercher l’opération
+# Finish scanning — review IDs
+OWTUI_f9e77a9e9468=Terminer le scan — vérifier les codes
+# Finish scanning — review items
+OWTUI_5387bbdd016c=Terminer le scan — vérifier les articles
+# For shipments and completed production orders, Dolibarr may have already deducted these units. Do not deduct twice.
+OWTUI_a654381be3ee=Pour les expéditions et les fabrications terminées, Dolibarr a peut-être déjà déduit ces unités. Évitez une double déduction.
+# Handheld scans show the QR image; camera scans also capture a thumbnail.
+OWTUI_38450cba293c=Le scanner manuel affiche l’image QR ; la caméra enregistre aussi une miniature.
+# In stock
+OWTUI_3f1356ad0e5c=En stock
+# Inventory
+OWTUI_300d29fd5f32=Inventaire
+# Item / QR
+OWTUI_14fede7d44fd=Article / QR
+# Item name / label
+OWTUI_9887af21a20e=Nom de l’article / étiquette
+# Known item
+OWTUI_c4de65e0f55c=Article connu
+# Label
+OWTUI_74341e3c271d=Étiquette
+# Labels & locations
+OWTUI_812f632a66d1=Étiquettes et emplacements
+# Linked business transaction
+OWTUI_fbe8794ea76c=Opération commerciale associée
+# Local Binloc labels
+OWTUI_cdc6999fdcf1=Étiquettes Binloc locales
+# Location
+OWTUI_d219c68101f5=Emplacement
+# Matching Dolibarr products
+OWTUI_346879ce5c22=Produits Dolibarr correspondants
+# Matching business transactions
+OWTUI_0b0c90652064=Opérations commerciales correspondantes
+# Menu
+OWTUI_57f5f5efbc59=Menu
+# More tools
+OWTUI_c871f1056ac9=Autres outils
+# Move
+OWTUI_76cdb9507216=Déplacer
+# Move all selected items to
+OWTUI_4f9c065d9000=Déplacer tous les articles sélectionnés vers
+# Move items
+OWTUI_af5a527b41c9=Déplacer des articles
+# Move this item
+OWTUI_14ad11db9548=Déplacer cet article
+# Native Dolibarr lot/serial (if applicable)
+OWTUI_43fb44d776b6=Lot/numéro de série Dolibarr (si applicable)
+# New location
+OWTUI_964f68159a45=Nouvel emplacement
+# Next
+OWTUI_bc981983e7f5=Suivant
+# No items found
+OWTUI_2ab447eb84f5=Aucun article trouvé
+# OK
+OWTUI_9ce3bd4224c8=OK
+# One QR per individual device. Save then continue with copied or empty details.
+OWTUI_d6f45abde57b=Un QR par appareil. Enregistrez puis continuez avec des champs copiés ou vides.
+# Opening camera…
+OWTUI_bd8e21eed1ed=Ouverture de la caméra…
+# Original location
+OWTUI_c4c8a51b3149=Emplacement d’origine
+# Other / general consumption
+OWTUI_fccce91b49ea=Autre / consommation générale
+# Personal warehouses
+OWTUI_5102aa00c8d4=Entrepôts personnels
+# Pick sheet
+OWTUI_3f071cc9063c=Liste de prélèvement
+# Point the camera at QR labels. When finished, review the detected IDs and select which ones to process.
+OWTUI_ec9ee4d7207b=Dirigez la caméra vers les étiquettes QR. Vérifiez ensuite les codes détectés et sélectionnez ceux à traiter.
+# Print
+OWTUI_5b221e9c2a45=Imprimer
+# Print labels
+OWTUI_e9f4c149626c=Imprimer les étiquettes
+# Print again
+OWTUI_b83bafd97219=Réimprimer
+# Print labels
+OWTUI_e9f4c149626c=Imprimer les étiquettes
+# Print new QR codes
+OWTUI_cdaeb001a53b=Imprimer de nouveaux codes QR
+# Product
+OWTUI_dd3b86d1ef21=Produit
+# Production / manufacturing order (MRP)
+OWTUI_0d85d8c4f851=Ordre de fabrication (MRP)
+# Purpose or explanation
+OWTUI_df5ef2dfba35=But ou explication
+# QR Inventory
+OWTUI_cf3462134416=Inventaire QR
+# QR Pick sheet
+OWTUI_913a73fa3365=Liste de prélèvement QR
+# Open Warehouse Tracker navigation
+OWTUI_cbd278039092=Navigation Open Warehouse Tracker
+# warehouse inventory
+OWTUI_1652fa6de5ff=Inventaire QR
+# QR labels
+OWTUI_2cd02d5ed256=Étiquettes QR
+# QR snapshot saved with this item when you register.
+OWTUI_e3d35d26b630=La capture QR sera enregistrée avec cet article.
+# QR, bin, product ID or label
+OWTUI_5b9216ba234c=QR, emplacement, ID produit ou étiquette
+# Quantity
+OWTUI_44f6af694554=Quantité
+# Quantity in container
+OWTUI_a162707744b6=Quantité dans le contenant
+# Quick actions
+OWTUI_e47e804262aa=Actions rapides
+# Reason / notes (optional)
+OWTUI_c7f6edd220d1=Motif / remarques (facultatif)
+# Register
+OWTUI_d672995a1465=Enregistrer
+# Register items
+OWTUI_50f0d39cb7b5=Enregistrer des articles
+# Register more items
+OWTUI_22a7ac019ac6=Enregistrer d’autres articles
+# Register new items
+OWTUI_06406edc013a=Enregistrer de nouveaux articles
+# Registration associates QR labels with existing Dolibarr inventory. It does not receive or increment native warehouse stock.
+OWTUI_4e32fad1c4fc=L’enregistrement associe les étiquettes QR au stock Dolibarr existant. Il n’ajoute pas de stock natif.
+# Registration summary
+OWTUI_87d64ac5ab9f=Récapitulatif des enregistrements
+# Remove
+OWTUI_e963907dac5c=Supprimer
+# Rescan
+OWTUI_84661f6a90cc=Scanner à nouveau
+# Restart camera
+OWTUI_17959d706221=Redémarrer la caméra
+# Result
+OWTUI_5faa59d4bc37=Résultat
+# Return
+OWTUI_24f096b221f9=Réintégrer
+# Return consumed
+OWTUI_ebc84be0d1a3=Réintégrer après consommation
+# Return consumed item
+OWTUI_bea3457ddf49=Réintégrer un article consommé
+# Review scanned IDs
+OWTUI_458bb458c5c8=Vérifier les codes scannés
+# Review scanned items
+OWTUI_926d2a9e5a57=Vérifier les articles scannés
+# Save and Finish
+OWTUI_2342d78d2574=Enregistrer et terminer
+# Save and Next (Copy)
+OWTUI_77543b6f3e1d=Enregistrer et suivant (copier)
+# Save and Next (New)
+OWTUI_b7153a87a126=Enregistrer et suivant (nouveau)
+# Save changes
+OWTUI_179359b39edb=Enregistrer les modifications
+# Scan codes
+OWTUI_0866861f7d84=Scanner des codes
+# Scan a QR code
+OWTUI_8b2858040132=Scanner un code QR
+# Scan all Item identifiers before filling common information once.
+OWTUI_ea5b30107376=Scannez tous les identifiants QR, puis remplissez une seule fois les informations communes.
+# Scan all labels, then finish scanning and fill common product/location information.
+OWTUI_44d1d5124319=Scannez toutes les étiquettes, terminez la numérisation puis saisissez les informations communes du produit et de l’emplacement.
+# Scan an item
+OWTUI_97ff6aba450b=Scanner un article
+# Scan labels
+OWTUI_1305665575aa=Scanner les étiquettes
+# Scan one unassigned label, then finish scanning to open its details.
+OWTUI_358e8feb2c01=Scannez une étiquette non attribuée, puis terminez le scan pour ouvrir ses informations.
+# Scan one unassigned label. The details form opens automatically after a valid scan.
+OWTUI_b9bb03def37d=Scannez une étiquette non attribuée. Le formulaire s’ouvre automatiquement après un scan valide.
+# Scanned QR camera snapshot
+OWTUI_9a7e76029e4e=Capture caméra du QR scanné
+# Scanned QR label
+OWTUI_96dfba15c298=Étiquette QR scannée
+# Search
+OWTUI_bce06414177f=Rechercher
+# Search products
+OWTUI_4412bfe59cdf=Rechercher des produits
+# Select
+OWTUI_8598222918d3=Sélectionner
+# Select a transaction type to browse recent records.
+OWTUI_096e31432419=Sélectionnez un type d’opération pour voir les enregistrements récents.
+# Select all
+OWTUI_913afff1faf7=Tout sélectionner
+# Select employee
+OWTUI_c70121d9fc2c=Sélectionner un employé
+# Select the labels to register. Nothing has been assigned yet.
+OWTUI_1aada64ecaea=Sélectionnez les étiquettes à enregistrer. Rien n’a encore été attribué.
+# Select type, then search or browse recent orders
+OWTUI_70d5d7dd7a7c=Sélectionnez un type, puis recherchez ou parcourez les commandes récentes
+# Shipment
+OWTUI_0cd0f284cf8e=Expédition
+# Start another round
+OWTUI_7099b34f80a3=Commencer un autre lot
+# Start over
+OWTUI_51dd91dc98a9=Recommencer
+# Status
+OWTUI_bae7d5be7082=Statut
+# Stock actions
+OWTUI_6a85702abfc8=Opérations de stock
+# Stock correction: change container quantity
+OWTUI_bd698d666c12=Correction de stock : modifier la quantité du contenant
+# Tools
+OWTUI_4fa8cc860c52=Outils
+# Tracked Generic
+OWTUI_69713356ad96=Article générique suivi
+# Tracked Individual
+OWTUI_19a29c5ef457=Article suivi individuellement
+# Type
+OWTUI_3deb74565196=Type
+# Unassigned
+OWTUI_e57016edceec=Non attribué
+# Unassigned printable label
+OWTUI_92f006f8a7b9=Étiquette imprimable non attribuée
+# Uncheck items to leave them out. Each code is scanned only once; no stock changes have occurred.
+OWTUI_e14ec7cfa819=Décochez les articles à exclure. Chaque code n’est scanné qu’une fois ; aucun stock n’a été modifié.
+# Unknown QR
+OWTUI_49a570781377=QR inconnu
+# Unregistered QR batches
+OWTUI_581e0cccf8af=Lots de QR non enregistrés
+# View
+OWTUI_69bd4ef9fbd0=Voir
+# View unregistered QR batches
+OWTUI_5867e06dd6c9=Voir les lots QR non enregistrés
+# Warehouse
+OWTUI_298dff72dae2=Entrepôt
+# Warehouse operations
+OWTUI_73df7fa4ecb4=Opérations d’entrepôt
+# Create QR label
+OWTUI_fc153ec6d5bf=Créer une étiquette QR
+# Action for selected IDs
+OWTUI_ad36c3aea6ef=Action pour les codes sélectionnés
+# Add returned quantity to native Dolibarr stock
+OWTUI_d0e487ec3c27=Ajouter la quantité retournée au stock Dolibarr
+# Boxes
+OWTUI_d8c9b084b5bd=Boîtes
+# Bulk QR entry
+OWTUI_7245c711b7e0=Saisie groupée des codes QR
+# Check the identifiers and uncheck any rows you want to exclude.
+OWTUI_738192dc223b=Vérifiez les identifiants et décochez les lignes à exclure.
+# Confirm return
+OWTUI_7a7d87a06975=Confirmer le retour
+# Confirm stock correction
+OWTUI_2fb3e5b6fff7=Confirmer la correction de stock
+# Container quantity (blank = unknown)
+OWTUI_15b5cc400394=Quantité du contenant (vide = inconnue)
+# Containers
+OWTUI_e040a458f465=Contenants
+# Continue with selected
+OWTUI_d9767ec2191c=Continuer avec la sélection
+# Correct container quantity
+OWTUI_e03139aef1b4=Corriger la quantité du contenant
+# Correction reason (required)
+OWTUI_c0209e11ca26=Motif de correction (obligatoire)
+# Count discrepancy, damaged, inventory adjustment
+OWTUI_90a2807983d0=Écart de comptage, endommagé, ajustement de stock
+# Counted
+OWTUI_319a2b6e851d=Compté
+# Counted Container registration
+OWTUI_23571cf0d704=Enregistrement d’un contenant compté
+# Create printable batch
+OWTUI_14b9454a6bd1=Créer un lot imprimable
+# Current action:
+OWTUI_978b00590a32=Action en cours :
+# Current count:
+OWTUI_d5b67f34cc03=Quantité actuelle :
+# Customer order (browse or filter)
+OWTUI_fa4665841e5e=Commande client (parcourir ou filtrer)
+# Enter again
+OWTUI_9f735919d5c0=Saisir à nouveau
+# Find item
+OWTUI_8fb9018b5830=Rechercher l’article
+# Focus the search field to browse recent orders.
+OWTUI_e81e155beb05=Activez le champ de recherche pour parcourir les commandes récentes.
+# Generate unassigned labels, print them and attach them to equipment or containers. Printing creates no Dolibarr stock.
+OWTUI_3cb04f7888bb=Générez des étiquettes non attribuées, imprimez-les et apposez-les sur le matériel ou les contenants. L’impression ne crée aucun stock Dolibarr.
+# Generic
+OWTUI_ff7613e54fc9=Générique
+# Generic items and boxes — summed by product
+OWTUI_a6830d7eecae=Articles génériques et boîtes — totaux par produit
+# Go to item registration
+OWTUI_686a94dcdfb3=Aller à l’enregistrement des articles
+# Individual QR
+OWTUI_304b4ee6229f=QR individuel
+# Inspect identifiers
+OWTUI_c60a6d3bfe92=Consulter les identifiants
+# Matching customer orders
+OWTUI_d965c53daf8a=Commandes clients correspondantes
+# New quantity
+OWTUI_e046b0f984db=Nouvelle quantité
+# Number of QR codes (1–200)
+OWTUI_f242501e56ab=Nombre de codes QR (1 à 200)
+# One QR per individual device. Save and continue with copied or empty fields.
+OWTUI_aaf6588948de=Un QR par appareil individuel. Enregistrez et continuez avec des champs copiés ou vides.
+# Order
+OWTUI_1d75774c0f96=Commande
+# Previously consumed QR code
+OWTUI_63966cc05973=Code QR consommé précédemment
+# QR identifier
+OWTUI_9e309059fe66=Identifiant QR
+# QR label
+OWTUI_e18e1ea95921=Étiquette QR
+# Reason or condition
+OWTUI_aa31ea32125f=Motif ou état
+# Register Counted Container
+OWTUI_f399163c6b89=Enregistrer un contenant compté
+# Register Tracked Generic
+OWTUI_10a3ffbd633a=Enregistrer un article générique suivi
+# Register Tracked Individual
+OWTUI_3433cdbcef03=Enregistrer un article suivi individuellement
+# Return Binloc location
+OWTUI_8d8c1aec07bc=Emplacement Binloc de retour
+# Return consumed item to inventory
+OWTUI_64d0fb5f60fb=Réintégrer un article consommé dans le stock
+# Return quantity
+OWTUI_c2abebe1cf53=Quantité retournée
+# Return to warehouse
+OWTUI_8c5d686b01d8=Retour vers l’entrepôt
+# Returned unused, inspection passed, damaged
+OWTUI_4431f0f95d4d=Retourné inutilisé, inspection réussie, endommagé
+# Review code
+OWTUI_ea1af17a0dcd=Vérifier le code
+# Review entered IDs
+OWTUI_33944e5f9973=Vérifier les codes saisis
+# Scan codes code
+OWTUI_447c609f0f53=Scanner un code QR
+# Scan a QR label using your phone camera. Each QR encodes only the short identifier, not a URL or product information.
+OWTUI_83fb247eaffa=Scannez une étiquette QR avec la caméra de votre téléphone. Le QR contient uniquement l’identifiant court, et non une URL ou des informations produit.
+# Scan a registered source container first
+OWTUI_56c28201f045=Scannez d’abord un contenant source enregistré
+# Scan destination container
+OWTUI_ad3eb949bcf6=Scanner le contenant de destination
+# Search by order reference or customer
+OWTUI_d8c25ebe72e4=Rechercher par référence de commande ou client
+# Select destination
+OWTUI_fbe353a85a2e=Choisir la destination
+# Single QR
+OWTUI_58bf0cff6aa3=QR unique
+# Stop camera
+OWTUI_53e96054691d=Arrêter la caméra
+# The camera starts automatically when supported. If permission is denied, use Restart camera or Enter codes manually. HTTPS and camera permission are required.
+OWTUI_f5c1d0568f63=La caméra démarre automatiquement si elle est prise en charge. En cas de refus, redémarrez la caméra ou saisissez les codes manuellement. HTTPS et l’autorisation caméra sont nécessaires.
+# Tracked Generic registration
+OWTUI_3d579e18590c=Enregistrement d’un article générique suivi
+# Tracked Individual registration
+OWTUI_91926e00a595=Enregistrement d’un article suivi individuellement
+# Tracked generic items and counted containers — summed by product
+OWTUI_73330e9ce34c=Articles génériques suivis et contenants comptés — totaux par produit
+# Transfer units — scan destination container
+OWTUI_68d0833a2bfc=Transférer des unités — scanner le contenant de destination
+# Type or paste Item identifiers. Individual and bulk entry use the same review step before any changes are made.
+OWTUI_643c9e4ca8dd=Saisissez ou collez les codes QR. La saisie individuelle et groupée utilise la même vérification avant toute modification.
+# Type or scan a code
+OWTUI_b282d82fef41=Saisissez ou scannez un code
+# Uncheck only if a separate Dolibarr return has already increased stock. Reuses the original QR identity.
+OWTUI_8905441dad8e=Décochez uniquement si un retour Dolibarr distinct a déjà augmenté le stock. L’identité QR d’origine est réutilisée.
+# Unknown
+OWTUI_bc7819b34ff8=Inconnu
+#  Enter codes manually if needed.
+OWTUI_6c2d04a2e1bb= Saisissez les codes manuellement si nécessaire.
+#  Use Restart camera or Enter codes manually.
+OWTUI_791eacf76fa8= Utilisez Redémarrer la caméra ou la saisie manuelle.
+#  customer order(s). Scroll and click one to select it.
+OWTUI_3a30d18d8c18= commande(s) client. Faites défiler et cliquez pour sélectionner.
+#  of 
+OWTUI_607f2de6ce59= sur 
+#  product(s). Scroll to select one.
+OWTUI_dc279af98a74= produit(s). Faites défiler pour en choisir un.
+#  result(s). Scroll and click a record to select it.
+OWTUI_c8caa26301b6= résultat(s). Faites défiler et cliquez pour sélectionner.
+#  scanned
+OWTUI_2b355d6c42ed= scanné(s)
+#  selected
+OWTUI_e034d90478d6= sélectionné(s)
+#  unique code
+OWTUI_3f811ed70c6a= code unique
+#  unique codes
+OWTUI_acfd8b29538b= codes uniques
+# Added 
+OWTUI_c9f46372e92a=Ajouté : 
+# Already scanned: 
+OWTUI_3ce76f408215=Déjà scanné : 
+# Camera API unavailable. Open this page over HTTPS and allow camera access.
+OWTUI_c0dd87d78b99=API caméra indisponible. Ouvrez cette page en HTTPS et autorisez la caméra.
+# Camera active (JavaScript QR detection).
+OWTUI_266be388a3c8=Caméra active (détection QR JavaScript).
+# Camera active (JavaScript QR detection). Point at a label.
+OWTUI_5eceab0f664b=Caméra active (détection QR JavaScript). Visez une étiquette.
+# Camera active (native QR detection)
+OWTUI_3333b1e4f98a=Caméra active (détection QR native)
+# Camera error: 
+OWTUI_46d76ac79634=Erreur de caméra : 
+# Camera ready. Loading JavaScript QR decoder…
+OWTUI_9ac38aca7b80=Caméra prête. Chargement du décodeur QR JavaScript…
+# Camera running
+OWTUI_421811eeab36=Caméra en marche
+# Camera unavailable — use Restart camera or Enter codes manually.
+OWTUI_86a3de8293b4=Caméra indisponible — redémarrez-la ou saisissez les codes manuellement.
+# Camera unavailable: 
+OWTUI_c38dbccc0f83=Caméra indisponible : 
+# Cannot load QR decoder library. Check internet access or Content-Security-Policy.
+OWTUI_85e6311bf9f6=Impossible de charger le décodeur QR. Vérifiez Internet et la politique de sécurité du contenu.
+# Choose a product from the scrollable results or clear your search.
+OWTUI_ef85b06f91f1=Choisissez un produit dans les résultats ou effacez la recherche.
+# Invalid identifier: 
+OWTUI_d62b41f82c79=Identifiant invalide : 
+# Loading Binloc levels...
+OWTUI_762446aaa6f5=Chargement des niveaux Binloc…
+# Maximum 200 codes per round
+OWTUI_4ce6e7ba205d=Maximum 200 codes par session
+# Native QR detection failed; switching to JavaScript decoder…
+OWTUI_a216bdfb4a8c=Échec de la détection QR native ; passage au décodeur JavaScript…
+# No matching customer orders.
+OWTUI_1039b03507bd=Aucune commande client correspondante.
+# No matching products
+OWTUI_6a98e192a983=Aucun produit correspondant
+# No matching records. Try entering a different reference.
+OWTUI_19b4e4e8fb8b=Aucun résultat. Essayez une autre référence.
+# No product assigned
+OWTUI_96dff1dca398=Aucun produit attribué
+# Opening details for 
+OWTUI_1cd78c5f2727=Ouverture des détails de 
+# QR decoder error: 
+OWTUI_d1d010631a69=Erreur du décodeur QR : 
+# QR decoder library is unavailable
+OWTUI_2c143acb4039=Bibliothèque de décodage QR indisponible
+# QR decoder loading timed out. Check the network or use a hardware scanner.
+OWTUI_f883c72bcc3c=Chargement du décodeur QR trop long. Vérifiez le réseau ou utilisez un scanner matériel.
+# QR does not contain a valid inventory identifier: 
+OWTUI_70bb4bfd0f1f=Le QR ne contient pas d’identifiant de stock valide : 
+# Requesting camera permission…
+OWTUI_2235b9d27260=Demande d’autorisation de la caméra…
+# Scan at least one QR code, or use manual entry.
+OWTUI_847b1b14f986=Scannez au moins un QR ou utilisez la saisie manuelle.
+# Scan exactly one QR label
+OWTUI_1a581167aadb=Scannez exactement une étiquette QR
+# Searching…
+OWTUI_1a6a5ba8c23d=Recherche en cours…
+# Select a customer order from the scrollable results.
+OWTUI_6989e888221a=Sélectionnez une commande client dans les résultats.
+# Select an exact record from the scrollable results.
+OWTUI_2e3ab49790e2=Sélectionnez un enregistrement précis dans les résultats.
+# Select at least one item to continue.
+OWTUI_e7b3711e756d=Sélectionnez au moins un article pour continuer.
+# Selected product: 
+OWTUI_1f4f6710fe2c=Produit sélectionné : 
+# Selected: 
+OWTUI_ae3c35bce94a=Sélectionné : 
+# Serialised Unique accepts one label at a time
+OWTUI_266d29844bcb=Le suivi individuel accepte une étiquette à la fois
+# Unable to load Binloc levels: 
+OWTUI_565a7a4ecf1a=Impossible de charger les niveaux Binloc : 
+
+OWTUI_6589ecbd6051=Imprimante / format d??tiquette
+OWTUI_4b38d93ee612=Planche d??tiquettes A4
+OWTUI_c293b8979197=Les ?tiquettes DYMO contiennent le QR, son identifiant, puis par priorit? : num?ro de s?rie, nom court du produit, r?f?rence produit.
+OWTUI_0bc60cc7ca73=Produit non attribu?
+OWTUI_4f18bf74f765=R?f?rence non attribu?e
+OWTUI_1493a661d1d8=?tiquettes DYMO 550
+OWTUI_dd7ad9a6639b=54 mm de large ? 25 mm de haut. Une ?tiquette par page.
+OWTUI_27a13c96842a=S?lectionnez votre DYMO LabelWriter 550 et le papier 25 ? 54 mm. Utilisez l?orientation paysage, une ?chelle de 100 %, aucune marge et d?sactivez les en-t?tes et pieds de page.
+OWTUI_43e64dc3ed9f=D?tails : num?ro de s?rie, nom court du produit, puis r?f?rence produit. Les donn?es absentes sont signal?es comme non attribu?es.
+OWTUI_707fea89ce60=Imprimer les ?tiquettes DYMO
+OWTUI_0767c1584a8a=Disposition A4
+OWTUI_d40bc9600ff2=Retour ? Open Warehouse Tracker
+OWTUI_0905c494d1f0=Chargement des images QR?
+OWTUI_e5bb92ef805f=Aucune ?tiquette ? imprimer
+OWTUI_9adc5d3b4866=JavaScript est requis pour pr?parer cette mise en page.
+OWTUI_5621ca78ef88=?tiquettes pr?tes. Les longs d?tails peuvent ?tre abr?g?s ; l?identifiant QR reste complet.
+OWTUI_1565f470db44=?chec du chargement d?une image QR. Actualisez avant d?imprimer.
+
+OWTUI_f6a3ad4a5b9b=Taille d??tiquette
+OWTUI_66b47e4c9af7=Appliquer la taille
+OWTUI_76f6d5d94323=Une ?tiquette par page
+OWTUI_1d8715588067=Les grandes ?tiquettes ajoutent lot, emplacement, quantit?, statut et d?tails d?article si disponibles.
+OWTUI_4c015926ec45=S?lectionnez votre imprimante et le papier correspondant. Utilisez l?orientation paysage, l??chelle 100 %, aucune marge et d?sactivez les en-t?tes et pieds de page.
+OWTUI_4a211932145b=Lot
+OWTUI_ecdda59aea5e=Article
+OWTUI_8f5e155f6115=Formats d??tiquettes DYMO
+
+OWTRelatedEntries=Entrées QR
+OWTUI_72f3bb3ca122=Entrées QR
+OWTUI_bb00e96eb1ff=Retour à la fiche Dolibarr
+OWTUI_a56ebebdd0b2=Emplacements Binloc
+OWTUI_797a4917230e=Tous les emplacements
+OWTUI_667c6de9a153=Aucune entrée QR associée.
+OWTUI_de05bdea8426=Le stock QR est temporairement indisponible.
+OWTUI_01e495bdbb1a=Format du code-barres

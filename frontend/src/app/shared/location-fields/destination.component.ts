@@ -14,7 +14,7 @@ import { LocationScan } from '@core/models/inventory';
 
 /** Resolve storage-location scans server-side and emit only the validated current destination. */
 @Component({
-  selector: 'qrr-destination',
+  selector: 'owt-destination',
   standalone: true,
   imports: [SharedModule, CaptureComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -28,13 +28,13 @@ import { LocationScan } from '@core/models/inventory';
       {{ 'Scan destination bin' | t }}
     </button>
     @if (scanning()) {
-      <qrr-capture content="locations" [multiple]="false" (changed)="scan($event)" />
+      <owt-capture content="locations" [multiple]="false" (changed)="scan($event)" />
     }
     @if (error()) {
       <p class="alert" role="alert">{{ error() | t }}</p>
     }
     @if (active(); as location) {
-      <qrr-card [title]="('Destination contents' | t) + ': ' + location.label">
+      <owt-card [title]="('Destination contents' | t) + ': ' + location.label">
         <p>
           {{ api.context()!.warehouses[location.warehouse_id]?.ref }} · {{ 'Updated' | t }}:
           {{ location.updated_at | date: 'short' }}
@@ -81,7 +81,7 @@ import { LocationScan } from '@core/models/inventory';
         @if (!location.summary.tracked.length && !location.summary.totals.length) {
           <p>{{ 'No QR-tracked contents at this location' | t }}</p>
         }
-      </qrr-card>
+      </owt-card>
     }
   `,
 })

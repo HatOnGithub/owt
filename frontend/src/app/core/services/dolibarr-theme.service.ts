@@ -6,7 +6,7 @@ export class DolibarrThemeService {
   private overlay = inject(OverlayContainer);
 
   apply(): void {
-    const host = document.querySelector<HTMLElement>('qrr-root');
+    const host = document.querySelector<HTMLElement>('owt-root');
     if (!host) return;
     // Measure native Dolibarr controls. Never change Dolibarr's document-level theme.
     const sample = document.createElement('div');
@@ -43,21 +43,21 @@ export class DolibarrThemeService {
         background !== 'rgba(0, 0, 0, 0)' && background !== 'transparent' ? background : 'Canvas';
     }
     const values: Record<string, string> = {
-      '--qrr-text': text,
-      '--qrr-surface': surface,
-      '--qrr-action-bg': nativeButton.backgroundColor,
-      '--qrr-action-background': nativeButton.background,
-      '--qrr-action-text': nativeButton.color,
-      '--qrr-font': getComputedStyle(host).fontFamily,
-      '--qrr-font-size': getComputedStyle(host).fontSize,
-      '--qrr-input-bg': nativeInput.backgroundColor,
-      '--qrr-input-background': nativeInput.background,
-      '--qrr-success-color': getComputedStyle(success).color,
-      '--qrr-error-color': getComputedStyle(error).color,
+      '--owt-text': text,
+      '--owt-surface': surface,
+      '--owt-action-bg': nativeButton.backgroundColor,
+      '--owt-action-background': nativeButton.background,
+      '--owt-action-text': nativeButton.color,
+      '--owt-font': getComputedStyle(host).fontFamily,
+      '--owt-font-size': getComputedStyle(host).fontSize,
+      '--owt-input-bg': nativeInput.backgroundColor,
+      '--owt-input-background': nativeInput.background,
+      '--owt-success-color': getComputedStyle(success).color,
+      '--owt-error-color': getComputedStyle(error).color,
     };
     sample.remove();
     for (const target of [host, this.overlay.getContainerElement()]) {
-      target.classList.add('qrr-theme');
+      target.classList.add('owt-theme');
       for (const [key, value] of Object.entries(values)) target.style.setProperty(key, value);
     }
   }

@@ -19,7 +19,7 @@ import {
 } from './csv';
 
 @Component({
-  selector: 'qrr-csv',
+  selector: 'owt-csv',
   standalone: true,
   imports: [SharedModule],
   providers: [CsvImportService],
@@ -61,12 +61,12 @@ export class CsvComponent {
   protected exportAll(): void {
     const context = this.api.context()!;
     downloadCsv(
-      'qrrouter-inventory.csv',
+      'owt-inventory.csv',
       inventoryCsv(this.api.items(), context.products, context.warehouses)
     );
   }
   protected template(): void {
-    downloadCsv('qrrouter-template.csv', recordsCsv([]));
+    downloadCsv('owt-template.csv', recordsCsv([]));
   }
   protected async selectFile(event: Event): Promise<void> {
     const file = (event.target as HTMLInputElement).files?.[0];
@@ -133,7 +133,7 @@ export class CsvComponent {
   protected report(): void {
     const context = this.api.context()!;
     downloadCsv(
-      'qrrouter-import-results.csv',
+      'owt-import-results.csv',
       recordsCsv(
         this.rows().map(row => {
           const item = context.state.items[row.code];

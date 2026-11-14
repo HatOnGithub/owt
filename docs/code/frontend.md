@@ -29,7 +29,7 @@ The browser `InventoryService` owns a signal containing `Bootstrap`, with comput
 
 `ScannerComponent` owns camera acquisition, frame decoding through the shared `BarcodeDecoder`, identifier normalization, duplicate suppression and bounded selection. The decoder retains `jsQR` for QR and adds ZXing readers for Data Matrix, Code 128 and PDF417. Stop/restart and destroy release the media stream and animation frame. A generation counter prevents an old asynchronous camera startup/frame loop from continuing after a newer session or stop. See [barcode carriers and layouts](barcodes.md).
 
-`codes.ts` normalizes bare IDs and QR Router URLs, validates short/legacy identifiers and recognizes storage-location and physical-bin payloads. It preserves the case-sensitive encoded payload of location/bin scans. These checks improve capture feedback; PHP still validates payloads and access.
+`codes.ts` normalizes bare IDs and Open Warehouse Tracker URLs, validates short/legacy identifiers and recognizes storage-location and physical-bin payloads. It preserves the case-sensitive encoded payload of location/bin scans. These checks improve capture feedback; PHP still validates payloads and access.
 
 `CaptureComponent` wraps the scanner and owns the route's camera/manual mode through query parameters. The scanner reports codes; workflow-specific validation is supplied by the feature. This lets camera and manual/USB entry share the same eligibility checks.
 
@@ -53,13 +53,13 @@ Applying an import checks for changes since preview and uses the normal gateway 
 - `TranslationService` uses bootstrap strings and bounded character-entity decoding. It decodes individual entities without treating the surrounding text as markup.
 - `DolibarrThemeService` adapts the module to host theme/style changes. Feature styles remain with the feature rather than modifying unrelated host pages.
 
-UI strings use the `t` pipe. PHP provides hashed `QRRUI_...` translations from language files plus Dutch/French SPA dictionaries. Add new SPA text to the relevant dictionaries and use plain text suitable for safe interpolation.
+UI strings use the `t` pipe. PHP provides hashed `OWTUI_...` translations from language files plus Dutch/French SPA dictionaries. Add new SPA text to the relevant dictionaries and use plain text suitable for safe interpolation.
 
 ## Printing
 
 PHP print endpoints authenticate users, require Print where applicable, check QR/native visibility and prepare a bounded print data model. They serve the standalone modules under `spa/print`; label rendering does not require booting the full Angular application.
 
-`frontend/src/print/model.ts` selects label names, serials and detail rows for supported profiles. `main.ts` creates the print DOM using text nodes/text content, applies profile page dimensions and waits for printable content before enabling printing. `language.ts` supports print language selection. Profile definitions live in `dolibarr/qrrouter/assets/label-profiles.json`.
+`frontend/src/print/model.ts` selects label names, serials and detail rows for supported profiles. `main.ts` creates the print DOM using text nodes/text content, applies profile page dimensions and waits for printable content before enabling printing. `language.ts` supports print language selection. Profile definitions live in `dolibarr/owt/assets/label-profiles.json`.
 
 `label.php` and `batch_print.php` cover item labels; `bin_print.php` covers storage-location reports/labels and `physical_bin_print.php` covers permanent physical-bin identities. QR image and thumbnail endpoints enforce inventory/object visibility independently of whether a user arrived through a print page.
 

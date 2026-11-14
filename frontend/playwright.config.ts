@@ -5,7 +5,7 @@ export default defineConfig({
   workers: 1,
   retries: 0,
   use: {
-    baseURL: process.env['QRR_E2E_URL'],
+    baseURL: process.env['OWT_E2E_URL'],
     browserName: 'chromium',
     headless: true,
     viewport: { width: 1440, height: 1000 },

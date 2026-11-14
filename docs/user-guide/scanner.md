@@ -4,11 +4,13 @@
 
 The camera accepts the module's QR, Data Matrix, Code 128 and PDF417 labels. All formats carry the same item identifier and use the same action/permission checks. Hold the label steady with its complete barcode and surrounding blank margin visible; wide 1D barcodes may need more space in the frame. Manual/USB scanners submit the same decoded identifier.
 
+Identifiers normally have six characters. When the six-character range is full, new labels automatically use eight characters. Both lengths work together in camera and manual/USB scanning; existing labels keep their IDs.
+
 ## Camera and manual / USB entry
 
-1. Open **Scan QR** and select **QR camera**, **Manual / USB entry**, or a warehouse action.
+1. Open **Scan codes** and select **QR camera**, **Manual / USB entry**, or a warehouse action.
 2. In camera mode, allow camera access and hold the QR item label inside the frame. Each accepted ID appears in the selection.
-3. To use a USB scanner or keyboard, select **Manual / USB entry**. Focus **QR identifiers**, scan or enter the QR ID, then press Enter or **Add codes**. The printed QR URL is also accepted.
+3. To use a USB scanner or keyboard, select **Manual / USB entry**. Focus **Item identifiers**, scan or enter the QR ID, then press Enter or **Add codes**. The printed QR URL is also accepted.
 4. Repeat for the items you need. Duplicate scans do not add the same ID twice. Select an ID in the list to remove it.
 5. Use **QR camera** to return to the camera page, or **Stop camera** to stop capture. If needed, select **Start camera** or **Restart camera**.
 
@@ -16,7 +18,7 @@ Changing input mode preserves the selection. The camera stops when you leave cap
 
 ## Look up scanned items
 
-1. Open **Scan QR > QR camera** or **Manual / USB entry**.
+1. Open **Scan codes > QR camera** or **Manual / USB entry**.
 2. Add the desired QR IDs.
 3. Select **Review selected items**.
 4. Use **Previous** and **Next** to inspect each result and open its item details where available.
@@ -26,10 +28,10 @@ This lookup does not change stock.
 
 ## Register items
 
-1. Print blank labels if needed, then open **Scan QR > Register items**.
+1. Print blank labels if needed, then open **Scan codes > Register items**.
 2. Scan or enter all labels you want to assign.
 3. Select **Assign details** to open the separate details page.
-4. Choose **QR type**, product, warehouse and QR Router location.
+4. Choose **QR type**, product, warehouse and Open Warehouse Tracker location.
 5. For a generic unit, leave the item name blank for the product short name or enter an override. Several selected labels can share these details.
 6. For an individual or container, register one QR at a time. Enter the individual name and serial options, or the box lot name and quantity.
 7. Review any serial warning, then select **Save**. Use **Change selection** to return without losing the details draft.
@@ -39,10 +41,10 @@ An existing serial must have no QR association. Linking it preserves its native 
 
 ## Move items
 
-1. Open **Scan QR > Move items**.
+1. Open **Scan codes > Move items**.
 2. Scan all items to move, then select **Review selected items**.
 3. Check the selected rows and their current locations; deselect anything to leave behind.
-4. Select **Scan destination bin** and scan a location QR, or choose **Destination warehouse** and its QR Router location fields. A scanned destination shows its current contents. Choose the same warehouse for a bin-only move.
+4. Select **Scan destination bin** and scan a location QR, or choose **Destination warehouse** and its Open Warehouse Tracker location fields. A scanned destination shows its current contents. Choose the same warehouse for a bin-only move.
 5. Enter **Reason / purpose** if useful.
 6. Select **Confirm operation** and check each result.
 
@@ -50,7 +52,7 @@ This moves the selected item or container to the chosen location; use a contents
 
 ## Consume items
 
-1. Open **Scan QR > Consume items**.
+1. Open **Scan codes > Consume items**.
 2. Scan the items and select **Review selected items**.
 3. Check the selection and enter the quantity to consume from each item. An individual serial represents at most one unit.
 4. Choose **Transaction reference**: **Customer order**, **Manufacturing order**, **Shipment**, or **None**, according to your permissions.
@@ -63,10 +65,10 @@ The selected reference and reason appear in the item history.
 
 ## Return consumed stock
 
-1. Open **Scan QR > Return items**, or select **Return** on a consumed item's detail page.
+1. Open **Scan codes > Return items**, or select **Return** on a consumed item's detail page.
 2. Add the relevant QR IDs and select **Review selected items**.
 3. Enter the quantities to restore, within the item's consumed quantity.
-4. Choose **Destination warehouse**, QR Router location and **Reason / purpose**.
+4. Choose **Destination warehouse**, Open Warehouse Tracker location and **Reason / purpose**.
 5. Review **Post native Dolibarr stock movement** as described for consumption.
 6. Select **Confirm operation** and check the restored quantities.
 
@@ -74,7 +76,7 @@ To return an employee loan, use **Check in items** instead.
 
 ## Check out items to an employee
 
-1. Open **Scan QR > Check out items**.
+1. Open **Scan codes > Check out items**.
 2. Scan the items and select **Review selected items**.
 3. Check the selection, choose **Employee** and enter **Reason / purpose**.
 4. Select **Confirm operation**.
@@ -84,7 +86,7 @@ Items move to that employee's personal warehouse. If no mapping exists, the work
 
 ## Check in employee loans
 
-1. Open **Scan QR > Check in items**, or open an item in **Loans** and select **Check in**.
+1. Open **Scan codes > Check in items**, or open an item in **Loans** and select **Check in**.
 2. Scan any additional loaned items and select **Review selected items**.
 3. Verify the loans selected for return and enter a reason if needed.
 4. Select **Confirm operation**.
@@ -92,7 +94,7 @@ Items move to that employee's personal warehouse. If no mapping exists, the work
 
 ## Correct a container quantity
 
-1. Open **Scan QR > Correct container quantity**.
+1. Open **Scan codes > Correct container quantity**.
 2. Scan the container and select **Review selected items**.
 3. Enter the actual counted quantity, including zero for an empty box. This is the new total, not the amount to add or subtract.
 4. Check the displayed **Difference** and enter **Reason / purpose** explaining the count.
@@ -102,7 +104,7 @@ For an unknown QR-only count shown as `?`, the first count establishes the QR qu
 
 ## Transfer contents between containers
 
-1. Open **Scan QR > Transfer contents between containers**.
+1. Open **Scan codes > Transfer contents between containers**.
 2. Scan exactly two boxes: **source first**, then destination.
 3. Select **Review selected items** and check the **Source** and **Destination** markers.
 4. Confirm that both boxes hold the same product in the same warehouse.

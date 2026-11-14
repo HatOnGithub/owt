@@ -32,14 +32,20 @@ export default defineConfig({
         },
       },
     },
-    { name: 'webkit', use: { browserName: 'webkit' } },
+    {
+      name: 'webkit',
+      // Concurrent Windows WebKit workers can stall during document initialization.
+      // Keep its assertions intact and serialize this platform's browser instances.
+      workers: process.platform === 'win32' ? 1 : undefined,
+      use: { browserName: 'webkit' },
+    },
   ],
   webServer: {
     // Component HMR adds asynchronous imports that can be cancelled by navigation/reload.
     // E2E runs need stable application modules; interactive development keeps HMR enabled.
     command: 'node dev/start-mock.mjs --port 4300 --no-hmr --no-live-reload',
     url: 'http://127.0.0.1:4300',
-    env: { QRR_MOCK_PORT: '0' },
+    env: { OWT_MOCK_PORT: '0' },
     reuseExistingServer: false,
     timeout: 60000,
   },

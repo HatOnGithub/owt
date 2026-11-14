@@ -8,7 +8,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 /** Collects identifiers only. Product and inventory details belong to the editor page. */
 /** Capture unused labels before the shared editor prepares their typed registration choices. */
 @Component({
-  selector: 'qrr-registration-selection',
+  selector: 'owt-registration-selection',
   standalone: true,
   imports: [SharedModule, CaptureComponent],
   templateUrl: './registration.component.html',

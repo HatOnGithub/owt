@@ -48,7 +48,7 @@ test('print blank labels, register one through the virtual camera and preserve i
     bin: 'A-3',
   });
   expect(saved.state.items[unused].type).toBe('unassigned');
-  const thumbnail = await request.get('/custom/qrrouter/thumbnail.php?code=' + code);
+  const thumbnail = await request.get('/custom/owt/thumbnail.php?code=' + code);
   expect(thumbnail.ok()).toBeTruthy();
   expect(thumbnail.headers()['content-type']).toBe('image/jpeg');
   expect((await thumbnail.body()).length).toBeGreaterThan(100);
@@ -319,7 +319,7 @@ test('read-only operators can inspect stock but cannot open management workflows
   await expect(page.getByRole('link', { name: 'Print label', exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Edit metadata', exact: true })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Consume', exact: true })).toHaveCount(0);
-  await mock.navigate('Scan QR');
+  await mock.navigate('Scan codes');
   await expect(
     page
       .getByRole('navigation', { name: 'Warehouse operations' })
@@ -370,7 +370,7 @@ test('pending synchronization blocks writes until recovery and item reconciliati
   const item = await mock.item('Network cable');
   const before = (await mock.bootstrap()).state;
   await page.goto('/#/labels');
-  const synchronization = page.locator('qrr-pending-details').first();
+  const synchronization = page.locator('owt-pending-details').first();
   await expect(synchronization.getByRole('table')).toBeHidden();
   await synchronization.locator('summary').click();
   await expect(
@@ -394,14 +394,14 @@ test('pending synchronization blocks writes until recovery and item reconciliati
   const row = page.locator('tbody tr').filter({ hasText: item.label });
   await expect(row.locator('.inventory-status')).toHaveText('Pending');
   await row.getByRole('link', { name: item.label, exact: true }).click();
-  const operation = page.locator('qrr-pending-details');
+  const operation = page.locator('owt-pending-details');
   await operation.locator('summary').click();
   await expect(operation.getByRole('row').filter({ hasText: 'Warehouse' })).toContainText('OTHER');
   await expect(operation.getByRole('row').filter({ hasText: '+1 (OTHER)' })).toBeVisible();
   await page.getByRole('button', { name: 'Reconcile pending operation', exact: true }).click();
   await expect(
     page
-      .locator('qrr-root')
+      .locator('owt-root')
       .getByRole('status')
       .filter({ hasText: 'Mock pending operation reconciled' })
   ).toBeVisible();
@@ -428,7 +428,7 @@ test('pending synchronization details remain readable without recovery permissio
     await route.fulfill({ response, json: data });
   });
   await page.goto('/#/inventory');
-  const details = page.locator('qrr-pending-details').first();
+  const details = page.locator('owt-pending-details').first();
   await details.locator('summary').click();
   await expect(details.getByRole('table')).toBeVisible();
   await expect(
@@ -453,10 +453,10 @@ test('workflow scanning rejects unrelated labels and enforces loaded pick quanti
   await mock.lookup('Customer order', 'SO', /SO-0039/);
   await mock.select('Pick from warehouse', 'MAIN');
   await page.getByRole('button', { name: 'Load pick list', exact: true }).click();
-  await expect(page.locator('qrr-card').filter({ hasText: 'Pick list safeguards' })).toContainText(
+  await expect(page.locator('owt-card').filter({ hasText: 'Pick list safeguards' })).toContainText(
     box.code
   );
-  const entry = page.getByRole('textbox', { name: 'QR identifiers', exact: true });
+  const entry = page.getByRole('textbox', { name: 'Item identifiers', exact: true });
   await entry.fill(drill.code);
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('Item is not on the loaded pick list');
@@ -484,7 +484,7 @@ for (const kind of ['correct', 'transfer', 'checkin', 'return']) {
   }) => {
     const drill = await mock.item('Workshop drill');
     await page.goto('/#/workflow/' + kind + '?input=manual');
-    await page.getByRole('textbox', { name: 'QR identifiers', exact: true }).fill(drill.code);
+    await page.getByRole('textbox', { name: 'Item identifiers', exact: true }).fill(drill.code);
     await page.getByRole('button', { name: 'Add codes', exact: true }).click();
     await expect(page.getByRole('alert')).toBeVisible();
     await expect(
@@ -523,9 +523,9 @@ async function inventoryCommand(
   action: string,
   payload: unknown
 ) {
-  const bootstrap = await (await request.get('/custom/qrrouter/api.php?resource=bootstrap')).json();
-  const response = await request.post('/custom/qrrouter/api.php?action=' + action, {
-    form: { token: bootstrap.token, qrr_token: bootstrap.csrf, payload: JSON.stringify(payload) },
+  const bootstrap = await (await request.get('/custom/owt/api.php?resource=bootstrap')).json();
+  const response = await request.post('/custom/owt/api.php?action=' + action, {
+    form: { token: bootstrap.token, owt_token: bootstrap.csrf, payload: JSON.stringify(payload) },
   });
   expect(response.ok()).toBeTruthy();
   return (await response.json()).result;
@@ -546,7 +546,7 @@ test('scanning a location QR opens current contents and refreshes after stock ch
   });
   const qr = locationQr(1, levels);
   await page.goto('/#/scan?input=manual');
-  await page.getByRole('textbox', { name: 'QR identifiers', exact: true }).fill(qr);
+  await page.getByRole('textbox', { name: 'Item identifiers', exact: true }).fill(qr);
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await expect(page).toHaveURL(/locations/);
   await expect(page.locator('tbody').nth(1)).toContainText('25');
@@ -570,7 +570,7 @@ test('move workflow scans a destination location and shows its current contents'
   const qr = locationQr(2, levels);
   await page.goto('/#/workflow/move?input=manual&code=' + item.code);
   await page.getByRole('button', { name: 'Scan destination bin', exact: true }).click();
-  await page.getByRole('textbox', { name: 'QR identifiers', exact: true }).fill(qr);
+  await page.getByRole('textbox', { name: 'Item identifiers', exact: true }).fill(qr);
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: 'Destination contents: B-2', exact: true })
@@ -610,16 +610,16 @@ test('physical bins pack items and move their contents to a scanned location wit
   await expect(page.getByRole('heading', { name: 'Blue tote', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Pack or unpack items', exact: true }).click();
   await page
-    .getByRole('textbox', { name: 'QR identifiers', exact: true })
+    .getByRole('textbox', { name: 'Item identifiers', exact: true })
     .fill(first.code + ' ' + second.code);
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await page.getByRole('button', { name: 'Pack selected items', exact: true }).click();
   await expect(page.locator('tbody tr')).toHaveCount(2);
   const binBefore = (
-    await (await request.get('/custom/qrrouter/api.php?resource=physical-bins')).json()
+    await (await request.get('/custom/owt/api.php?resource=physical-bins')).json()
   )[0];
   await page.getByRole('button', { name: 'Scan destination bin', exact: true }).click();
-  await page.getByRole('textbox', { name: 'QR identifiers', exact: true }).fill(qr);
+  await page.getByRole('textbox', { name: 'Item identifiers', exact: true }).fill(qr);
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: 'Destination contents: B-2', exact: true })
@@ -642,11 +642,11 @@ test('physical bins pack items and move their contents to a scanned location wit
     physical_bin_id: binBefore.id,
   });
   const binAfter = (
-    await (await request.get('/custom/qrrouter/api.php?resource=physical-bins')).json()
+    await (await request.get('/custom/owt/api.php?resource=physical-bins')).json()
   )[0];
   expect(binAfter.qr).toBe(binBefore.qr);
   await page.goto('/#/scan?input=manual');
-  await page.getByRole('textbox', { name: 'QR identifiers', exact: true }).fill(binAfter.qr);
+  await page.getByRole('textbox', { name: 'Item identifiers', exact: true }).fill(binAfter.qr);
   await page.getByRole('button', { name: 'Add codes', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Blue tote', exact: true })).toBeVisible();
   await expect(page.locator('tbody tr')).toHaveCount(2);
@@ -665,8 +665,7 @@ test('virtual camera reads a printed location URL and opens its current report @
   await page
     .getByRole('textbox', { name: 'QR content', exact: true })
     .fill(
-      'https://example.invalid/custom/qrrouter/index.php#/locations?location=' +
-        encodeURIComponent(qr)
+      'https://example.invalid/custom/owt/index.php#/locations?location=' + encodeURIComponent(qr)
     );
   await page.getByRole('button', { name: 'Show QR code', exact: true }).click();
   await expect(page).toHaveURL(/locations/);
@@ -719,12 +718,12 @@ test('action history blocks direct access without the history permission', async
   await expect(
     page.getByText('Operation history permission required', { exact: true })
   ).toBeVisible();
-  const response = await request.get('/custom/qrrouter/api.php?resource=history');
+  const response = await request.get('/custom/owt/api.php?resource=history');
   expect(response.status()).toBe(403);
 });
 
 function locationQr(warehouse: number, levels: Record<string, string | number>): string {
-  return `QRRLOC:1:1:${warehouse}:${Buffer.from(JSON.stringify(levels)).toString('base64url')}`;
+  return `OWTLOC:1:1:${warehouse}:${Buffer.from(JSON.stringify(levels)).toString('base64url')}`;
 }
 
 test('history permission lets a reader see QR movement history and its separate page', async ({
@@ -773,7 +772,7 @@ test('history permission lets a reader see QR movement history and its separate 
   });
   await page.goto('/#/items/' + item.code);
   const history = page
-    .locator('qrr-card')
+    .locator('owt-card')
     .filter({ has: page.getByRole('heading', { name: 'Movement history', exact: true }) });
   await expect(history).toContainText('Visible movement record');
   await expect(history).not.toContainText('Other QR movement');
@@ -801,11 +800,11 @@ test('read-only history permission is enforced by the API and does not grant sto
   await expect(
     page.getByText('Operation history permission required', { exact: true })
   ).toHaveCount(0);
-  expect((await request.get('/custom/qrrouter/api.php?resource=history')).ok()).toBe(true);
-  const rejected = await request.post('/custom/qrrouter/api.php?action=bulk', {
+  expect((await request.get('/custom/owt/api.php?resource=history')).ok()).toBe(true);
+  const rejected = await request.post('/custom/owt/api.php?action=bulk', {
     form: {
       token: context.token,
-      qrr_token: context.csrf,
+      owt_token: context.csrf,
       payload: JSON.stringify({ type: 'unassigned', count: 1 }),
     },
   });

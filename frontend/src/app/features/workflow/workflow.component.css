@@ -5,9 +5,9 @@
   gap: 12px 28px;
   padding: 16px;
   margin-bottom: 20px;
-  border: 1px solid color-mix(in srgb, var(--qrr-text, currentColor) 25%, transparent);
+  border: 1px solid color-mix(in srgb, var(--owt-text, currentColor) 25%, transparent);
   border-radius: 5px;
-  background: color-mix(in srgb, var(--qrr-text, currentColor) 7%, transparent);
+  background: color-mix(in srgb, var(--owt-text, currentColor) 7%, transparent);
 }
 .scanner-steps {
   display: flex;
@@ -35,13 +35,13 @@
   font-weight: 700;
 }
 .scanner-steps .current b {
-  color: var(--qrr-action-text, ButtonText);
-  background: var(--qrr-action-background, ButtonFace);
-  border-color: var(--qrr-action-bg, currentColor);
+  color: var(--owt-action-text, ButtonText);
+  background: var(--owt-action-background, ButtonFace);
+  border-color: var(--owt-action-bg, currentColor);
 }
 form {
   display: grid;
-  gap: var(--qrr-control-gap, 16px);
+  gap: var(--owt-control-gap, 16px);
 }
 form > .actions,
 form > .alert,
@@ -71,10 +71,10 @@ form > .muted {
   font-size: 0.9em;
 }
 .quantity-difference strong {
-  color: var(--qrr-success-color, currentColor);
+  color: var(--owt-success-color, currentColor);
 }
 .quantity-difference.negative strong {
-  color: var(--qrr-error-color, currentColor);
+  color: var(--owt-error-color, currentColor);
 }
 .review-product > td {
   padding-block: 16px;
@@ -145,7 +145,7 @@ form > .muted {
     height: 22px;
     flex-shrink: 0;
   }
-  .scanner-page:has(qrr-capture) .scanner-steps span:not(.current) {
+  .scanner-page:has(owt-capture) .scanner-steps span:not(.current) {
     display: none;
   }
 }

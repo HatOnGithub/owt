@@ -14,15 +14,15 @@ Delete applies only to unused unassigned labels. It also removes their membershi
 
 Configuration changes preserve existing level/option identities. Datatype changes are restricted once assignments exist. Both item and physical-bin assignments matter when deciding whether a definition can change. Renaming a display option does not mean generating a new identity for every item.
 
-`qrrouter_locations.lib.php` is the native-warehouse adapter. It asks C# to validate choices and constructs storage-location labels in the format:
+`owt_locations.lib.php` is the native-warehouse adapter. It asks C# to validate choices and constructs storage-location labels in the format:
 
 ```text
-QRRLOC:1:<entity>:<warehouse>:<base64url JSON level values>
+OWTLOC:1:<entity>:<warehouse>:<base64url JSON level values>
 ```
 
 The payload is tied to entity, warehouse and level values, not the current formatted label. Resolving it checks entity, visible warehouse and current definitions, then returns current contents through authorized summaries. Printed URLs carry this payload in the application route. Treat a scan as a request to resolve a location, not trusted stock or an unchecked destination.
 
-The optional `qrrouter_location_import.lib.php` reads legacy Binloc data once into native QR Router definitions/assignments. Normal operation does not load Binloc classes. Import is limited to warehouses not already configured and must preserve pending-operation safety.
+The optional `owt_location_import.lib.php` reads legacy Binloc data once into native Open Warehouse Tracker definitions/assignments. Normal operation does not load Binloc classes. Import is limited to warehouses not already configured and must preserve pending-operation safety.
 
 ## Movable physical bins
 
@@ -31,7 +31,7 @@ A physical bin has its own permanent QR identity, label and current storage loca
 Its scan payload is:
 
 ```text
-QRRBIN:1:<entity>:<six-character bin ID>
+OWTBIN:1:<entity>:<six- or eight-character bin ID>
 ```
 
 Unlike a storage-location label, this identifies a movable object. Resolve it against the current entity and visible bin before using its location or contents.
@@ -58,7 +58,7 @@ Employee checkout/checkin transfers stock through personal warehouses. An admini
 
 ## History and pending details
 
-Every successful repository update stores an audit record with actor, action, time, revision and projected summary. A multi-step stock action can therefore produce several lifecycle entries, such as stage and finish. This history describes QR Router operations; it is not a replacement for the complete native Dolibarr stock ledger.
+Every successful repository update stores an audit record with actor, action, time, revision and projected summary. A multi-step stock action can therefore produce several lifecycle entries, such as stage and finish. This history describes Open Warehouse Tracker operations; it is not a replacement for the complete native Dolibarr stock ledger.
 
 The same `HistoryComponent` serves `/history` and an embedded QR details panel. An exact QR filter isolates the item's entries. The grant, native movement-read right and current native object scope all apply to both views.
 

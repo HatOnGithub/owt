@@ -2,9 +2,13 @@
 
 ## Identity stays independent of rendering
 
-New item identifiers still contain five random characters and the existing checksum character. The alphabet, checksum, database keys, native serials and legacy identifier support have not changed. Printing the same item in another symbology encodes the same identifier; it does not create an alias, replace a QR record or post stock.
+New entities generate six-character identifiers: five random payload characters and one checksum character. Once every valid six-character ID in a namespace is occupied, generation automatically expands to eight characters (seven payload characters plus the same checksum). C#, PHP and TypeScript always recognize **both** lengths, alongside the supported legacy formats. Existing records and printed labels retain their original IDs. Printing the same item in another symbology encodes the same identifier; it does not create an alias, replace a record or post stock.
 
-Numeric-looking IDs are still strings. PHP converts all-digit array keys to integers, so adapter code lists use `qrr_item_codes()` before serializing visibility scopes or query candidates. Do not pass those keys directly as JSON numbers to C# string fields.
+The alphabet `23456789ABCDEFGHJKMNPQRSTUVWXYZ` contains 31 symbols. The six-character range has `31^5 = 28,629,151` IDs; the eight-character range has `31^7 = 27,512,614,111`. The final character is reserved for the checksum. Seven-character IDs are not introduced. No administrator setting or relabeling is required for expansion.
+
+`Codes.Reserve` allocates within each entity's item or physical-bin namespace under the repository write transaction. Bounded random retries are followed by a deterministic search for a free payload, so collisions near capacity do not trigger premature expansion or an unbounded random loop. Full-range checks count only valid IDs of that length. The persisted `identifier_allocation` metadata stores each namespace's active length and fallback cursor. Expansion remains active after restart or deletion of an old short ID. Native staging carries the candidate allocator metadata through finish, while pre-upgrade pending intents remain recoverable. This increases the identifier range; it does not change the current document-based repository's memory/scalability characteristics.
+
+Numeric-looking IDs are still strings. PHP converts all-digit array keys to integers, so adapter code lists use `owt_item_codes()` before serializing visibility scopes or query candidates. Do not pass those keys directly as JSON numbers to C# string fields.
 
 `assets/barcode-formats.json` is the shared list of supported carriers. The bootstrap exposes it as `barcode_formats`. Item labels support QR Code (`QRCODE`), Data Matrix (`DATAMATRIX`), Code 128 (`C128`) and PDF417 (`PDF417`). Numeric-only encodings such as EAN-13/UPC and numeric Code 128 subsets are not options for these alphanumeric IDs.
 
@@ -14,7 +18,7 @@ Storage-location and physical-bin labels keep their existing typed route payload
 
 ## Native rendering boundary
 
-`qrrouter_barcodes.lib.php` validates the carrier against the shared list, uses Dolibarr's `modTcpdfbarcode::getTcpdfEncodingType()` mapping and instantiates the bundled TCPDF 1D/2D renderer. The Barcode engine can be used as a rendering utility without enabling native product-barcode editing. QR Router does not assign or overwrite a native product barcode when printing its own identifier.
+`owt_barcodes.lib.php` validates the carrier against the shared list, uses Dolibarr's `modTcpdfbarcode::getTcpdfEncodingType()` mapping and instantiates the bundled TCPDF 1D/2D renderer. The Barcode engine can be used as a rendering utility without enabling native product-barcode editing. Open Warehouse Tracker does not assign or overwrite a native product barcode when printing its own identifier.
 
 `barcode.php` checks the same base inventory/object access as the original image endpoint and returns SVG. SVG remains sharp at printer resolution and does not need GD. It accepts an authorized item code or the existing location/bin selectors, not arbitrary user-supplied barcode text. Unsupported carriers are rejected before rendering; renderer errors are logged without disclosing internals in the response.
 
@@ -44,7 +48,8 @@ Manual/USB entry follows the same payload validation. A hardware scanner needs s
 
 ## Verification and extension
 
-- `npm run test:barcodes` round-trips independent BWIPP encoders through the production decoder, including numeric-looking and mixed IDs, rotations, inversion and blank frames.
+- `npm run test:barcodes` round-trips independent BWIPP encoders through the production decoder, including both ID lengths, numeric-looking and mixed IDs, rotations, inversion and blank frames.
+- Service allocator tests model the real capacity boundary with occupancy callbacks, including the last short slot, repeated collisions, long-ID collisions, Int64 cursors and durable expansion, without materializing 28 million fixture records.
 - Mock camera tests exercise the actual capture pipeline and selection without mutating identifiers. The developer camera toolbar includes a carrier selector and preserves image aspect ratio.
 - Native compatibility checks exercise the official engine mapping and SVG rendering for each supported Dolibarr version. Prepare the pinned source cache with `python tests/dolibarr_compatibility.py --download --php /path/to/php` before gateway tests.
 - Gateway tests use those official renderers, verify allowlists/access checks and assert that rendering does not modify service state.

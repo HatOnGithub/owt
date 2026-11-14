@@ -1,5 +1,5 @@
 <h1>{{ 'CSV import and export' | t }}</h1>
-<p class="subtitle">{{ 'Transfer QR inventory using UTF-8 CSV files.' | t }}</p>
+<p class="subtitle">{{ 'Transfer warehouse inventory using UTF-8 CSV files.' | t }}</p>
 <a mat-button routerLink="/inventory">{{ 'Back to inventory' | t }}</a>
 @if (error()) {
   <p class="alert" role="alert">{{ error() }}</p>
@@ -7,7 +7,7 @@
 @if (notice()) {
   <p class="alert success" role="status">{{ notice() | t }}</p>
 }
-<qrr-card [title]="'Export inventory' | t">
+<owt-card [title]="'Export inventory' | t">
   <p>{{ 'Exports include only items and fields you are permitted to view.' | t }}</p>
   <div class="actions">
     <button mat-stroked-button (click)="exportAll()">
@@ -15,9 +15,9 @@
     </button>
     <button mat-button (click)="template()">{{ 'Download CSV template' | t }}</button>
   </div>
-</qrr-card>
+</owt-card>
 @if (api.can('create') || api.can('modify')) {
-  <qrr-card [title]="'Import CSV' | t">
+  <owt-card [title]="'Import CSV' | t">
     <p>
       {{
         'Leave code blank to create a QR, or use an existing QR ID to register or update it. Review every row before importing.'
@@ -105,5 +105,5 @@
         </button>
       </div>
     }
-  </qrr-card>
+  </owt-card>
 }

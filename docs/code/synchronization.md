@@ -7,9 +7,9 @@ QR state and native stock live in separate databases. The service durably stores
 Creation, bulk creation, registration, initial counts and container-content transfers can use the `native-stage` / `native-finish` protocol when native-linked records are involved.
 
 1. PHP prepares allowed fields from native products, warehouses and creation rules. It checks action and stock rights, plus lot-creation rights when needed.
-2. `InventoryService.NativeStage()` applies the proposed command to a cloned state. It records before/after changes, candidate item/batch snapshots and the result under root `pending_native`, with a random `QRR-N-...` ID.
+2. `InventoryService.NativeStage()` applies the proposed command to a cloned state. It records before/after changes, candidate item/batch snapshots and the result under root `pending_native`, with a random `OWT-N-...` ID.
 3. That service transaction commits before native execution. While the root intent exists, other modifying service commands are blocked except native finish/cancel.
-4. `qrr_native_complete()` checks current rights and visibility of both sides. If there is no native receipt, it starts a Dolibarr transaction and inserts a unique receipt claim for the entity/operation ID.
+4. `owt_native_complete()` checks current rights and visibility of both sides. If there is no native receipt, it starts a Dolibarr transaction and inserts a unique receipt claim for the entity/operation ID.
 5. Native stock rows are locked in product order, lot identities are resolved/created, expected quantities are checked and native `correct_stock_batch()` calls apply the required deltas. The lot-ID bindings are saved into the same receipt transaction.
 6. After the native commit, PHP sends `native-finish` with the operation ID and bindings. C# installs the staged snapshots, attaches native lot IDs, removes `pending_native` and returns the saved result.
 
@@ -21,7 +21,7 @@ Native-linked metadata edits use the metadata command path. They do not repost s
 
 ### Recovery and cancellation
 
-The browser's Recover command returns to `qrr_native_complete()`. A saved committed receipt skips stock execution and supplies the same bindings to service finalization. Cancel is allowed only if there is no committed native-change receipt. PHP writes a cancellation receipt before C# removes the intent, preventing later completion of an operation that was cancelled. Recovery/cancellation require Recovery and the original action grant, stock rights and current native visibility.
+The browser's Recover command returns to `owt_native_complete()`. A saved committed receipt skips stock execution and supplies the same bindings to service finalization. Cancel is allowed only if there is no committed native-change receipt. PHP writes a cancellation receipt before C# removes the intent, preventing later completion of an operation that was cancelled. Recovery/cancellation require Recovery and the original action grant, stock rights and current native visibility.
 
 The gateway waits at least 30 seconds from staging before manual native recovery/cancellation. The service also enforces the native cancellation delay. This delay reduces overlap with an original request still executing; elapsed time alone is not evidence that stock did or did not commit.
 
@@ -31,7 +31,7 @@ Move, consume, return and quantity correction use `plan`, `stage`, `finish` and 
 
 1. C# plans from the current item and trusted native observations. A plan has only the allowed QR patch, signed warehouse effects, identity/reference data and the current revision.
 2. PHP preflights native stock availability, warehouse state and lot requirements.
-3. `Stage()` checks that the revision still matches, replans under the write transaction and assigns a random `QRR-...` operation ID. It persists `pending_operation` or `pending_handoff` before native execution.
+3. `Stage()` checks that the revision still matches, replans under the write transaction and assigns a random `OWT-...` operation ID. It persists `pending_operation` or `pending_handoff` before native execution.
 4. PHP executes native stock APIs in a Dolibarr transaction, tagging movements with that operation's `inventorycode`.
 5. PHP queries movement evidence by that ID, product, lot, warehouse and delta. The service verifies the operation ID and the complete expected evidence before applying the QR patch/loan state and clearing the marker.
 

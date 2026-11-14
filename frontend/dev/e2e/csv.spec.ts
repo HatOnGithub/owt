@@ -233,10 +233,10 @@ test('CSV requires a fresh preview if inventory changes before confirmation', as
   const bootstrap = await mock.bootstrap();
   expect(
     (
-      await request.post('/custom/qrrouter/api.php?action=bulk', {
+      await request.post('/custom/owt/api.php?action=bulk', {
         form: {
           token: bootstrap.token,
-          qrr_token: bootstrap.csrf,
+          owt_token: bootstrap.csrf,
           payload: JSON.stringify({ type: 'unassigned', count: 1 }),
         },
       })

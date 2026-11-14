@@ -30,7 +30,7 @@ import {
  * is feedback only; staging recalculates the plan and pick allowance from current server state.
  */
 @Component({
-  selector: 'qrr-workflow',
+  selector: 'owt-workflow',
   standalone: true,
   imports: [
     SharedModule,

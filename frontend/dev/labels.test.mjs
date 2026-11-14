@@ -1,9 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { details, serial, name } from '../dist/qrrouter/browser/print/model.js';
+import { details, serial, name } from '../dist/owt/browser/print/model.js';
 const profiles = JSON.parse(
-  readFileSync(new URL('../../dolibarr/qrrouter/assets/label-profiles.json', import.meta.url))
+  readFileSync(new URL('../../dolibarr/owt/assets/label-profiles.json', import.meta.url))
 );
 const product = { label: 'Product short name', ref: 'REF-42' };
 const item = {

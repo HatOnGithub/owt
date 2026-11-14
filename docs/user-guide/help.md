@@ -8,15 +8,15 @@ For specific error messages, missing native receipt tables, warehouse validation
 
 The module and its business service must be installed before this step.
 
-1. Open QR Router's setup page from Dolibarr's module configuration.
+1. Open Open Warehouse Tracker's setup page from Dolibarr's module configuration.
 2. Enter the **Service URL** and the **Service API key** supplied by the administrator running the service.
-3. Select **Save**, then open QR Router and use **Refresh**.
+3. Select **Save**, then open Open Warehouse Tracker and use **Refresh**.
 
 When the URL is unchanged, leaving a previously saved API key blank keeps it. Re-enter the key when changing the URL.
 
 ## Missing pages or actions
 
-Menu entries, direct pages and actions depend on permissions. All non-administrators need **Use QR Router**, **Read QR inventory and scan labels**, and native product/stock read access. Grant only the additional QR permissions needed for their tasks. Native object access, entity sharing and document permissions are checked separately; a QR grant never overrides a native restriction.
+Menu entries, direct pages and actions depend on permissions. All non-administrators need **Use Open Warehouse Tracker**, **Read warehouse inventory and scan labels**, and native product/stock read access. Grant only the additional QR permissions needed for their tasks. Native object access, entity sharing and document permissions are checked separately; a QR grant never overrides a native restriction.
 
 | QR permission    | Allows                                                                                                                                         |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -40,7 +40,7 @@ The former broad **manage** permission now controls configuration only. It does 
 ## Camera or entry problems
 
 - Allow camera access in the browser. If capture fails, select **Start camera** or **Restart camera**, or switch to **Manual / USB entry**.
-- For USB scanners, focus **QR identifiers** before scanning.
+- For USB scanners, focus **Item identifiers** before scanning.
 - Use the QR ID printed on the item label or its QR URL. A native serial, product reference or bin label is not a QR item ID.
 - Remove an unwanted selected ID by selecting its button. An unknown label must be registered before stock actions can use it.
 
@@ -49,7 +49,7 @@ The former broad **manage** permission now controls configuration only. It does 
 - An existing serial can be linked only if it has no QR association. Read its availability warning and verify the product and warehouse before saving.
 - New tracked individuals receive random serials automatically. Existing serials can only be associated with one QR item.
 - Shorten names when the form reports a text limit. See [Labels and printing](labels.md) for label sizes and limits.
-- If linked lot stock is split across warehouses, consolidate it in Dolibarr before using that lot in QR Router.
+- If linked lot stock is split across warehouses, consolidate it in Dolibarr before using that lot in Open Warehouse Tracker.
 - After a native record changes in Dolibarr, select **Refresh** before continuing.
 
 ## Pending synchronization banner
@@ -78,7 +78,7 @@ Administrators and users granted **View QR operation history** can open **Action
 
 The **Movement history** section on a QR's details page shows actions affecting that exact QR, with a refresh button and **Open operation history page** link. That link opens the separate page filtered to the same QR. Select **All QR entries** to return to the full history.
 
-Administrators can grant **View QR operation history** through Dolibarr's user or group permissions for QR Router, alongside module access, inventory read access, native product/stock read and native stock-movement read permissions. This right does not grant inventory management or stock changes. After updating, if a new right is missing from the permissions screen, disable and re-enable the QR Router module to refresh its permission definitions.
+Administrators can grant **View QR operation history** through Dolibarr's user or group permissions for Open Warehouse Tracker, alongside module access, inventory read access, native product/stock read and native stock-movement read permissions. This right does not grant inventory management or stock changes. After updating, if a new right is missing from the permissions screen, disable and re-enable the Open Warehouse Tracker module to refresh its permission definitions.
 
 Search by QR identifier, bin, location or reason, or filter by user, action and date range. Dates use the browser's local time; **Through date** includes that entire day. Use **Previous** and **Next** for older entries and **Apply filters / Refresh** to reload results. Links open affected items, physical bins and orders. Historical user and QR IDs remain visible when their current records are unavailable.
 

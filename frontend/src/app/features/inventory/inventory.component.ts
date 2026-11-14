@@ -7,7 +7,7 @@ import { ConsumptionService } from '@services/consumption.service';
 import { downloadCsv, inventoryCsv } from '@features/csv/csv';
 
 @Component({
-  selector: 'qrr-inventory',
+  selector: 'owt-inventory',
   standalone: true,
   imports: [SharedModule],
   templateUrl: './inventory.component.html',
@@ -107,7 +107,7 @@ export class InventoryComponent {
   protected exportCsv(): void {
     const context = this.api.context()!;
     downloadCsv(
-      'qrrouter-inventory.csv',
+      'owt-inventory.csv',
       inventoryCsv(this.rows(), context.products, context.warehouses)
     );
   }

@@ -22,7 +22,7 @@ export function languageSelect(locale: string, caption: string): HTMLLabelElemen
 }
 
 // Location reports use the same selector as the standalone label renderer.
-const bootstrap = document.getElementById('qrr-print-language-data');
+const bootstrap = document.getElementById('owt-print-language-data');
 if (bootstrap) {
   const data: {
     locale: string;
@@ -46,5 +46,5 @@ if (bootstrap) {
   button.type = 'submit';
   button.textContent = data.translations['Apply language'] || 'Apply language';
   form.append(button);
-  document.querySelector('.qrr-print-tool')?.append(form);
+  document.querySelector('.owt-print-tool')?.append(form);
 }

@@ -29,7 +29,7 @@ venv/
 **/.vite/
 **/playwright-report/
 **/test-results/
-dolibarr/qrrouter/spa/
+dolibarr/owt/spa/
 
 # Runtime logs, temporary files and editor state
 *.log

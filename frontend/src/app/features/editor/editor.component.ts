@@ -13,7 +13,7 @@ import { faArrowLeft, faFloppyDisk, faXmark } from '@fortawesome/free-solid-svg-
  * native identity generation, linking and stock authority remain on the server.
  */
 @Component({
-  selector: 'qrr-editor',
+  selector: 'owt-editor',
   standalone: true,
   imports: [SharedModule, LookupComponent, LocationFieldsComponent],
   templateUrl: './editor.component.html',

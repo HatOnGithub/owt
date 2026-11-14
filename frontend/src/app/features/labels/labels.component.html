@@ -1,4 +1,4 @@
-<h1>{{ 'Print QR labels' | t }}</h1>
+<h1>{{ 'Print labels' | t }}</h1>
 <p class="subtitle">
   {{ 'Create assigned labels now, or print blank labels to register later.' | t }}
 </p>
@@ -6,7 +6,7 @@
   <p class="alert" role="alert">{{ error() }}</p>
 }
 @if (api.can('create')) {
-  <qrr-card [title]="'Create printable batch' | t">
+  <owt-card [title]="'Create printable batch' | t">
     @if (api.can('create')) {
       <a mat-stroked-button routerLink="/create" [queryParams]="{ bulk: 'assigned' }">
         <fa-icon [icon]="icons.create" aria-hidden="true" />
@@ -32,9 +32,9 @@
         {{ 'Create batch' | t }}
       </button>
     </form>
-  </qrr-card>
+  </owt-card>
 }
-<qrr-card [title]="'Label batches' | t">
+<owt-card [title]="'Label batches' | t">
   <mat-form-field appearance="outline">
     <mat-label>{{ 'Barcode format' | t }}</mat-label>
     <mat-select [(ngModel)]="symbology">
@@ -104,4 +104,4 @@
       }
     </tbody>
   </table>
-</qrr-card>
+</owt-card>

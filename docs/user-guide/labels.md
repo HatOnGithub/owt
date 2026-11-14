@@ -4,7 +4,7 @@
 
 ## Choose a barcode format
 
-Choose **Barcode format** on the batch page or an individual/batch print preview: **QR Code**, **Data Matrix**, **Code 128**, or **PDF417**. Select **Apply settings** in the preview. The same six-character identifier is encoded in every format; changing format does not register a new item or change stock. Existing QR labels continue to work.
+Choose **Barcode format** on the batch page or an individual/batch print preview: **QR Code**, **Data Matrix**, **Code 128**, or **PDF417**. Select **Apply settings** in the preview. The same six- or eight-character identifier is encoded in every format; changing format does not register a new item or change stock. Existing QR labels continue to work.
 
 Compact 2D labels put the code on the left and information on the right. Larger 2D labels put the code at the top-left, with information to the right and underneath. Code 128 puts information above the wide barcode along the bottom. The readable identifier remains complete. Printer size and barcode format are separate choices.
 
@@ -18,12 +18,12 @@ This changes printed headings, captions and instructions without changing your D
 
 ## Print blank labels for later registration
 
-1. Open **Print QR labels**.
+1. Open **Print labels**.
 2. Enter **Number of QR codes (1?200)**.
 3. Select **Create batch**.
 4. Under **Label batches**, choose **Printer / label format**.
 5. Select **Print** beside your batch and complete the browser print dialog.
-6. Attach the labels, then use **Scan QR > Register items** to assign them.
+6. Attach the labels, then use **Scan codes > Register items** to assign them.
 
 Unassigned printed labels contain only the QR image and QR ID.
 
@@ -31,7 +31,7 @@ To delete an unused QR code, filter **Inventory** by **Unassigned**, open the QR
 
 ## Create an assigned batch
 
-1. Open **Print QR labels > Create assigned QR batch**.
+1. Open **Print labels > Create assigned QR batch**.
 2. Choose **QR type**, one shared **Dolibarr product**, **Warehouse** and location.
 3. Complete the fields for the chosen type:
    - **Tracked Generic:** set **Number of labels**. Leave the name blank for the Dolibarr product short name, or enter one shared override.
@@ -53,7 +53,7 @@ Individual batches receive one unit per new serial. Container batches receive th
 
 1. Install and select the printer through your workstation's normal printer setup.
 2. Load labels matching the chosen format: **25 ? 54**, **32 ? 57**, **36 ? 89** or **54 ? 101 mm** (height ? width).
-3. Choose the matching format in QR Router.
+3. Choose the matching format in Open Warehouse Tracker.
 4. In the browser print dialog, select the DYMO printer and matching paper size. Print at **100% / actual size**, with browser headers and footers disabled. Avoid scaling to fit another paper size.
 5. Print one label first and check its boundaries and QR readability before printing a batch.
 

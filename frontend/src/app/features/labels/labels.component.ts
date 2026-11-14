@@ -5,7 +5,7 @@ import { faPlus, faPrint } from '@fortawesome/free-solid-svg-icons';
 
 /** Create bounded label batches and link authorized printouts; native receipt handling stays in PHP. */
 @Component({
-  selector: 'qrr-labels',
+  selector: 'owt-labels',
   standalone: true,
   imports: [SharedModule],
   templateUrl: './labels.component.html',

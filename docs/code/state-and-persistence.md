@@ -2,7 +2,7 @@
 
 ## Item identity and types
 
-An item's QR `code` is its key in `items`. Newly generated codes contain five random characters from `23456789ABCDEFGHJKMNPQRSTUVWXYZ` and one rolling checksum character. C#, PHP and TypeScript also accept the supported legacy identifier formats. A code is an identifier, not an authorization token.
+An item's QR `code` is its key in `items`. Newly generated codes contain five payload characters from `23456789ABCDEFGHJKMNPQRSTUVWXYZ` and one rolling checksum character. When that range is fully occupied, generation automatically uses seven payload characters plus a checksum. Both six/eight-character codes and the supported legacy formats remain valid simultaneously. A code is an identifier, not an authorization token. See [barcode identity and allocation](barcodes.md).
 
 | Type         | Meaning                                          | Quantity and native identity                                                                                 |
 | ------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
@@ -41,7 +41,7 @@ The service operates on a schema-2 JSON document even though storage is relation
 | `pick_lists`              | Sales order ID string | Saved order requirements and completion metadata    |
 | `physical_bins`           | Physical bin ID       | Bin identity, current location and resumable move   |
 
-Other root properties, including `pending_native`, are metadata records. `history` is stored separately in append-only audit rows. Normal HTTP inventory reads omit accumulated history. Export-style reads can request it with the required permission; the history screens use a paged query instead.
+Other root properties, including `pending_native` and `identifier_allocation`, are metadata records. `identifier_allocation` stores the active ID length and an Int64 fallback cursor for each namespace; it commits with the item/bin insertion. Native pending snapshots include this metadata so finish installs the matching allocation state. `history` is stored separately in append-only audit rows. Normal HTTP inventory reads omit accumulated history. Export-style reads can request it with the required permission; the history screens use a paged query instead.
 
 ## Durable pending state
 

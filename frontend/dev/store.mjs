@@ -201,13 +201,13 @@ export class MockStore {
     if (resource === 'physical-bins')
       return Object.values(data.state.physical_bins).map(bin => ({
         ...bin,
-        qr: 'QRRBIN:1:1:' + bin.id,
+        qr: 'OWTBIN:1:1:' + bin.id,
         codes: Object.values(data.state.items)
           .filter(item => item.physical_bin_id === bin.id)
           .map(item => item.code),
       }));
     if (resource === 'location-qr') {
-      const match = /^QRRLOC:1:1:([1-9][0-9]*):([A-Za-z0-9_-]+)$/.exec(params.get('payload') || '');
+      const match = /^OWTLOC:1:1:([1-9][0-9]*):([A-Za-z0-9_-]+)$/.exec(params.get('payload') || '');
       requireValue(match, 'Invalid location QR');
       const levels = JSON.parse(Buffer.from(match[2], 'base64url').toString());
       const location = this.location(Number(match[1]), levels);
@@ -699,7 +699,11 @@ export class MockStore {
         workflow:
           { correct: 'adjust', checkout: 'loans', checkin: 'loans' }[payload.kind] || payload.kind,
       }[action] || 'manage';
-    requireValue(permissions.use && permissions[required], 'Missing QR Router permission', 403);
+    requireValue(
+      permissions.use && permissions[required],
+      'Missing Open Warehouse Tracker permission',
+      403
+    );
     requireValue(
       !this.data.state.pending_native || ['native-recover', 'native-cancel'].includes(action),
       'Resolve the pending native synchronization first',
@@ -789,7 +793,10 @@ export class MockStore {
     }
     if (action === 'physical-bin-create') {
       requireValue(payload.label?.trim(), 'Enter a physical bin name');
-      const id = makeCode(6000 + Object.keys(state.physical_bins).length);
+      const id = makeCode(
+        6000 + Object.keys(state.physical_bins).length,
+        state.identifier_allocation?.physical_bins?.length || 6
+      );
       return (state.physical_bins[id] = {
         id,
         label: payload.label.trim(),
@@ -854,7 +861,10 @@ export class MockStore {
       }
       const codes = [];
       for (let index = 0; index < count; index++) {
-        const code = makeCode(++this.data.sequence);
+        const code = makeCode(
+          ++this.data.sequence,
+          state.identifier_allocation?.items?.length || 6
+        );
         let fields = payload;
         if (action === 'bulk' && ['tracked', 'box'].includes(payload.type)) {
           const label = namedItems ? String(payload.labels[index]).trim() : payload.label;

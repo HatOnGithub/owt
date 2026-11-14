@@ -29,7 +29,7 @@
   let timer;
   let open = false;
 
-  const savedMode = localStorage.getItem('qrr-mock-camera-mode');
+  const savedMode = localStorage.getItem('owt-mock-camera-mode');
   if ([...mode.options].some(option => option.value === savedMode)) mode.value = savedMode;
 
   function reportError(message = '') {
@@ -151,7 +151,7 @@
     workspace.classList.toggle('camera-controls-open', open);
     document.body.classList.toggle('mock-camera-open', open);
     toggle.setAttribute('aria-expanded', String(open));
-    sessionStorage.setItem('qrr-mock-camera-panel', String(open));
+    sessionStorage.setItem('owt-mock-camera-panel', String(open));
     resizePanel();
     update();
     if (open) {
@@ -190,7 +190,7 @@
       }
     }
   });
-  mode.addEventListener('change', () => localStorage.setItem('qrr-mock-camera-mode', mode.value));
+  mode.addEventListener('change', () => localStorage.setItem('owt-mock-camera-mode', mode.value));
   fixture.addEventListener('change', () => {
     if (fixture.value) content.value = fixture.value;
   });
@@ -208,7 +208,9 @@
     show.disabled = true;
     reportError();
     try {
-      const response = await fetch('/__mock/camera/qr?' + new URLSearchParams({ text: value, symbology: symbology.value }));
+      const response = await fetch(
+        '/__mock/camera/qr?' + new URLSearchParams({ text: value, symbology: symbology.value })
+      );
       if (!response.ok) throw new Error((await response.json()).message);
       const source = URL.createObjectURL(await response.blob());
       const next = new Image();
@@ -257,5 +259,5 @@
   });
   update();
   resizePanel();
-  if (sessionStorage.getItem('qrr-mock-camera-panel') === 'true') setOpen(true);
+  if (sessionStorage.getItem('owt-mock-camera-panel') === 'true') setOpen(true);
 })();

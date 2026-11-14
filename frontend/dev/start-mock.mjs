@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { listenMock } from './server.mjs';
 
 try {
-  const server = await listenMock(Number(process.env.QRR_MOCK_PORT || 8089));
+  const server = await listenMock(Number(process.env.OWT_MOCK_PORT || 8089));
   const port = server.address().port;
   console.log(
     `Local Dolibarr mock listening on 127.0.0.1:${port}. Data resets when this command restarts.`
@@ -19,7 +19,7 @@ try {
     ],
     {
       cwd: fileURLToPath(new URL('../', import.meta.url)),
-      env: { ...process.env, QRR_MOCK_PORT: String(port) },
+      env: { ...process.env, OWT_MOCK_PORT: String(port) },
       stdio: 'inherit',
     }
   );

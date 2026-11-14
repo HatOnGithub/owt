@@ -3,6 +3,7 @@ import type { Bootstrap, Item } from '../../src/app/core/models/inventory';
 
 type Scenario =
   | 'populated'
+  | 'expanded'
   | 'empty'
   | 'no-employees'
   | 'read-only'
@@ -22,7 +23,7 @@ export class MockApplication {
   }
 
   async bootstrap(): Promise<Bootstrap> {
-    const response = await this.request.get('/custom/qrrouter/api.php?resource=bootstrap');
+    const response = await this.request.get('/custom/owt/api.php?resource=bootstrap');
     expect(response.ok()).toBeTruthy();
     return response.json();
   }
@@ -45,7 +46,7 @@ export class MockApplication {
   }
 
   async operation(label: string): Promise<void> {
-    await this.navigate('Scan QR');
+    await this.navigate('Scan codes');
     await this.page
       .getByRole('navigation', { name: 'Warehouse operations' })
       .getByRole('link', { name: new RegExp('^' + label) })
@@ -108,7 +109,7 @@ export const test = base.extend<{ mock: MockApplication }>({
   extraHTTPHeaders: async ({ extraHTTPHeaders }, use, info) => {
     await use({
       ...extraHTTPHeaders,
-      'x-qrr-mock-session': `${info.workerIndex}-${info.testId}-${info.retry}-${info.repeatEachIndex}`,
+      'x-owt-mock-session': `${info.workerIndex}-${info.testId}-${info.retry}-${info.repeatEachIndex}`,
     });
   },
   mock: [
@@ -148,7 +149,7 @@ export const test = base.extend<{ mock: MockApplication }>({
         // scanner so platform-specific color conversion and narrow bars can be reproduced.
         if (info.tags.includes('@virtual-camera') && !page.isClosed()) {
           const frame = await page.evaluate(() => {
-            const video = document.querySelector('qrr-scanner video');
+            const video = document.querySelector('owt-scanner video');
             if (!(video instanceof HTMLVideoElement) || video.readyState < 2 || !video.videoWidth)
               return null;
             const canvas = document.createElement('canvas');
@@ -168,7 +169,7 @@ export const test = base.extend<{ mock: MockApplication }>({
           body: JSON.stringify(errors, null, 2),
           contentType: 'application/json',
         });
-        const response = await request.get('/custom/qrrouter/api.php?resource=bootstrap');
+        const response = await request.get('/custom/owt/api.php?resource=bootstrap');
         await info.attach('mock-state', {
           body: await response.body(),
           contentType: 'application/json',

@@ -17,6 +17,18 @@ after(async () => {
 });
 beforeEach(() => store.reset());
 
+test('expanded warehouse fixture keeps six-character IDs and generates eight-character IDs', () => {
+  store.reset({ scenario: 'expanded' });
+  const previous = Object.keys(store.data.state.items);
+  assert.ok(previous.some(code => code.length === 6));
+  assert.ok(previous.some(code => code.length === 8));
+  const batch = store.command('bulk', { type: 'unassigned', count: 2 });
+  assert.ok(
+    store.data.state.batches[batch].codes.every(code => code.length === 8 && validCode(code))
+  );
+  assert.ok(previous.every(code => code in store.data.state.items));
+});
+
 test('manufacturing picks include only components, consume available allocations once and do not mutate stock', () => {
   const before = structuredClone(store.data);
   const rows = store.read(
@@ -107,25 +119,25 @@ test('internal location configuration preserves option identities and blocks pen
 
 const read = async (resource, params = {}) => {
   const response = await fetch(
-    `${base}/custom/qrrouter/api.php?${new URLSearchParams({ resource, ...params })}`
+    `${base}/custom/owt/api.php?${new URLSearchParams({ resource, ...params })}`
   );
   assert.equal(response.status, 200);
   return response.json();
 };
 const command = (action, payload, tokens = {}) =>
-  fetch(`${base}/custom/qrrouter/api.php?action=${action}`, {
+  fetch(`${base}/custom/owt/api.php?action=${action}`, {
     method: 'POST',
     body: new URLSearchParams({
       token: 'local-mock-token',
-      qrr_token: 'local-mock-csrf',
+      owt_token: 'local-mock-csrf',
       payload: JSON.stringify(payload),
       ...tokens,
     }),
   });
 
 test('parallel mock sessions isolate resets, settings and inventory from each other and manual use', async () => {
-  const headers = { 'x-qrr-mock-session': 'isolation-a' };
-  const otherHeaders = { 'x-qrr-mock-session': 'isolation-b' };
+  const headers = { 'x-owt-mock-session': 'isolation-a' };
+  const otherHeaders = { 'x-owt-mock-session': 'isolation-b' };
   const reset = await fetch(`${base}/__mock/reset`, {
     method: 'POST',
     headers,
@@ -133,7 +145,7 @@ test('parallel mock sessions isolate resets, settings and inventory from each ot
   });
   assert.equal(reset.status, 200);
   const bootstrap = async sessionHeaders => {
-    const response = await fetch(`${base}/custom/qrrouter/api.php?resource=bootstrap`, {
+    const response = await fetch(`${base}/custom/owt/api.php?resource=bootstrap`, {
       headers: sessionHeaders,
     });
     assert.equal(response.status, 200);
@@ -295,7 +307,7 @@ test('scenarios reset data, enforce read-only access and recover from service er
     });
     assert.equal(reset.status, 200);
     if (scenario === 'unavailable') {
-      assert.equal((await fetch(base + '/custom/qrrouter/api.php?resource=bootstrap')).status, 503);
+      assert.equal((await fetch(base + '/custom/owt/api.php?resource=bootstrap')).status, 503);
       continue;
     }
     const bootstrap = await read('bootstrap');
@@ -329,7 +341,7 @@ test('bad tokens, malformed requests and unsupported endpoints fail without muta
 test('camera controls list current fixtures and generate bounded custom QR payloads', async () => {
   const catalog = await (await fetch(base + '/__mock/camera/items')).json();
   assert.ok(catalog.items.some(item => item.label === 'Workshop drill' && validCode(item.code)));
-  const text = 'https://example.test/custom/qrrouter/scan.php?code=' + catalog.items[0].code;
+  const text = 'https://example.test/custom/owt/scan.php?code=' + catalog.items[0].code;
   const response = await fetch(base + '/__mock/camera/qr?' + new URLSearchParams({ text }));
   assert.equal(response.status, 200);
   assert.ok(response.headers.get('content-type').startsWith('image/svg+xml'));
@@ -371,26 +383,24 @@ test('generic mock labels follow the product short name until a QR override is s
   assert.equal((await read('bootstrap')).state.items[item.code].label, '');
   for (const format of ['a4', 'dymo-25x54', 'dymo-32x57', 'dymo-36x89', 'dymo-54x101']) {
     const defaultLabel = await (
-      await fetch(`${base}/custom/qrrouter/label.php?code=${item.code}&format=${format}`)
+      await fetch(`${base}/custom/owt/label.php?code=${item.code}&format=${format}`)
     ).text();
     assert.ok(defaultLabel.includes('<span>Updated product short name</span>'));
     const overrideLabel = await (
-      await fetch(`${base}/custom/qrrouter/label.php?code=${overrideCode}&format=${format}`)
+      await fetch(`${base}/custom/owt/label.php?code=${overrideCode}&format=${format}`)
     ).text();
     assert.ok(overrideLabel.includes('<span>Bench fasteners</span>'));
     assert.ok(!overrideLabel.includes('Updated product short name'));
   }
   const bins = await (
-    await fetch(`${base}/custom/qrrouter/bin_print.php?warehouse_id=${item.warehouse_id}`)
+    await fetch(`${base}/custom/owt/bin_print.php?warehouse_id=${item.warehouse_id}`)
   ).text();
   assert.ok(bins.includes('Updated product short name') && bins.includes('Bench fasteners'));
   assert.equal(
     (await command('update', { ...payload, code: overrideCode, label: '' })).status,
     200
   );
-  const cleared = await (
-    await fetch(`${base}/custom/qrrouter/label.php?code=${overrideCode}`)
-  ).text();
+  const cleared = await (await fetch(`${base}/custom/owt/label.php?code=${overrideCode}`)).text();
   assert.ok(cleared.includes('<span>Updated product short name</span>'));
 });
 
@@ -424,13 +434,11 @@ test('QR images and printable previews stay local and escape labels', async () =
   const bootstrap = await read('bootstrap');
   const item = Object.values(bootstrap.state.items).find(item => item.type === 'tracked');
   store.data.state.items[item.code].label = '<img src=x onerror=alert(1)>';
-  const qr = await fetch(`${base}/custom/qrrouter/qr.php?code=${item.code}`);
+  const qr = await fetch(`${base}/custom/owt/qr.php?code=${item.code}`);
   assert.equal(qr.status, 200);
   assert.equal(qr.headers.get('content-type'), 'image/svg+xml');
   assert.ok((await qr.text()).includes('<svg'));
-  const label = await fetch(
-    `${base}/custom/qrrouter/label.php?code=${item.code}&format=dymo-25x54`
-  );
+  const label = await fetch(`${base}/custom/owt/label.php?code=${item.code}&format=dymo-25x54`);
   const markup = await label.text();
   assert.equal(label.status, 200);
   assert.ok(markup.includes('&lt;img'));

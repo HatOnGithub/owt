@@ -1,6 +1,6 @@
 # Update guide
 
-Refresh QR Router's module permissions after installing the updated module. Non-administrators now need an explicit **Use QR Router** grant and individual action permissions; the old **manage** grant controls configuration only. Review user and group grants using the [permission guide](user-guide/help.md#missing-pages-or-actions) before operators resume work.
+Refresh Open Warehouse Tracker's module permissions after installing the updated module. Non-administrators now need an explicit **Use Open Warehouse Tracker** grant and individual action permissions; the old **manage** grant controls configuration only. Review user and group grants using the [permission guide](user-guide/help.md#missing-pages-or-actions) before operators resume work.
 
 [Project overview](../README.md) | [Installation](installation.md) | [User guide](user-guide/README.md)
 
@@ -13,9 +13,9 @@ If an update reports a missing native receipt table, a warehouse error or retain
 | Store                               | Contents                                                                                                                                                                                                                  | Keep across updates                                                                                 |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | Service `AppSettings.DataDirectory` | Per-entity `entity-N/state.sqlite3` databases (older releases: `state.json`): QR identities, associations, batches, employee warehouse mappings, loans, location definitions, assignments, history and pending operations | The complete data directory, outside the service application directory                              |
-| External service settings           | API key and absolute data directory, with any other service settings                                                                                                                                                      | An external JSON file referenced by `QRR_CONFIG_FILE`, or the existing service environment settings |
-| Dolibarr database                   | Products, serials/lots, stock, optional legacy Binloc data, permissions, module settings and native synchronization receipts                                                                                              | The existing database, including QR Router tables and settings                                      |
-| Dolibarr documents                  | QR scan thumbnails under `DOL_DATA_ROOT/qrrouter/entity-N/thumbnails`                                                                                                                                                     | The existing Dolibarr documents directory                                                           |
+| External service settings           | API key and absolute data directory, with any other service settings                                                                                                                                                      | An external JSON file referenced by `OWT_CONFIG_FILE`, or the existing service environment settings |
+| Dolibarr database                   | Products, serials/lots, stock, optional legacy Binloc data, permissions, module settings and native synchronization receipts                                                                                              | The existing database, including Open Warehouse Tracker tables and settings                         |
+| Dolibarr documents                  | QR scan thumbnails under `DOL_DATA_ROOT/owt/entity-N/thumbnails`                                                                                                                                                          | The existing Dolibarr documents directory                                                           |
 
 Do not rebuild QR associations by registering or importing the same inventory again. Reuse the saved service state. Current state files use schema 2; invalid or unsupported state is rejected rather than reset automatically.
 
@@ -23,8 +23,8 @@ Do not rebuild QR associations by registering or importing the same inventory ag
 
 1. Download the module and business service ZIPs for the chosen release from [Releases](https://github.com/HatOnGithub/qrrouter/releases). Check its notes for any required migration.
 2. Record the current service URL, service account, configuration path, actual data path and Dolibarr entity IDs. Keep the previous application files for rollback.
-3. Ask operators to stop using QR Router. Let active requests finish and resolve pending synchronization or stock operations where possible.
-4. Stop the business service and keep QR Router unavailable during the update.
+3. Ask operators to stop using Open Warehouse Tracker. Let active requests finish and resolve pending synchronization or stock operations where possible.
+4. Stop the business service and keep Open Warehouse Tracker unavailable during the update.
 5. Back up the complete service data directory, external service settings, Dolibarr database and QR document directory together. Verify that each used entity has its expected `state.sqlite3` (or pre-migration `state.json`) in the backup. Copy the whole entity directory, including any SQLite `-wal` and `-shm` files; never copy only the database while the service is running.
 
 ## 2. Move application-local data once, if necessary
@@ -33,7 +33,7 @@ If your existing service already uses an absolute data path outside its applicat
 
 Earlier installations could use `DataDirectory: "data"`. This was resolved relative to the service's **working directory**, which might differ from the folder containing its DLL. Locate the actual existing `entity-N/state.sqlite3` or older `state.json` files before proceeding. Do not point the update at a new empty folder and assume the old inventory will be found automatically.
 
-1. With the service stopped, copy the **entire existing data directory** to a persistent location outside the application directory, such as `/var/lib/qrrouter` on Linux or `C:/ProgramData/QrRouter/data` on Windows.
+1. With the service stopped, copy the **entire existing data directory** to a persistent location outside the application directory, such as `/var/lib/owt` on Linux or `C:/ProgramData/OpenWarehouseTracker/data` on Windows.
 2. Check that the copied entity directories match the originals for every entity. Keep the original directory and backup until verification is complete.
 3. Give the service account read/write access to the new data directory.
 4. Set `AppSettings.DataDirectory` to that absolute path in the settings used by the new service.
@@ -50,41 +50,41 @@ SQLite uses local disk storage and write-ahead logging. Use the stopped-service 
 
 ### Moving locations from Binloc
 
-Current source stores location definitions and QR assignments in the service database. Binloc is no longer required for normal operation, and QR Router no longer writes its locations. Existing saved `bin`, `bin_key` and `bin_values` remain intact; the data migration preserves saved label-format preferences under their new name.
+Current source stores location definitions and QR assignments in the service database. Binloc is no longer required for normal operation, and Open Warehouse Tracker no longer writes its locations. Existing saved `bin`, `bin_key` and `bin_values` remain intact; the data migration preserves saved label-format preferences under their new name.
 
 1. Back up the service data and Dolibarr database together, and resolve pending stock operations before updating.
-2. Install the matching module and service, then disable/re-enable QR Router in module setup to refresh dependencies, hooks and native tabs.
-3. While Binloc is still available, an administrator can open **Bins and locations > Import existing locations** and select **Import Binloc locations**. This imports definitions and current assignments for QR-associated lots once per warehouse. Previously configured QR Router locations are not overwritten; resolve any reported stock/warehouse mismatch before retrying.
+2. Install the matching module and service, then disable/re-enable Open Warehouse Tracker in module setup to refresh dependencies, hooks and native tabs.
+3. While Binloc is still available, an administrator can open **Bins and locations > Import existing locations** and select **Import Binloc locations**. This imports definitions and current assignments for QR-associated lots once per warehouse. Previously configured Open Warehouse Tracker locations are not overwritten; resolve any reported stock/warehouse mismatch before retrying.
 4. Verify representative warehouse, product and serial/lot links and location values. You can then disable Binloc. Keep its database data in the backup.
-5. Make future location changes through QR Router. Changes made later in Binloc do not change QR Router locations.
+5. Make future location changes through Open Warehouse Tracker. Changes made later in Binloc do not change Open Warehouse Tracker locations.
 
 If Binloc has already been removed, saved location codes remain visible. A warehouse without imported definitions offers a single **Location** field; editing uses the complete saved code instead of displaying legacy option IDs. An external Dolibarr stock move to another warehouse clears the old warehouse's QR location until a new location is assigned.
 
 ## 3. Keep settings outside the release directory
 
-For a standalone service, create a persistent JSON settings file outside the application directory, for example `/etc/qrrouter/service.json` or `C:/ProgramData/QrRouter/service.json`:
+For a standalone service, create a persistent JSON settings file outside the application directory, for example `/etc/owt/service.json` or `C:/ProgramData/OpenWarehouseTracker/service.json`:
 
 ```json
 {
   "AppSettings": {
     "ApiKey": "KEEP-YOUR-EXISTING-SERVICE-KEY-HERE",
-    "DataDirectory": "/var/lib/qrrouter"
+    "DataDirectory": "/var/lib/owt"
   }
 }
 ```
 
-Use your existing key and actual data path, not these placeholder values. On Windows, a path such as `C:/ProgramData/QrRouter/data` works in JSON without escaping backslashes. Limit access to the settings file to the administrator and service account.
+Use your existing key and actual data path, not these placeholder values. On Windows, a path such as `C:/ProgramData/OpenWarehouseTracker/data` works in JSON without escaping backslashes. Limit access to the settings file to the administrator and service account.
 
 Set the absolute configuration file path in the service manager's environment:
 
 ```sh
 # Linux/macOS shell example; persist this in the service manager as well.
-export QRR_CONFIG_FILE=/etc/qrrouter/service.json
+export OWT_CONFIG_FILE=/etc/owt/service.json
 ```
 
 ```powershell
 # Windows PowerShell example; persist this in the service manager as well.
-$env:QRR_CONFIG_FILE = 'C:/ProgramData/QrRouter/service.json'
+$env:OWT_CONFIG_FILE = 'C:/ProgramData/OpenWarehouseTracker/service.json'
 ```
 
 The file must exist; a missing or invalid file prevents startup. Existing `AppSettings__ApiKey` and `AppSettings__DataDirectory` environment variables remain supported and override the JSON file, as do command-line settings. Check them for old paths before restarting. Docker Compose already supplies these settings through its environment and does not need an external JSON file.
@@ -92,10 +92,10 @@ The file must exist; a missing or invalid file prevents startup. Existing `AppSe
 ## 4. Replace and restart
 
 1. Extract the new service ZIP into a new application directory. Keep the persistent settings and data directories separate; do not replace them with release defaults.
-2. Update the service manager to launch the new `QrRouterApi.dll`, retaining the configuration file environment variable, account and listener URL.
-3. Install the matching module ZIP through Dolibarr's external-module installer, or replace only `htdocs/custom/qrrouter` with the new module files. Keep the Dolibarr documents directory and database.
-4. If the release changes module tables, tabs, hooks or menus, disable and re-enable QR Router in Dolibarr's module setup. Do not uninstall its database data or delete module settings.
-5. Start the service. Check `/health`, then open QR Router and select **Refresh**. Confirm that the saved module service URL and key still match.
+2. Update the service manager to launch the new `OwtApi.dll`, retaining the configuration file environment variable, account and listener URL.
+3. Install the matching module ZIP through Dolibarr's external-module installer, or replace only `htdocs/custom/owt` with the new module files. Keep the Dolibarr documents directory and database.
+4. If the release changes module tables, tabs, hooks or menus, disable and re-enable Open Warehouse Tracker in Dolibarr's module setup. Do not uninstall its database data or delete module settings.
+5. Start the service. Check `/health`, then open Open Warehouse Tracker and select **Refresh**. Confirm that the saved module service URL and key still match.
 6. Reload the browser. Restart PHP workers if their opcode cache retains old files.
 
 Changing the application's directory or the service's working directory must not change the configured data directory.
@@ -110,7 +110,7 @@ The supplied Compose file stores service data at `/data` in a named volume. Repl
 4. Start the updated container using the same Compose files as before:
 
    ```sh
-   docker compose up -d --build --wait qrrouter-api
+   docker compose up -d --build --wait owt-api
    ```
 
 5. Verify the existing data and stock as below.

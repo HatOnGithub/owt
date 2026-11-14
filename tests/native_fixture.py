@@ -1,8 +1,8 @@
 """Persistent Dolibarr 21 / Binloc 2.19 contract doubles for the gateway suite."""
 
 QUERIES = r'''
-  if(str_contains($sql,'qrrouter_native_receipt')) {
-    preg_match("/QRR-N-[A-F0-9]+/",$sql,$m);$id=$m[0]??'';
+  if(str_contains($sql,'owt_native_receipt')) {
+    preg_match("/OWT-N-[A-F0-9]+/",$sql,$m);$id=$m[0]??'';
     if(str_starts_with($sql,'SELECT')) {if(isset($s['receipts'][$id]))$this->rows=[(object)['bindings'=>$s['receipts'][$id]]];}
     elseif(str_starts_with($sql,'INSERT')) {if(isset($s['receipts'][$id]))return false;$s['receipts'][$id]=str_contains($sql,'cancelled')?'{"cancelled":true}':'{}';}
     elseif(str_starts_with($sql,'UPDATE')) {preg_match("/SET bindings='((?:\\\\.|[^'])*)'/",$sql,$v);$s['receipts'][$id]=stripslashes($v[1]);}

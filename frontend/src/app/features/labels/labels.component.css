@@ -2,7 +2,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--qrr-control-gap, 16px);
+  gap: var(--owt-control-gap, 16px);
 }
 .number {
   max-width: 130px;

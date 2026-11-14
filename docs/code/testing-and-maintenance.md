@@ -4,11 +4,13 @@ Use the [development guide](../development.md) for prerequisites, detailed setup
 
 ## Test layers
 
+Windows WebKit runs with one worker: concurrent instances can stall during document initialization before an application view loads. Chromium and Firefox, and WebKit on other operating systems, retain the normal worker limits. This keeps the same permission and workflow assertions active on every supported browser.
+
 Prepare the pinned official barcode source cache with `python tests/dolibarr_compatibility.py --download --php /path/to/php` before running the gateway suite. `npm run test:barcodes` in `frontend` verifies decoder round trips independently of the native renderer. Barcode camera/browser tests also check unchanged IDs and carrier-specific layout geometry.
 
 | Check                   | Command                                                                | What it establishes                                                                                                         |
 | ----------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| C# console suite        | `dotnet run --project tests/QrRouterApi.Tests -c Release`              | Domain rules, independent grants, locations, history, repository migration/concurrency/rollback and operation recovery      |
+| C# console suite        | `dotnet run --project tests/OwtApi.Tests -c Release`                   | Domain rules, independent grants, locations, history, repository migration/concurrency/rollback and operation recovery      |
 | HTTP smoke              | `python tests/http_smoke.py`                                           | Real service HTTP contract, storage configuration, persistence and restart behavior                                         |
 | PHP gateway integration | `python tests/angular_integration.py --php /path/to/php`               | Real C# plus PHP, native API doubles, CSRF, object scopes, stock transactions, receipts, permissions and public projections |
 | Production browser      | Build frontend, then add `--browser` to gateway integration            | Built Angular served by PHP against the real service and native doubles                                                     |
@@ -50,9 +52,9 @@ The EF model is `InventoryDbContext.cs`; migrations and snapshot are under `Migr
 
 ```sh
 dotnet tool restore
-dotnet tool run dotnet-ef migrations add DescribeTheChange --project src/QrRouterApi
-dotnet tool run dotnet-ef migrations has-pending-model-changes --project src/QrRouterApi
-dotnet run --project tests/QrRouterApi.Tests -c Release
+dotnet tool run dotnet-ef migrations add DescribeTheChange --project src/OwtApi
+dotnet tool run dotnet-ef migrations has-pending-model-changes --project src/OwtApi
+dotnet run --project tests/OwtApi.Tests -c Release
 ```
 
 Do not replace migration-based initialization with `EnsureCreated`. Add preservation tests for data conversions, including old JSON import when relevant. The design-time factory uses an in-memory connection; manually applying migrations to a persistent database needs an explicit connection and should use a test copy. Do not remove applied migrations to make a deployment appear compatible.
@@ -63,7 +65,7 @@ Adding a document collection can require repository load/save changes even witho
 
 ```sh
 python tools/build-frontend.py
-dotnet build QrRouter.sln -c Release
+dotnet build OpenWarehouseTracker.sln -c Release
 python tools/package.py
 ```
 
