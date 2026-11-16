@@ -20,6 +20,7 @@ FILES = [
     'core/lib/security.lib.php',
     'core/lib/admin.lib.php',
     'core/lib/functions.lib.php',
+    'core/menus/standard/eldy.lib.php',
     'core/modules/DolibarrModules.class.php',
     'core/class/extrafields.class.php',
     'user/class/user.class.php',

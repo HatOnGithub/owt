@@ -225,6 +225,8 @@ if(in_array($method,['printFieldListTitle','printFieldListOption','printFieldLis
                             'core/modules/DolibarrModules.class.php': "<?php #[AllowDynamicProperties] class DolibarrModules {}",
                             'custom/owt/descriptor_fixture.php': """<?php
 require __DIR__.'/../../main.inc.php';
+// Native icon markup and theme rendering are exercised by the compatibility suite.
+function img_picto($title, $picto, $attributes='') {return '<span class="fas '.htmlspecialchars($picto,ENT_QUOTES,'UTF-8').'"></span>';}
 require __DIR__.'/core/modules/modOwt.class.php';
 $module=new modOwt($db);
 echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'=>eval('return '.$module->menu[1]['perms'].';')]);

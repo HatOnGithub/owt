@@ -18,8 +18,8 @@ class modOwt extends DolibarrModules {
         $this->phpmin = [8, 0];
         $this->need_dolibarr_version = [21, 0, 2];
         $this->const_name = 'MAIN_MODULE_OWT';
-        // The fa- prefix also registers MAIN_MODULE_OWT_ICON during activation,
-        // so Dolibarr's top menu uses the warehouse glyph instead of its generic fallback.
+        // The fa- prefix registers native icon metadata. The top-menu prefix below
+        // supplies the glyph markup; registration alone only hides the generic fallback.
         $this->picto = 'fa-warehouse';
         $this->langfiles = ['owt@owt'];
         $this->dirs = [];
@@ -121,6 +121,7 @@ class modOwt extends DolibarrModules {
                 'fk_menu' => 0,
                 'type' => 'top',
                 'titre' => 'Open Warehouse Tracker',
+                'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle"'),
                 'mainmenu' => 'owt',
                 'leftmenu' => 'owt',
                 'url' => '/owt/index.php',

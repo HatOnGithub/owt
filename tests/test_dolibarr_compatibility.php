@@ -5,6 +5,7 @@ $version = $argv[2];
 $fixture = $argv[3];
 define('DOL_DOCUMENT_ROOT', $fixture);
 define('DOL_VERSION', $version);
+define('DOL_URL_ROOT', '');
 error_reporting(E_ALL);
 set_error_handler(function ($severity, $message, $file, $line) {
     throw new ErrorException($message, 0, $severity, $file, $line);
@@ -297,8 +298,38 @@ check(owt_internal_user($user), 'Active modern-status user rejected');
 $baseFile = $fixture . '/core/modules/DolibarrModules.class.php';
 mkdir(dirname($baseFile), 0777, true);
 copy($source . '/core/modules/DolibarrModules.class.php', $baseFile);
+eval(native_function($source . '/core/lib/functions.lib.php', 'img_picto'));
 require_once __DIR__ . '/../dolibarr/owt/core/modules/modOwt.class.php';
 $module = new modOwt(null);
+// Render the descriptor through the real theme function. Icon metadata alone
+// suppresses the generic fallback but leaves an empty image without menu markup.
+function dol_escape_htmltag($value) {
+    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+eval(native_function($source . '/core/menus/standard/eldy.lib.php', 'print_text_menu_entry'));
+$langs = new class {
+    public function trans($key) {
+        return $key;
+    }
+};
+foreach ([1, 2] as $visibility) {
+    ob_start();
+    print_text_menu_entry(
+        'Open Warehouse Tracker',
+        $visibility,
+        '/custom/owt/index.php',
+        'mainmenu',
+        'owt',
+        'class="tmenu"',
+        '',
+        $module->menu[0],
+    );
+    $menuHtml = ob_get_clean();
+    check(
+        str_contains($menuHtml, 'fas fa-warehouse') && !str_contains($menuHtml, 'tmenuimageforpng'),
+        'Native top menu must render the warehouse icon for enabled and disabled entries',
+    );
+}
 check(
     $module->name === 'Owt' &&
         $module->rights_class === 'owt' &&
