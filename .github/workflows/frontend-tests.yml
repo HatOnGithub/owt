@@ -14,12 +14,16 @@ concurrency:
 
 jobs:
   frontend-mocks:
-    name: Dolibarr and camera mocks (${{ matrix.os }})
+    name: Dolibarr and camera mocks (${{ matrix.os }}, ${{ matrix.browser }})
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest, macos-latest]
+        # Branch pushes get all engines on Linux; PRs, releases and manual runs
+        # additionally cover Windows/macOS, avoiding duplicate full matrices on merges.
+        os: ${{ fromJSON((github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')) && '["ubuntu-24.04"]' || '["ubuntu-24.04","windows-latest","macos-latest"]') }}
+        browser: [chromium, firefox, webkit]
     runs-on: ${{ matrix.os }}
+    # Each engine has its own runner; Windows WebKit remains serialized within its job.
     timeout-minutes: 15
     defaults:
       run:
@@ -42,35 +46,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check end-to-end test types
-        run: npm run typecheck:e2e:mock
-
-      - name: Test print models
-        run: npm run test:labels
-
-      - name: Verify barcode decoder round trips
-        run: npm run test:barcodes
-
-      - name: Test CSV files
-        run: npm run test:csv
-
-      - name: Test mock API
-        run: npm run test:mock
-
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium firefox webkit
+        run: npx playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run mock end-to-end tests
-        run: npm run e2e:mock
-
-      - name: Build production frontend
-        run: npm run build
+        run: npm run e2e:mock -- --project ${{ matrix.browser }}
 
       - name: Upload test reports and diagnostics
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
         with:
-          name: frontend-mock-test-results-${{ matrix.os }}
+          name: frontend-mock-test-results-${{ matrix.os }}-${{ matrix.browser }}
           path: |
             frontend/playwright-report/mock/
             frontend/test-results/mock/
@@ -78,7 +64,7 @@ jobs:
           retention-days: 14
 
   gateway-authorization:
-    name: PHP and C# authorization
+    name: Core, PHP and C# checks
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
@@ -109,6 +95,15 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
         working-directory: frontend
+
+      - name: Check frontend types, decoders, print models, CSV and mock API
+        working-directory: frontend
+        run: |
+          npm run typecheck:e2e:mock
+          npm run test:barcodes
+          npm run test:labels
+          npm run test:csv
+          npm run test:mock
 
       - name: Build frontend
         run: npm run build

@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
+import { extname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import QRCode from 'qrcode';
 import bwipjs from 'bwip-js';
@@ -184,7 +185,30 @@ async function printPage(store, url) {
   );
 }
 
-export function createMockServer(defaultStore = new MockStore()) {
+export function createMockServer(defaultStore = new MockStore(), { frontendRoot } = {}) {
+  // E2E serves an already compiled app. Enumerate regular build files once: a URL
+  // never becomes a filesystem path, and missing assets retain a genuine 404.
+  const frontendFiles = new Map();
+  const collect = (directory, prefix = '') => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const name = `${prefix}/${entry.name}`;
+      const path = join(directory, entry.name);
+      if (entry.isDirectory()) collect(path, name);
+      else if (entry.isFile()) frontendFiles.set(name, path);
+    }
+  };
+  if (frontendRoot) collect(frontendRoot);
+  const mimeTypes = {
+    '.html': 'text/html; charset=utf-8',
+    '.js': 'text/javascript; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.json': 'application/json; charset=utf-8',
+    '.map': 'application/json; charset=utf-8',
+    '.svg': 'image/svg+xml',
+    '.png': 'image/png',
+    '.ico': 'image/x-icon',
+    '.woff2': 'font/woff2',
+  };
   const sessions = new Map();
   return createServer(async (request, response) => {
     try {
@@ -195,6 +219,16 @@ export function createMockServer(defaultStore = new MockStore()) {
       const url = new URL(request.url, 'http://127.0.0.1');
       const method = request.method;
       if (!['GET', 'POST'].includes(method)) throw new MockError('Unsupported method', 405);
+      const frontendFile = frontendFiles.get(url.pathname === '/' ? '/index.html' : url.pathname);
+      if (method === 'GET' && frontendFile) {
+        response.writeHead(200, {
+          'Content-Type': mimeTypes[extname(frontendFile)] || 'application/octet-stream',
+          'Cache-Control': 'public, max-age=3600',
+          'X-Content-Type-Options': 'nosniff',
+        });
+        response.end(readFileSync(frontendFile));
+        return;
+      }
       // The development controls and fixtures never forward requests to an ERP server.
       if (method === 'POST' && request.headers['sec-fetch-site'] === 'cross-site')
         throw new MockError('Cross-site mock mutation rejected', 403);
@@ -380,8 +414,8 @@ export function createMockServer(defaultStore = new MockStore()) {
   });
 }
 
-export async function listenMock(port = 8089) {
-  const server = createMockServer();
+export async function listenMock(port = 8089, options = {}) {
+  const server = createMockServer(undefined, options);
   await new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, '127.0.0.1', resolve);

@@ -41,11 +41,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // Component HMR adds asynchronous imports that can be cancelled by navigation/reload.
-    // E2E runs need stable application modules; interactive development keeps HMR enabled.
-    command: 'node dev/start-mock.mjs --port 4300 --no-hmr --no-live-reload',
+    // Build once instead of serving hundreds of development modules on each new page.
+    // Interactive development still uses start-mock.mjs with the Angular dev server.
+    command: 'node dev/start-e2e.mjs',
     url: 'http://127.0.0.1:4300',
-    env: { OWT_MOCK_PORT: '0' },
     reuseExistingServer: false,
     timeout: 60000,
   },

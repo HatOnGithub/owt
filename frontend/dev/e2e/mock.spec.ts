@@ -193,6 +193,8 @@ test('location inventory searches bins and defaults to the whole warehouse', asy
 }) => {
   const cable = await mock.item('Network cable');
   await page.goto('/#/locations?warehouse_id=1');
+  // Initial route compilation can exceed an assertion's five-second budget on CI.
+  await page.getByRole('heading', { name: 'Bins and locations', exact: true }).waitFor();
   const bin = page.getByRole('combobox', { name: 'Bin', exact: true });
   const search = page.getByRole('searchbox', { name: 'Search bins', exact: true });
   const drill = page.getByRole('link', { name: 'Workshop drill', exact: true });

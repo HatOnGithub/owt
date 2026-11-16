@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import { after, before, beforeEach, test } from 'node:test';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { validCode } from '../src/app/shared/scanner/codes.ts';
 import { createMockServer } from './server.mjs';
 import { MockStore } from './store.mjs';
@@ -16,6 +19,41 @@ after(async () => {
   await new Promise(resolve => server.close(resolve));
 });
 beforeEach(() => store.reset());
+
+test('prebuilt frontend serves assets with correct types and keeps API and path boundaries', async t => {
+  const directory = mkdtempSync(join(tmpdir(), 'owt-static-test-'));
+  const frontendRoot = join(directory, 'public');
+  mkdirSync(frontendRoot);
+  writeFileSync(join(frontendRoot, 'index.html'), '<h1>Prebuilt mock</h1>');
+  writeFileSync(join(frontendRoot, 'main.js'), 'window.mockReady = true;');
+  writeFileSync(join(frontendRoot, 'styles.css'), 'body { color: blue; }');
+  writeFileSync(join(frontendRoot, 'public.json'), '{"ready":true}');
+  writeFileSync(join(directory, 'private.txt'), 'outside frontend');
+  const staticServer = createMockServer(new MockStore(), { frontendRoot });
+  t.after(async () => {
+    staticServer.closeAllConnections();
+    await new Promise(resolve => staticServer.close(resolve));
+    rmSync(directory, { recursive: true, force: true });
+  });
+  await new Promise(resolve => staticServer.listen(0, '127.0.0.1', resolve));
+  const origin = `http://127.0.0.1:${staticServer.address().port}`;
+  const index = await fetch(origin + '/');
+  assert.match(index.headers.get('content-type'), /^text\/html/);
+  assert.equal(await index.text(), '<h1>Prebuilt mock</h1>');
+  const script = await fetch(origin + '/main.js');
+  assert.match(script.headers.get('content-type'), /^text\/javascript/);
+  assert.equal(await script.text(), 'window.mockReady = true;');
+  assert.match((await fetch(origin + '/styles.css')).headers.get('content-type'), /^text\/css/);
+  assert.deepEqual(await (await fetch(origin + '/public.json')).json(), { ready: true });
+  const bootstrap = await fetch(origin + '/custom/owt/api.php?resource=bootstrap');
+  assert.equal(bootstrap.status, 200);
+  assert.ok((await bootstrap.json()).state.items);
+  for (const path of ['/missing.js', '/..%2Fprivate.txt', '/..%5Cprivate.txt']) {
+    const response = await fetch(origin + path);
+    assert.equal(response.status, 404, path);
+    assert.match(response.headers.get('content-type'), /^application\/json/);
+  }
+});
 
 test('expanded warehouse fixture keeps six-character IDs and generates eight-character IDs', () => {
   store.reset({ scenario: 'expanded' });
