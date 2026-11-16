@@ -60,7 +60,7 @@ python tools/build-frontend.py
 python tools/package.py
 ```
 
-The first command builds Angular and copies its production output into `dolibarr/owt/spa`. Packaging validates the project versions and creates `artifacts/module_owt-v0.4.0.zip`. Rebuild before packaging frontend changes; a service build alone does not deploy PHP or frontend changes.
+The first command installs the locked frontend dependencies with `npm ci --include=dev`, builds Angular and copies its production output into `dolibarr/owt/spa`. This refreshes dependencies after pulling updates, including build tools when `NODE_ENV=production` is set. Use `--skip-install` only when dependencies were already installed from the current lockfile, or `--skip-build` to copy an existing build without installing or compiling. Failed installation or compilation leaves the deployed bundles untouched. Packaging validates the project versions and creates `artifacts/module_owt-v0.4.0.zip`. Rebuild before packaging frontend changes; a service build alone does not deploy PHP or frontend changes.
 
 Build the service separately:
 

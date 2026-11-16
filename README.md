@@ -24,7 +24,7 @@ Available under the [MIT License](LICENSE). Third-party dependencies retain thei
 
 ## Installation
 
-Download the module ZIP and matching business service ZIP from [Releases](https://github.com/HatOnGithub/qrrouter/releases). Install the module through Dolibarr's external-module installer, then start and connect the service as described in the [installation guide](docs/installation.md).
+Download the module ZIP and matching business service ZIP from [Releases](https://github.com/HatOnGithub/owt/releases). Install the module through Dolibarr's external-module installer, then start and connect the service as described in the [installation guide](docs/installation.md).
 
 ## Updating
 

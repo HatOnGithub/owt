@@ -6,6 +6,8 @@ The browser displays capabilities; PHP enforces the Dolibarr session, native rig
 
 `owt_inventory_right()` requires an active internal user, enabled Open Warehouse Tracker/Product/Stock/Lot-Serial modules, QR module access/read and native product/stock read. Nonadministrators need both `use` and `read`. External or inactive users do not gain entry through an administrator flag. Independent write grants do not replace this base access.
 
+Dolibarr evaluates descriptor menu/tab expressions through its restricted `dol_eval()` parser. Keep these expressions to supported module and permission checks: casts, null coalescing and direct user status/third-party properties are rejected by different supported releases even when ordinary PHP accepts them. Menus declare `user = 0` for internal users; all endpoints still call the full identity/access helpers independently. The native compatibility suite executes the actual evaluator from each pinned release, while gateway tests verify that external/inactive users remain denied even if they hold the projected grants.
+
 Native `restrictedArea` checks enforce object scope in addition to broad rights. `owt_native_read_access()` accounts for the explicit read-mode parameter in newer Dolibarr signatures. Product visibility, warehouse visibility, lot consistency, document access and employee access are rechecked where their records are used. Do not equate an entity ID or a successful catalog lookup with permission for every object in that entity.
 
 ## QR capability mapping

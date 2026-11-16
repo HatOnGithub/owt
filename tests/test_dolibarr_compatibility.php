@@ -313,6 +313,88 @@ check(
     'An upper version cap blocks incremental upgrades',
 );
 
+// Plain PHP eval misses Dolibarr's restricted expression parser. Exercise the
+// actual parser so a valid PHP expression cannot silently disable menus and tabs.
+function getDolGlobalString($key, $default = '') {
+    return $default;
+}
+function isModEnabled($module) {
+    return !in_array($module, $GLOBALS['disabledMenuModules'], true);
+}
+if (
+    str_contains(
+        file_get_contents($source . '/core/lib/functions.lib.php'),
+        'function dol_eval_standard(',
+    )
+) {
+    eval(native_function($source . '/core/lib/functions.lib.php', 'dol_eval_standard'));
+}
+eval(
+    contract('core/lib/functions.lib.php', 'dol_eval', [
+        's',
+        'returnvalue',
+        'hideerrors',
+        'onlysimplestring',
+    ])
+);
+$savedMenuUser = $user;
+$disabledMenuModules = [];
+$user = new class {
+    public $id = 8,
+        $admin = 1,
+        $socid = 0,
+        $status = 1;
+    public $grants = ['owt.use', 'owt.read', 'produit.lire', 'stock.lire'];
+    public function hasRight(...$parts) {
+        return in_array(implode('.', $parts), $this->grants, true);
+    }
+};
+foreach ($module->menu as $entry) {
+    $user->grants = [];
+    check(
+        dol_eval($entry['perms']) === true,
+        'Native menu evaluator must permit an active internal administrator',
+    );
+    $user->admin = 0;
+    $user->grants = ['owt.use', 'owt.read', 'produit.lire', 'stock.lire'];
+    check(
+        dol_eval($entry['perms']) === true,
+        'Native menu evaluator must permit an explicitly granted operator',
+    );
+    $grants = $user->grants;
+    foreach ($grants as $missing) {
+        $user->grants = array_values(array_diff($grants, [$missing]));
+        check(
+            dol_eval($entry['perms']) === false,
+            'Native menu evaluator must require ' . $missing,
+        );
+    }
+    $user->grants = $grants;
+    $user->admin = 1;
+    $user->id = 0;
+    check(
+        dol_eval($entry['perms']) === false,
+        'Native menu evaluator must require a logged-in user',
+    );
+    $user->id = 8;
+    foreach (['owt', 'product', 'stock', 'productbatch'] as $missing) {
+        $disabledMenuModules = [$missing];
+        check(
+            dol_eval($entry['perms']) === false,
+            'Native menu evaluator must require enabled module ' . $missing,
+        );
+    }
+    $disabledMenuModules = [];
+}
+foreach ($module->tabs as $tab) {
+    $parts = explode(':', $tab['data'], 6);
+    check(
+        dol_eval($parts[4]) === true,
+        'Native tab evaluator must accept the related-entry condition',
+    );
+}
+$user = $savedMenuUser;
+
 // Exercise activation through the real native field-creation methods, not just signatures.
 // An interrupted activation may leave the SQL column without its field definition.
 $extraFile = 'core/class/extrafields.class.php';
@@ -492,17 +574,9 @@ file_put_contents(
     $fixture . '/product/stock/class/entrepot.class.php',
     '<?php /* Real fetch supplied above. */',
 );
+eval(native_function(__DIR__ . '/../dolibarr/owt/lib/owt_service.lib.php', 'owt_warehouse_closed'));
 eval(
-    native_function(
-        __DIR__ . '/../dolibarr/owt/lib/owt_service.lib.php',
-        'owt_warehouse_closed',
-    )
-);
-eval(
-    native_function(
-        __DIR__ . '/../dolibarr/owt/lib/owt_service.lib.php',
-        'owt_service_preflight',
-    )
+    native_function(__DIR__ . '/../dolibarr/owt/lib/owt_service.lib.php', 'owt_service_preflight')
 );
 foreach (
     [

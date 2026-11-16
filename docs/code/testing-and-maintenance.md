@@ -69,7 +69,7 @@ dotnet build OpenWarehouseTracker.sln -c Release
 python tools/package.py
 ```
 
-The frontend tool deploys compiled Angular and standalone print output into the module. The packaging tool checks licenses, generated print/SPA files and matching versions in the frontend package/lockfile, module descriptor and service project. It creates the versioned archive under `artifacts`; do not copy an outdated filename from a previous release.
+The frontend tool first installs the exact locked dependencies using `npm ci --include=dev`, then compiles and deploys Angular and standalone print output into the module. This prevents stale `node_modules` after pulling updates; development dependencies are needed even when building on a production host. `--skip-install` reuses an installation from the current lockfile; `--skip-build` only deploys existing output and skips installation too. Installation and compilation must both succeed before deployed bundles are changed. The packaging tool checks licenses, generated print/SPA files and matching versions in the frontend package/lockfile, module descriptor and service project. It creates the versioned archive under `artifacts`; do not copy an outdated filename from a previous release.
 
 Frontend/PHP formatting uses the repository Prettier configuration and PHP plugin; C# uses the configured CSharpier local tool. Format the files intentionally changed and use `git diff --check` to catch whitespace errors. Comments and docs should describe behavior and invariants rather than repeat obvious syntax.
 

@@ -9,9 +9,17 @@ root = Path(__file__).resolve().parents[1]
 frontend = root / 'frontend'
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--skip-build', action='store_true', help='Deploy bundles already built with npm run build')
+parser.add_argument('--skip-install', action='store_true', help='Use dependencies already installed from the current lockfile')
 args = parser.parse_args()
 if not args.skip_build:
-    subprocess.run(['npm.cmd' if os.name == 'nt' else 'npm', 'run', 'build'], cwd=frontend, check=True)
+    npm = 'npm.cmd' if os.name == 'nt' else 'npm'
+    # A git pull can add decoder dependencies without updating node_modules. Install
+    # the locked tree before compiling, including build tools on production hosts.
+    # Leave the deployed bundles untouched if either installation or compilation fails.
+    if not args.skip_install:
+        print('Installing locked frontend dependencies (including build tools)...', flush=True)
+        subprocess.run([npm, 'ci', '--include=dev'], cwd=frontend, check=True)
+    subprocess.run([npm, 'run', 'build'], cwd=frontend, check=True)
 source = frontend / 'dist/owt/browser'
 if not (source / 'index.html').is_file():
     raise SystemExit('Angular output is missing. Run npm run build first.')

@@ -4,6 +4,19 @@
 
 Start with the exact message below. If a stock action failed or timed out, let the original request finish and keep any pending synchronization. A missing browser response does not prove that the stock movement failed.
 
+## Old QR Router menu remains, or OWT is greyed out
+
+A QR Router menu linking to `/qrrouter/index.php` can remain in Dolibarr's database after its application files have been removed. Apache's **Not Found** response for that link indicates a missing route; changing OWT's icon or API key does not replace the saved menu. The rename assumes a fresh OWT installation and does not migrate an older module registration.
+
+1. If QR Router is still listed under **Setup > Modules/Applications**, disable it through Dolibarr before removing its old application files. Keep its data and settings. Do not leave both module descriptors installed: they use the same module number, `503871`.
+2. If its descriptor has already been removed, use Dolibarr's **Menu editor** (`/admin/menus/index.php`, relative to the Dolibarr installation) to identify and remove only the obsolete QR Router entries pointing to `/qrrouter/`. This removes navigation entries, not inventory. Disabling/re-enabling OWT only manages menus registered as `owt`; it cannot remove entries registered as `qrrouter`.
+3. Ensure Open Warehouse Tracker, Products, Stock and Lots/Serials are enabled in the current entity, then disable/re-enable OWT to refresh its own menus, icon and permissions. Sign out and back in to refresh the user's permissions and cached navigation.
+4. Open `/custom/owt/index.php` directly, using the actual Dolibarr base path and configured custom-module URL. A 404 here indicates that the new module files or web mapping are missing; an access-denied response requires checking module dependencies and user permissions.
+
+If the direct OWT page opens but the top-menu entry is greyed out, install the menu-expression fix and disable/re-enable OWT. Earlier descriptors used syntax and user properties that Dolibarr's restricted menu evaluator rejects, even though the same access condition works in ordinary PHP. The fixed descriptor uses the native evaluator's supported permission expression and retains all module and native read grants. Internal-user and active-status checks remain enforced independently on module requests. Bare OWT application links also now select the OWT menu during bootstrap instead of inheriting Home from the session. As a temporary navigation workaround, open `/custom/owt/index.php?mainmenu=owt&leftmenu=&idmenu=0`.
+
+A greyed-out menu can also indicate that the current user lacks access. Active internal administrators can enter when all dependencies are enabled. Other users need **Use Open Warehouse Tracker**, inventory read, native product read and native stock read permissions. Service connection settings are separate from these checks. If enabling the module fails, retain the exact activation error rather than trying to fix it by changing menu permissions.
+
 ## Native receipt table unavailable
 
 **Message:** `Native receipt table unavailable. Re-enable Open Warehouse Tracker to install its tables.`

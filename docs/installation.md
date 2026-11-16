@@ -15,7 +15,7 @@ For a new installation, follow the steps below. For an existing installation, fo
 
 ## 1. Download a release
 
-1. Open the project's [Releases](https://github.com/HatOnGithub/qrrouter/releases) page and choose a release.
+1. Open the project's [Releases](https://github.com/HatOnGithub/owt/releases) page and choose a release.
 2. Under **Assets**, download both files for the same version:
    - `module_owt-v0.4.0.zip`: the installable Dolibarr module, including its built interface.
    - `owt-service-v0.4.0.zip`: the matching portable business service.

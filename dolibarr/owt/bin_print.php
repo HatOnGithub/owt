@@ -81,7 +81,7 @@ foreach ($bins as $name) {
         $box += $row['box'];
         $unk += $row['unknown_boxes'];
     }
-    print '<section class="owt-binsheet"><div class="meta">QR ROUTER &nbsp; | &nbsp; ' .
+    print '<section class="owt-binsheet"><div class="meta">OPEN WAREHOUSE TRACKER (OWT) &nbsp; | &nbsp; ' .
         $pt('Warehouse') .
         ' ' .
         owt_h($warehouses[$wid]['ref']) .

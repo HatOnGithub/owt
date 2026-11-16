@@ -30,4 +30,6 @@ Use the following names consistently when adding code, deployment files or docum
 
 The rename assumes a fresh installation. These are the canonical contracts; there are no prior-name routes, settings aliases or migration adapters. Item IDs remain independent of branding and carrier: six- and eight-character checksummed identifiers are both accepted, with automatic range expansion as described in [barcodes](barcodes.md).
 
+The module uses Dolibarr's bundled `fa-warehouse` icon to represent its warehouse tracking workflows. Keep the `fa-` prefix in the descriptor's `picto`: native activation uses it to register `MAIN_MODULE_OWT_ICON` for the top menu. After changing this icon on an existing installation, disable/re-enable OWT in module setup and refresh the browser so the registered icon and theme CSS are regenerated.
+
 QR Code, Data Matrix, Code 128 and PDF417 are barcode standards, so their technical names and carrier identifiers remain unchanged. Repository hosting links use the actual GitHub repository URL.

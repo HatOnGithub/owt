@@ -76,6 +76,14 @@ with tempfile.TemporaryDirectory(prefix='owt-angular-') as directory:
     main = main.replace('$this->idx=0;$s=$this->state();', '$this->idx=0;$s=$this->txn??$this->state();')
     main = main.replace('<meta charset="utf-8">', '<meta charset="utf-8"><style>body{font-family:Arial,sans-serif;color:rgb(40,40,40);background:rgb(250,250,250)}.butAction{background:rgb(83,101,117);color:white;border:1px solid gray;border-radius:3px}.flat{background:white;color:rgb(40,40,40)}</style>')
     main = main.replace('function llxHeader($a,$title){print ', 'function llxHeader($a,$title){global $conf; print ')
+    # Model native bootstrap selection before the host renders, including a stale
+    # menu ID. This catches direct/deep links that would otherwise keep Home selected.
+    main = main.replace('session_start();', '''session_start();
+foreach(['mainmenu','leftmenu','idmenu'] as $menuKey) {
+ if(isset($_GET[$menuKey])) $_SESSION[$menuKey]=$_GET[$menuKey];
+}
+''')
+    main = main.replace('data-title="', '''data-mainmenu="'.htmlspecialchars($_SESSION['mainmenu']??'home').'" data-menu-id="'.htmlspecialchars((string)($_SESSION['idmenu']??0)).'" data-title="''')
     main = main.replace('function llxFooter()', '''function dol_get_fiche_head($head,$selected,$title='',$notab=0,$picto='') {
  $html='<nav data-native-tabs>';foreach($head as $tab)$html.='<a href="'.htmlspecialchars($tab[0]).'">'.htmlspecialchars($tab[1]).'</a>';return $html.'</nav>';
 }
@@ -456,12 +464,15 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
                 assert error.code == expected, error.read().decode()
                 return ''
         product_entries = native_entries('product', 4)
-        for role, allowed in [('admin', True), ('reader', True), ('no-stock', False), ('external-admin', False), ('inactive', False), ('disabled-binloc', True)]:
+        # Native expression syntax projects grants; authenticated routes must also
+        # reject external/inactive identities even when those identities hold grants.
+        for role, menu_grants, accessible in [('admin', True, True), ('reader', True, True), ('no-stock', False, False), ('external-admin', True, False), ('inactive', True, False), ('disabled-binloc', True, True)]:
             with client.open(base + 'descriptor_fixture.php?role=' + role) as response:
                 descriptor = json.load(response)
-                assert descriptor['allowed'] is allowed
+                assert descriptor['allowed'] is menu_grants
                 assert 'productlotcard' in descriptor['parts']['hooks']['data']
                 assert [tab['data'].split(':', 1)[0] for tab in descriptor['tabs']] == ['product', 'stock', 'productlot', 'stock']
+            native_entries('product', 4, role=role, expected=200 if accessible else 403)
         assert '#/items/' + tracked in product_entries and '#/items/' + box in product_entries
         assert '#/items/' + generic not in product_entries
         assert 'data-native-tabs' in product_entries and 'Change location' in product_entries
@@ -656,6 +667,16 @@ echo json_encode(['parts'=>$module->module_parts,'tabs'=>$module->tabs,'allowed'
         with client.open(base + 'index.php') as response:
             host = response.read().decode()
             assert 'owt-root' in host and '/spa/main-' in host and key not in host
+        for page in ['index.php', 'app.php']:
+            with client.open(web_base + '/native.php?mainmenu=home&leftmenu=setup&idmenu=17') as response:
+                assert 'data-mainmenu="home"' in response.read().decode()
+            with client.open(base + page) as response:
+                host = response.read().decode()
+                assert 'data-mainmenu="owt"' in host and 'data-menu-id="0"' in host
+            with client.open(base + page + '?mainmenu=products&leftmenu=stock&idmenu=23') as response:
+                host = response.read().decode()
+                assert 'data-mainmenu="products"' in host and 'data-menu-id="23"' in host
+        print('Menu context PASS: direct OWT links replace Home and stale IDs; explicit native context is preserved.', flush=True)
         assert request()['state']['revision'] == before
         with client.open(base + 'api.php?resource=products&q=Part') as response:
             assert json.load(response)[0]['id'] == 3

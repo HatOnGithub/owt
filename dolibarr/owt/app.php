@@ -1,5 +1,13 @@
 <?php
 /** Angular host inside the authenticated Dolibarr shell. */
+// Dolibarr loads the selected menu during bootstrap. Bare URLs and printed deep
+// links must select OWT instead of inheriting Home (or a stale menu ID) from session.
+// Preserve an explicit menu context supplied by a native Dolibarr link.
+if (!isset($_GET['mainmenu']) && !isset($_POST['mainmenu'])) {
+    $_GET['mainmenu'] = 'owt';
+    $_GET['leftmenu'] = '';
+    $_GET['idmenu'] = 0;
+}
 $res = 0;
 if (is_file(__DIR__ . '/../../main.inc.php')) {
     $res = include __DIR__ . '/../../main.inc.php';

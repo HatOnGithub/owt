@@ -18,7 +18,9 @@ class modOwt extends DolibarrModules {
         $this->phpmin = [8, 0];
         $this->need_dolibarr_version = [21, 0, 2];
         $this->const_name = 'MAIN_MODULE_OWT';
-        $this->picto = 'barcode';
+        // The fa- prefix also registers MAIN_MODULE_OWT_ICON during activation,
+        // so Dolibarr's top menu uses the warehouse glyph instead of its generic fallback.
+        $this->picto = 'fa-warehouse';
         $this->langfiles = ['owt@owt'];
         $this->dirs = [];
         $this->config_page_url = ['setup.php@owt'];
@@ -41,8 +43,11 @@ class modOwt extends DolibarrModules {
         ];
         $this->const = [];
         $this->tabs = [];
+        // Native dol_eval only permits selected user properties/methods. Keep this
+        // expression within that contract; internal-only menus use user=0 below,
+        // and every module endpoint independently rejects external/inactive users.
         $warehouseRead =
-            'isModEnabled("owt") && isModEnabled("product") && isModEnabled("stock") && isModEnabled("productbatch") && $user->id > 0 && (int) ($user->status ?? $user->statut ?? 1) === 1 && empty($user->socid) && ($user->admin || ($user->hasRight("owt", "use") && $user->hasRight("owt", "read") && $user->hasRight("produit", "lire") && $user->hasRight("stock", "lire")))';
+            'isModEnabled("owt") && isModEnabled("product") && isModEnabled("stock") && isModEnabled("productbatch") && $user->id > 0 && ($user->admin || ($user->hasRight("owt", "use") && $user->hasRight("owt", "read") && $user->hasRight("produit", "lire") && $user->hasRight("stock", "lire")))';
         foreach (
             ['product' => 'product', 'stock' => 'warehouse', 'productlot' => 'lot']
             as $native => $kind
@@ -121,7 +126,7 @@ class modOwt extends DolibarrModules {
                 'url' => '/owt/index.php',
                 'langs' => 'owt@owt',
                 'position' => 120,
-                'enabled' => '1',
+                'enabled' => 'isModEnabled("owt")',
                 'perms' => $warehouseRead,
                 'target' => '',
                 'user' => 0,
