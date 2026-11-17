@@ -1,6 +1,7 @@
 # Open Warehouse Tracker (OWT) v0.4.0
 
 Open Warehouse Tracker (OWT) is a native Dolibarr warehouse extension for barcode identification, stock workflows, storage locations, movable bins, picking, loans and operation history. It uses Dolibarr's product, stock, lot/serial and permission systems. Originally developed as an internal tool for DeltaIoT.
+Why is it written with Angular and C#? Well, because i know those languages better... :P
 
 Available under the [MIT License](LICENSE). Third-party dependencies retain their own licenses.
 
